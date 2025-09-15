@@ -3,65 +3,71 @@
 #include <cstdint>
 #include <vector>
 #include <cmath>
-#include "render/CPURenderer.h"
-#include "import3d.h"
-#include "engconfig.h"
+#include <filesystem>
+#include "engine/render/CPURenderer.h"
+#include "engine/import3d.h"
+#include "engine/engconfig.h"
+#include <chrono>
 
 using std::endl, std::cout;
+using dtclock = std::chrono::steady_clock;
 
 int main(int argc, char** args) {
+	// =========
+	// SDL SETUP
+	// =========
 
 	// Pointers to our window and surface
 	SDL_Surface* winSurface = NULL;
 	SDL_Window* window = NULL;
 	SDL_Renderer* mainRenderer = NULL;
-
 	int result;
-	
-	// Initialize SDL. SDL_Init will return -1 if it fails.
 	result = SDL_Init(SDL_INIT_EVERYTHING);
 	if (result < 0) 
 	{
 		cout << "Error initializing SDL: " << SDL_GetError() << endl;
 		system("pause");
-		// End the program
 		return 1;
 	}
-
 	result = SDL_CreateWindowAndRenderer(screenwidth, screenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &mainRenderer);
 	if (result < 0)
 	{
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 		return 1;
 	}
-	SDL_SetWindowTitle(window, "Barbershop");
-	
-	// Init
-	// Lock the mouse to the window and hide the cursor
-	SDL_ShowCursor(SDL_DISABLE);
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-
+	SDL_SetWindowTitle(window, "Provision");
+	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
+	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
+	const Uint8* gk; // Used to read off inputs
+	SDL_Event event; // SDL event buffer
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
+	vp.Clear(0xFF5792FF); // sky blue
+	// ====
+	// TIME
+	// ====
+
+	int frame = 0;
+	auto lastTime = dtclock::now();
+	int fpsLimit = 0;
+	float fpsLimTick = 1.0f / fpsLimit;
+
+	// ===========
+	// SCENE SETUP
+	// ===========
 
 	Scene mainScene; //Create main scene
 	currentScene = &mainScene; // Set the current scene to mainScene
 	
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
-	mainScene.cams[0].pos.z -= 2;
-	//mainScene.cams[0].rot.pitch += pi / 2;
 
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj"));
-	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
-	
-	const Uint8* gk; 
-	SDL_Event event;
+	mainScene.addMesh(importObj("content/obj/suzanne.obj"));
+	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.8f);
 
-	float freecamspeed;
-	int frame = 0;
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
+	float freecamspeed = 0.05f;
 
 	while (true)
 	{
