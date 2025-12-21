@@ -465,3 +465,8 @@ void Scene::addMesh(Mesh& mesh)
 	mesh.name = this->getName(mesh.name);
 	this->meshes.emplace_back(mesh);
 }
+
+float lerp(float a, float b, float ratio) 
+{
+	return (ratio * (b - a)) + a;
+}

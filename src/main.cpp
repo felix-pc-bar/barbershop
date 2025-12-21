@@ -1,10 +1,10 @@
 #include <iostream>
-#include <SDL.h>
+#include <sdl.h>
 #include <cstdint>
 #include <vector>
 #include <cmath>
 #include <filesystem>
-#include "engine/render/CPURenderer.h"
+#include "engine/render/cpurenderer.h"
 #include "engine/import3d.h"
 #include "engine/engconfig.h"
 #include <chrono>
@@ -74,8 +74,9 @@ int main(int argc, char** args) {
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
+		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
+			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
 				return 0;  
 			}
 			if (event.type == SDL_MOUSEMOTION)
@@ -88,7 +89,6 @@ int main(int argc, char** args) {
 			}
 		}
 
-		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
 		else { freecamspeed = 0.01f; }
 		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }

@@ -10,18 +10,18 @@ Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
 Point2d::Point2d(const Vertex3d& from3d)
 {
-    Position3d cs = from3d.position.cameraspace();
-    // Perspective projection
-    float pf = perspectiveFac / screenheight;
-    float perspscale = pf * cs.z;
+	Position3d cs = from3d.position.cameraspace();
+	// Perspective projection
+	float pf = perspectiveFac / screenheight;
+	float perspscale = pf * cs.z;
 
-    if (perspscale <= 0.0001f) {
-        this->x = this->y = -99999;  // sentinel
-        return;
-    }
+	if (perspscale <= 0.0001f) {
+		this->x = this->y = -99999;  // sentinel
+		return;
+	}
 
-    this->x = cs.x / perspscale + screenwidth * 0.5f;
-    this->y = cs.y / perspscale + screenheight * 0.5f;
+	this->x = cs.x / perspscale + screenwidth * 0.5f;
+	this->y = cs.y / perspscale + screenheight * 0.5f;
 }
 
 Point2d operator+(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x + p2.x, p1.y + p2.y); }

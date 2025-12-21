@@ -196,3 +196,5 @@ public:
 extern Scene* currentScene;
 
 const float pi = 3.14159f; // looks like a good place to me 
+
+float lerp(float a, float b, float ratio);

@@ -16,7 +16,8 @@ public:
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
-	std::vector<uint32_t> pixelBuffer;
+	std::vector<uint32_t> bufShaded; // Shaded pixel buffer
+	std::vector<uint32_t> bufDepth; // Depth pixel buffer
 	int width;
 	int height;
 	void SetPixel(int x, int y, uint32_t color);
