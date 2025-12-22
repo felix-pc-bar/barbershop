@@ -35,7 +35,7 @@ int main(int argc, char** args) {
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 		return 1;
 	}
-	SDL_SetWindowTitle(window, "Provision");
+	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	const Uint8* gk; // Used to read off inputs
@@ -61,7 +61,8 @@ int main(int argc, char** args) {
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 
-	mainScene.addMesh(importObj("content/obj/suzanne.obj"));
+	//mainScene.addMesh(importObj("content/obj/suzanne.obj"));
+	mainScene.addMesh(importObj("content/obj/sz2.obj"));
 	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.8f);
 
 
@@ -72,6 +73,20 @@ int main(int argc, char** args) {
 
 	while (true)
 	{
+		auto currentTime = dtclock::now();
+		std::chrono::duration<float> elapsed = currentTime - lastTime;
+		float deltaTime = elapsed.count(); // Raw frametime (s)
+		if (fpsLimit != 0 && deltaTime < fpsLimTick)
+		{
+			SDL_Delay((fpsLimTick - deltaTime) * 1000);
+			deltaTime += fpsLimTick - deltaTime;
+			currentTime = dtclock::now();
+		}
+		float dtMulti = deltaTime / (1.0f / fpsTarget);
+		lastTime = currentTime;
+		float fps = 1.0f / deltaTime;
+		cout << fps << endl;
+
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
