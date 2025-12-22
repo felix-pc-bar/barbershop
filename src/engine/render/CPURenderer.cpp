@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <algorithm>
+#include <limits>
 
 using std::endl, std::cout;
 
@@ -20,7 +21,8 @@ CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(rend
 {
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
 	bufShaded.resize(width * height, 0xFF000000); // opaque black
-	bufDepth.resize(width * height, 0xFF000000);
+	bufDepth.resize(width * height, 0);
+	bufIsDrawn.resize(width * height, false);
 }
 
 CPURenderer::~CPURenderer() 
@@ -31,7 +33,8 @@ CPURenderer::~CPURenderer()
 void CPURenderer::Clear(uint32_t color) 
 {
 	std::fill(bufShaded.begin(), bufShaded.end(), color);
-	std::fill(bufDepth.begin(), bufDepth.end(), 0xFFFFFFFF);
+	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
+	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
 inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
@@ -160,7 +163,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
 	int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-	uint32_t* pixels = bufDepth.data();
+	float* pixDepth = bufDepth.data();
 
 	for (int y = bb.min.y; y < bb.max.y; y++)
 	{
@@ -201,9 +204,10 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 				float cdepth = std::sqrt((loc3 - currentScene->currentCam->pos).lengthSquared());
 				float qdepth = lerp(bdepth, cdepth, qbybc);
 				float pdepth = lerp(adepth, qdepth, pbyaq);
-				if (pdepth < pixels[baseIndex + x])
+				if (pdepth < pixDepth[baseIndex + x])
 				{
-					pixels[baseIndex + x] = (uint32_t)pdepth;
+					pixDepth[baseIndex + x] = pdepth;
+					bufIsDrawn[baseIndex + x] = true;
 				}
 			}
 			w1 += dw1;
@@ -221,7 +225,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 		//int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
 		//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-		pixels = bufShaded.data();
+		uint32_t* pixShaded = bufShaded.data();
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
@@ -240,7 +244,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 			{
 				if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 				{
-					pixels[baseIndex + x] = rawColour;
+					pixShaded[baseIndex + x] = rawColour;
+					bufIsDrawn[baseIndex + x] = true;
 				}
 				w1 += dw1;
 				w2 += dw2;
@@ -263,7 +268,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
 	// We copy by refernce the data of the pixbuf vector to a C-style array
-	pixels = bufShaded.data();
+	uint32_t* pixShaded = bufShaded.data();
 
 	uint8_t srcR = (rawColour >> 16) & 0xFF;
 	uint8_t srcG = (rawColour >> 8) & 0xFF;
@@ -287,7 +292,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 			if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 			{
 				// We get a reference to the current pixel in the array made above; still by refernce so changes the vector
-				uint32_t& dest = pixels[baseIndex + x];
+				uint32_t& dest = pixShaded[baseIndex + x];
+				bufIsDrawn[baseIndex + x] = true;
 
 				uint8_t dstR = (dest >> 16) & 0xFF;
 				uint8_t dstG = (dest >> 8) & 0xFF;
@@ -313,7 +319,30 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 void CPURenderer::Present()
 {
 	//SDL_UpdateTexture(texture, nullptr, bufShaded.data(), width * sizeof(uint32_t));
-	SDL_UpdateTexture(texture, nullptr, bufDepth.data(), width * sizeof(uint32_t));
+	// Generate depth buffer visualisation
+	std::vector<uint32_t> dbgDepth;
+	dbgDepth.resize(width * height, 0xFF000000);
+	float minDepth = std::numeric_limits<float>::infinity(), maxDepth = 0;
+	for (int i = 0; i < bufDepth.size(); ++i)
+	{
+		if (bufIsDrawn[i])
+		{
+			if (bufDepth[i] > maxDepth) { maxDepth = bufDepth[i]; }
+			// Questionable optimisation to elif here but we're not gonna have 1 pixel on the screen and need a depthmap
+			else if (bufDepth[i] < minDepth) { minDepth = bufDepth[i]; }
+		}
+	}
+	for (int i = 0; i < bufDepth.size(); ++i)
+	{
+		uint8_t v = 0x00;
+		if (bufIsDrawn[i])
+		{
+			v = (uint8_t)(((bufDepth[i] - minDepth) / maxDepth) * 255);
+			//std::cout << "v: " << v << '\n';
+		}
+		dbgDepth[i] = 0xFF000000 | (v << 16) | (v << 8) | v;
+	}
+	SDL_UpdateTexture(texture, nullptr, dbgDepth.data(), width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);
 }

@@ -10,14 +10,14 @@ public:
 
 	void Clear(uint32_t color);
 	void Present(); // push pixels to texture and draw to screen
-	void drawMesh(Mesh& mesh); // Old; maybe use for UI draw in future
 	void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
 	std::vector<uint32_t> bufShaded; // Shaded pixel buffer
-	std::vector<uint32_t> bufDepth; // Depth pixel buffer
+	std::vector<float> bufDepth; // Depth pixel buffer
+	std::vector<bool> bufIsDrawn; //Whether the background has been shaded
 	int width;
 	int height;
 	void SetPixel(int x, int y, uint32_t color);

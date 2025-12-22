@@ -68,6 +68,7 @@ int main(int argc, char** args) {
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
 	float freecamspeed = 0.05f;
+	currentScene->currentCam->pos = currentScene->currentCam->pos - Position3d(0, 0, 10);
 
 	while (true)
 	{
