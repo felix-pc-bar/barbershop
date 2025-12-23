@@ -1,5 +1,7 @@
 #include "engTools.h"
 #include <cmath>
+#include "logic2d.h"
+#include "render/CPURenderer.h"
 
 using std::vector, std::cout, std::endl, std::sin, std::cos;
 
@@ -191,6 +193,8 @@ Position3d Position3d::cameraspace() const
 float Position3d::lengthSquared() const {
 	return x * x + y * y + z * z; }
 
+
+
 ostream& operator<< (ostream& os, Position3d pos)
 {
 	return os << "[" << pos.x << " " << pos.y << " " << pos.z << "]";
@@ -198,7 +202,7 @@ ostream& operator<< (ostream& os, Position3d pos)
 
 Material::Material()
 {
-	this->colour = { 1,1,1 };
+	this->colour = { 1,0,1 };
 }
 
 Material::Material(float r, float g, float b, bool shade, bool allowDebugVis)

@@ -4,6 +4,7 @@
 //#include <cstdint>
 #include <iostream>
 #include <string>
+#include "render/CPURenderer.h"
 
 using std::vector, std::ostream, std::string;
 
@@ -27,7 +28,6 @@ public:
 	void normalise();
 	void flip();
 	float lengthSquared() const;
-
 
 	friend ostream& operator<< (ostream& os, Position3d pos);
 	friend Position3d operator+(const Position3d& p1, const Position3d& p2);
@@ -181,7 +181,12 @@ public:
 	Position3d forward;
 
 	// Tick function stuff
-
+	//bool wantsTick(); //Whether this object wants a tick op
+	//void tick(Scene* scene);
+private:
+	//still ticky
+	//float relScale; //For scaling relative to camera distance
+	
 
 };
 

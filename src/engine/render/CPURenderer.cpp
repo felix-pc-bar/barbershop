@@ -8,6 +8,21 @@
 
 using std::endl, std::cout;
 
+void CPURenderer::displaySquare(Position3d pos, int sizePx)
+{
+	Point2d point(pos);
+	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
+	int offset = std::floor(sizePx / 2.0f);
+	for (int x = point.x - offset; x < point.x + offset + sizePx % 2; x++)
+	{
+		for (int y = point.y - offset; y < point.y + offset + sizePx % 2; y++)
+		{
+			this->SetPixel(x, y, 0xFF808080);
+		}
+	}
+	return;
+}
+
 TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat) : v1(a), v2(b), v3(c)
 {
 	this->material = *mat;

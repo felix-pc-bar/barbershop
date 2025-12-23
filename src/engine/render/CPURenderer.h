@@ -12,6 +12,8 @@ public:
 	void Present(); // push pixels to texture and draw to screen
 	void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
+	void SetPixel(int x, int y, uint32_t color);
+	void displaySquare(Position3d pos, int sizePx);
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
@@ -20,7 +22,6 @@ private:
 	std::vector<bool> bufIsDrawn; //Whether the background has been shaded
 	int width;
 	int height;
-	void SetPixel(int x, int y, uint32_t color);
 };
 
 struct TriangleToRender 
