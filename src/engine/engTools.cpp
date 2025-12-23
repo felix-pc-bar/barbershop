@@ -201,19 +201,23 @@ Material::Material()
 	this->colour = { 1,1,1 };
 }
 
-Material::Material(float r, float g, float b)
+Material::Material(float r, float g, float b, bool shade, bool allowDebugVis)
 {
 	this->colour.red = r;
 	this->colour.green = g;
 	this->colour.blue = b;
+	this->shadeMat = shade;
+	this->omitDbg = allowDebugVis;
 }
 
-Material::Material(float r, float g, float b, float a)
+Material::Material(float r, float g, float b, float a, bool shade, bool allowDebugVis)
 {
 	this->colour.red = r;
 	this->colour.green = g;
 	this->colour.blue = b;
 	this->colour.alpha = a;
+	this->shadeMat = shade;
+	this->omitDbg = allowDebugVis;
 }
 
 Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b), alpha(1){}

@@ -116,9 +116,11 @@ class Material
 {
 public:
 	Material();
-	Material(float r, float g, float b);
-	Material(float r, float g, float b, float a);
+	Material(float r, float g, float b, bool shade = true, bool allowDebugVis = true);
+	Material(float r, float g, float b, float a, bool shade = true, bool allowDebugVis = true);
 	Colour colour;
+	bool shadeMat; //Whether to shade this material
+	bool omitDbg; //Don't change shading in debug
 };
 
 class Mesh;
@@ -177,6 +179,9 @@ public:
 	Position3d up;
 	Position3d right;
 	Position3d forward;
+
+	// Tick function stuff
+
 
 };
 

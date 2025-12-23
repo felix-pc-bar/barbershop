@@ -41,7 +41,7 @@ int main(int argc, char** args) {
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
-	vp.Clear(0xFF5792FF); // sky blue
+	vp.Clear(0xFF000000);
 	// ====
 	// TIME
 	// ====
@@ -62,9 +62,21 @@ int main(int argc, char** args) {
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 
 	//mainScene.addMesh(importObj("content/obj/suzanne.obj"));
-	mainScene.addMesh(importObj("content/obj/sz2.obj"));
-	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.8f);
+	//mainScene.addMesh(importObj("content/obj/ico2.obj"));
+	mainScene.addMesh(importObj("content/obj/out1.obj"));
+	mainScene.addMesh(importObj("content/obj/out2.obj"));
 
+	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.8f);
+	mainScene.meshes[1].materials.emplace_back(0.1f, 0.1f, 0.1f, false);
+	for (int x = 0; x < 20; x++)
+	{
+		for (int y = 0; y < 20; y++)
+		{
+			mainScene.addMesh(importObj("content/obj/_dot.obj"));
+			mainScene.meshes[2 + (y + 20 * x)].materials.emplace_back(0.5f, 0.5f, 0.5f, false);
+			mainScene.meshes[2 + (y + 20 * x)].move(Position3d(x - 10, 0, y - 10));
+		}
+	}
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });

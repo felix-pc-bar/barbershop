@@ -95,7 +95,11 @@ void CPURenderer::drawScene(Scene& scene)
 			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
 			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
 			//Material mat = mesh.materials[mesh.matIndices[i / 3]];
-			Material mat = mesh.materials[0];
+			Material mat(1.0f, 0.0f, 1.0f); // magenta
+			if (mesh.materials.size() != 0)
+			{
+				mat = mesh.materials[0];
+			}
 			triangles.emplace_back(v1, v2, v3, camPos, &mat);
 		}
 	}
@@ -140,7 +144,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	Position3d viewDir = (currentScene->currentCam->pos - triCentre);
 	viewDir.normalise();
 	uint32_t rawColour = 0xFFFF00FF; // Magenta by default
-	if (mat.colour.alpha == 1.0f) // Shade with hybrid diffuse algorithm (not physically acccurate)
+	if (mat.colour.alpha == 1.0f && mat.shadeMat) // Shade with hybrid diffuse algorithm (not physically acccurate)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
 		float dot = normal.dot(lightNormal);
@@ -151,7 +155,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	}
 	else
 	{
-		rawColour = mat.colour.raw(); // Because it's volumetric, we can use the material colour directly
+		rawColour = mat.colour.raw(); // we can use the material colour directly
 	}
 
 	// Extract alpha from colour
@@ -318,31 +322,33 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 
 void CPURenderer::Present()
 {
-	//SDL_UpdateTexture(texture, nullptr, bufShaded.data(), width * sizeof(uint32_t));
+	SDL_UpdateTexture(texture, nullptr, bufShaded.data(), width * sizeof(uint32_t));
 	// Generate depth buffer visualisation
-	std::vector<uint32_t> dbgDepth;
-	dbgDepth.resize(width * height, 0xFF000000);
-	float minDepth = std::numeric_limits<float>::infinity(), maxDepth = 0;
-	for (int i = 0; i < bufDepth.size(); ++i)
-	{
-		if (bufIsDrawn[i])
-		{
-			if (bufDepth[i] > maxDepth) { maxDepth = bufDepth[i]; }
-			// Questionable optimisation to elif here but we're not gonna have 1 pixel on the screen and need a depthmap
-			else if (bufDepth[i] < minDepth) { minDepth = bufDepth[i]; }
-		}
-	}
-	for (int i = 0; i < bufDepth.size(); ++i)
-	{
-		uint8_t v = 0x00;
-		if (bufIsDrawn[i])
-		{
-			v = (uint8_t)(((bufDepth[i] - minDepth) / maxDepth) * 255);
-			//std::cout << "v: " << v << '\n';
-		}
-		dbgDepth[i] = 0xFF000000 | (v << 16) | (v << 8) | v;
-	}
-	SDL_UpdateTexture(texture, nullptr, dbgDepth.data(), width * sizeof(uint32_t));
+
+	//std::vector<uint32_t> dbgDepth;
+	//dbgDepth.resize(width * height, 0xFF000000);
+	//float minDepth = std::numeric_limits<float>::infinity(), maxDepth = 0;
+	//for (int i = 0; i < bufDepth.size(); ++i)
+	//{
+	//	if (bufIsDrawn[i])
+	//	{
+	//		if (bufDepth[i] > maxDepth) { maxDepth = bufDepth[i]; }
+	//		// Questionable optimisation to elif here but we're not gonna have 1 pixel on the screen and need a depthmap
+	//		else if (bufDepth[i] < minDepth) { minDepth = bufDepth[i]; }
+	//	}
+	//}
+	//for (int i = 0; i < bufDepth.size(); ++i)
+	//{
+	//	uint8_t v = 0x00;
+	//	if (bufIsDrawn[i])
+	//	{
+	//		v = (uint8_t)(((bufDepth[i] - minDepth) / maxDepth) * 255);
+	//		//std::cout << "v: " << v << '\n';
+	//	}
+	//	dbgDepth[i] = 0xFF000000 | (v << 16) | (v << 8) | v;
+	//}
+
+	//SDL_UpdateTexture(texture, nullptr, dbgDepth.data(), width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);
 }
