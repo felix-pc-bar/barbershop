@@ -8,7 +8,7 @@
 
 using std::endl, std::cout;
 
-void CPURenderer::drawSquare(Position3d pos, int sizePx)
+void CPURenderer::drawPoint(Position3d pos, int sizePx)
 {
 	Point2d point(pos);
 	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
@@ -17,7 +17,10 @@ void CPURenderer::drawSquare(Position3d pos, int sizePx)
 	{
 		for (int y = point.y - offset; y < point.y + offset + sizePx % 2; y++)
 		{
-			this->SetPixel(x, y, 0xFF808080);
+			if (x - point.x == 0 || y - point.y  == 0 || sizePx != 3)
+			{
+				this->SetPixel(x, y, 0xFF808080);
+			}
 		}
 	}
 	return;
@@ -157,7 +160,7 @@ void CPURenderer::drawScene(Scene& scene)
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			drawSquare(pt.pos, pt.material.pointWidth);
+			drawPoint(pt.pos, pt.material.pointWidth);
 		}
 	}
 }

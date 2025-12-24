@@ -13,7 +13,7 @@ public:
 	void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
 	void SetPixel(int x, int y, uint32_t color);
-	void drawSquare(Position3d pos, int sizePx);
+	void drawPoint(Position3d pos, int sizePx);
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;

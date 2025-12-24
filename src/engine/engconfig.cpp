@@ -7,10 +7,10 @@ bool drawPoints = false;
 Position3d lightNormal = Position3d(-.577f, -.577f, .577f); // roughly normal, this is temporary anyway
 //Position3d lightNormal = Position3d(1.0f, -0.0f, 0.0f); 
 
-//int screenheight = 360;
-//int screenwidth = 640;
-int screenheight = 1080;
-int screenwidth = 1920;
+int screenheight = 360;
+int screenwidth = 640;
+//int screenheight = 1080;
+//int screenwidth = 1920;
 
 /*
 1920x1080
