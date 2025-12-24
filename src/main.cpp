@@ -75,7 +75,7 @@ int main(int argc, char** args) {
 		}
 	}
 
-	mainScene.addObject(importObj("content/obj/suzanne.obj"));
+	mainScene.addObject(importObj("content/obj/obj.obj"));
 
 	mainScene.objects[1].materials.emplace_back(0.8f, 0.8f, 0.8f);
 
