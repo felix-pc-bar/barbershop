@@ -129,7 +129,7 @@ void CPURenderer::drawScene(Scene& scene)
 				triangles.emplace_back(v1, v2, v3, camPos, &mat);
 			}
 		}
-		if (!ob.points.empty())
+		if (!ob.points.empty() && drawPoints)
 		{
 			for (Position3d point : ob.points)
 			{

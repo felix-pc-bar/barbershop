@@ -6,3 +6,4 @@ extern float perspectiveFac;
 extern Position3d lightNormal;
 extern int screenwidth;
 extern int screenheight;
+extern bool drawPoints;

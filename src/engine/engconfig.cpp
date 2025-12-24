@@ -2,6 +2,7 @@
 
 float fpsTarget = 30.0f;
 float perspectiveFac = 1.0f;
+bool drawPoints = false;
 
 Position3d lightNormal = Position3d(-.577f, -.577f, .577f); // roughly normal, this is temporary anyway
 //Position3d lightNormal = Position3d(1.0f, -0.0f, 0.0f); 
