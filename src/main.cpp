@@ -61,6 +61,7 @@ int main(int argc, char** args) {
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 
+	// Add the ground points object
 	mainScene.objects.emplace_back();
 	mainScene.objects[0].materials.emplace_back(0.5f, 0.5f, 0.5f, 3, false);
 	mainScene.objects[0].name = mainScene.getName("Ground plane points");
@@ -70,23 +71,15 @@ int main(int argc, char** args) {
 	{
 		for (int y = 0; y < gridSize; y++)
 		{
-			//mainScene.addMesh(importObj("content/obj/_dot.obj"));
-			//mainScene.meshes[2 + (y + 20 * x)].materials.emplace_back(0.5f, 0.5f, 0.5f, false);
-			//mainScene.meshes[2 + (y + 20 * x)].move(Position3d(x - 10, 0, y - 10));
 			mainScene.objects[0].points.emplace_back(x - gridSize/2, 0, y - gridSize/2);
 		}
 	}
 
-	//mainScene.addMesh(importObj("content/obj/suzanne.obj"));
-	//mainScene.addMesh(importObj("content/obj/ico2.obj"));
-	mainScene.addObject(importObj("content/obj/out1.obj"));
-	mainScene.addObject(importObj("content/obj/out2.obj"));
+	mainScene.addObject(importObj("content/obj/suzanne.obj"));
 
 	mainScene.objects[1].materials.emplace_back(0.8f, 0.8f, 0.8f);
-	mainScene.objects[2].materials.emplace_back(0.1f, 0.1f, 0.1f, false);
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
-	mainScene.objects[1].mesh->rotateQuat({ -pi / 4, -1, 0, 0 });
 	float freecamspeedbase = 0.01f;
 	float freecamspeed = 0.0f;
 	currentScene->currentCam->pos = currentScene->currentCam->pos - Position3d(0, 0, 10);
@@ -107,7 +100,6 @@ int main(int argc, char** args) {
 		float fps = 1.0f / deltaTime;
 		cout << fps << endl;
 
-		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
 		gk = SDL_GetKeyboardState(NULL); 

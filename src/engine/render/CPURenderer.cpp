@@ -113,23 +113,26 @@ void CPURenderer::drawScene(Scene& scene)
 
 	for (Object3D& ob : scene.objects)
 	{
-		if (ob.points.empty())
+		if (!(ob.mesh == nullptr))
 		{
-			Mesh& mesh = *ob.mesh;
-			Position3d pos = mesh.position;
-			Rotation3d rot = mesh.rotation;
-			for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
+			if (!ob.mesh->vertices.empty())
 			{
-				Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
-				Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
-				Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-				//Material mat = mesh.materials[mesh.matIndices[i / 3]];
-				Material mat(1.0f, 0.0f, 1.0f); // magenta
-				if (ob.materials.size() != 0)
+				Mesh& mesh = *ob.mesh;
+				Position3d pos = mesh.position;
+				Rotation3d rot = mesh.rotation;
+				for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
 				{
-					mat = ob.materials[0];
+					Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
+					Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
+					Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
+					//Material mat = mesh.materials[mesh.matIndices[i / 3]];
+					Material mat(1.0f, 0.0f, 1.0f); // magenta
+					if (ob.materials.size() != 0)
+					{
+						mat = ob.materials[0];
+					}
+					triangles.emplace_back(v1, v2, v3, camPos, &mat);
 				}
-				triangles.emplace_back(v1, v2, v3, camPos, &mat);
 			}
 		}
 		if (!ob.points.empty() && drawPoints)

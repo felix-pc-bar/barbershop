@@ -202,7 +202,10 @@ ostream& operator<< (ostream& os, Position3d pos)
 
 Material::Material()
 {
-	this->colour = { 1,0,1 };
+	this->colour = { 1,0,1 }; //Magenta
+	this->omitDbg = false;
+	this->pointWidth = 0;
+	this->shadeMat = true;
 }
 
 Material::Material(float r, float g, float b, int pointSize, bool shade, bool allowDebugVis)
@@ -302,6 +305,7 @@ string Scene::getName(string candidate = "New mesh") const
 Object3D::Object3D()
 {
 	this->name = "New object"; // Default name
+	this->mesh = nullptr;
 }
 
 Object3D::Object3D(Mesh* meshin)

@@ -9,9 +9,14 @@ Object3D importObj(string filepath) // Objects should be exported as Forward = +
 {
 	string line;
 	string inxStr;
-	ifstream objfile(filepath);
 	Object3D result;
 	Mesh* mesh = new Mesh(); // allocate to heap so it's not zapped when we leave importObj()
+	if (!std::filesystem::exists(filepath))
+	{
+		filepath = "content/obj/nomesh.obj";
+	}
+	ifstream objfile(filepath);
+	//if (!objfile.is_open()) { objfile = ifstream("content/obj/nomesh.obj"); }
 	if (objfile.is_open())
 	{
 		std::filesystem::path p(filepath);
