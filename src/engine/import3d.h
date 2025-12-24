@@ -7,4 +7,4 @@
 
 using std::string;
 
-Mesh importObj(string filepath);
+Object3D importObj(string filepath);

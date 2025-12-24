@@ -13,7 +13,7 @@ public:
 	void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
 	void SetPixel(int x, int y, uint32_t color);
-	void displaySquare(Position3d pos, int sizePx);
+	void drawSquare(Position3d pos, int sizePx);
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
@@ -30,5 +30,12 @@ struct TriangleToRender
 	float distanceToCamera;
 	Material material;
 	TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat);
+};
+struct PointToRender 
+{
+	Position3d pos;
+	float distanceToCamera;
+	Material material;
+	PointToRender(Position3d Pos, const Position3d& camPos, Material* mat);
 };
 

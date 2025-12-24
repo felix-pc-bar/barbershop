@@ -8,7 +8,7 @@
 
 using std::endl, std::cout;
 
-void CPURenderer::displaySquare(Position3d pos, int sizePx)
+void CPURenderer::drawSquare(Position3d pos, int sizePx)
 {
 	Point2d point(pos);
 	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
@@ -31,6 +31,13 @@ TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const V
 	distanceToCamera = diff.lengthSquared();
 }
 
+PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material* mat)
+{
+	this->pos = Pos;
+	this->material = *mat;
+	Position3d diff = Pos - camPos;
+	distanceToCamera = diff.lengthSquared();
+}
 
 CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h)
 {
@@ -96,26 +103,43 @@ inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 void CPURenderer::drawScene(Scene& scene)
 {
 	std::vector<TriangleToRender> triangles;
+	std::vector<PointToRender> renderPoints;
 
 	if (!scene.currentCam) return;
 	Position3d camPos = scene.currentCam->pos;
 
-	for (Mesh& mesh : scene.meshes)
+	for (Object3D& ob : scene.objects)
 	{
-		Position3d pos = mesh.position;
-		Rotation3d rot = mesh.rotation;
-		for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
+		if (ob.points.empty())
 		{
-			Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
-			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
-			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-			//Material mat = mesh.materials[mesh.matIndices[i / 3]];
-			Material mat(1.0f, 0.0f, 1.0f); // magenta
-			if (mesh.materials.size() != 0)
+			Mesh& mesh = *ob.mesh;
+			Position3d pos = mesh.position;
+			Rotation3d rot = mesh.rotation;
+			for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
 			{
-				mat = mesh.materials[0];
+				Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
+				Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
+				Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
+				//Material mat = mesh.materials[mesh.matIndices[i / 3]];
+				Material mat(1.0f, 0.0f, 1.0f); // magenta
+				if (ob.materials.size() != 0)
+				{
+					mat = ob.materials[0];
+				}
+				triangles.emplace_back(v1, v2, v3, camPos, &mat);
 			}
-			triangles.emplace_back(v1, v2, v3, camPos, &mat);
+		}
+		if (!ob.points.empty())
+		{
+			for (Position3d point : ob.points)
+			{
+				Material mat(1.0f, 0.0f, 1.0f); // magenta
+				if (ob.materials.size() != 0)
+				{
+					mat = ob.materials[0];
+				}
+				renderPoints.emplace_back(point, camPos, &mat);
+			}
 		}
 	}
 
@@ -128,6 +152,13 @@ void CPURenderer::drawScene(Scene& scene)
 	for (TriangleToRender& tri : triangles)
 	{
 		drawTri(tri.v1, tri.v2, tri.v3, tri.material);
+	}
+	for (PointToRender& pt : renderPoints)
+	{
+		if (pt.material.pointWidth != 0)
+		{
+			drawSquare(pt.pos, pt.material.pointWidth);
+		}
 	}
 }
 

@@ -5,12 +5,13 @@
 
 using namespace std;
 
-Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, Up = +Z
+Object3D importObj(string filepath) // Objects should be exported as Forward = +Y, Up = +Z
 {
 	string line;
 	string inxStr;
 	ifstream objfile(filepath);
-	Mesh result;
+	Object3D result;
+	Mesh* mesh = new Mesh(); // allocate to heap so it's not zapped when we leave importObj()
 	if (objfile.is_open())
 	{
 		std::filesystem::path p(filepath);
@@ -22,7 +23,7 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 				istringstream substr(line.substr(2));
 				double xin, yin, zin;
 				substr >> xin >> yin >> zin;
-				result.addVertex(Position3d(xin, yin, zin));
+				mesh->addVertex(Position3d(xin, yin, zin));
 			}
 			if (line._Starts_with("f "))
 			{
@@ -39,12 +40,13 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 					faceIndices.push_back(vIndex);
 				}
 
-				result.addFace(faceIndices);
-				result.matIndices.push_back(0); // For now, assign material 0 to every tri
+				mesh->addFace(faceIndices);
+				mesh->matIndices.push_back(0); // For now, assign material 0 to every tri
 
 			}
 		}
-		std::cout << "Imported " << filepath << " - " << result.vertices.size() << " vertices" << std::endl;
+		std::cout << "Imported " << filepath << " - " << mesh->vertices.size() << " vertices" << std::endl;
+		result.mesh = mesh;
 		return result;
 	}
 	std::cout << "Import error" << endl;

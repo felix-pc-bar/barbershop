@@ -4,7 +4,6 @@
 //#include <cstdint>
 #include <iostream>
 #include <string>
-#include "render/CPURenderer.h"
 
 using std::vector, std::ostream, std::string;
 
@@ -116,8 +115,9 @@ class Material
 {
 public:
 	Material();
-	Material(float r, float g, float b, bool shade = true, bool allowDebugVis = true);
-	Material(float r, float g, float b, float a, bool shade = true, bool allowDebugVis = true);
+	Material(float r, float g, float b, int pointSize = 0, bool shade = true, bool allowDebugVis = true);
+	Material(float r, float g, float b, float a, int pointSize = 0, bool shade = true, bool allowDebugVis = true);
+	int pointWidth; //Size of squares to draw for points in scene
 	Colour colour;
 	bool shadeMat; //Whether to shade this material
 	bool omitDbg; //Don't change shading in debug
@@ -134,6 +134,17 @@ public:
 	bool containsMesh(Mesh m) const;
 	
 	Position3d p1, p2;
+};
+
+class Object3D
+{
+public:
+	Object3D();
+	Object3D(Mesh* meshin);
+	Mesh* mesh;
+	std::vector<Position3d> points;
+	vector<Material> materials;
+	string name; // Name of the object
 };
 
 class Mesh
@@ -163,7 +174,6 @@ public:
 
 	void setRotationQuat(const Quaternion& q); // Faulty
 
-	string name; // Name of the mesh
 
 	vector<Vertex3d> vertices; //vector of type Vertex
 	vector<int> indices; //stores tri indices as 3-tuple
@@ -173,21 +183,11 @@ public:
 	Rotation3d rotation;
 	Quaternion quatIdentity;
 
-	vector<Material> materials;
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri
 
 	Position3d up;
 	Position3d right;
 	Position3d forward;
-
-	// Tick function stuff
-	//bool wantsTick(); //Whether this object wants a tick op
-	//void tick(Scene* scene);
-private:
-	//still ticky
-	//float relScale; //For scaling relative to camera distance
-	
-
 };
 
 
@@ -195,11 +195,10 @@ class Scene
 {
 public:
 	Camera* currentCam = nullptr;
-	vector<Mesh> meshes;
+	vector<Object3D> objects;
 	vector<Camera> cams;
-	void addMesh(Mesh& mesh); // Add a mesh to the scene
-	string getName(string candidate) const; // Get a name for a mesh
-	string getName() const; // Generate default name
+	void addObject(Object3D& ob); // Add an object to the scene
+	string getName(string candidate) const; // Get a name for a object
 };
 
 

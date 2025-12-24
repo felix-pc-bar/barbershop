@@ -205,21 +205,23 @@ Material::Material()
 	this->colour = { 1,0,1 };
 }
 
-Material::Material(float r, float g, float b, bool shade, bool allowDebugVis)
+Material::Material(float r, float g, float b, int pointSize, bool shade, bool allowDebugVis)
 {
 	this->colour.red = r;
 	this->colour.green = g;
 	this->colour.blue = b;
+	this->pointWidth = pointSize;
 	this->shadeMat = shade;
 	this->omitDbg = allowDebugVis;
 }
 
-Material::Material(float r, float g, float b, float a, bool shade, bool allowDebugVis)
+Material::Material(float r, float g, float b, float a, int pointSize, bool shade, bool allowDebugVis)
 {
 	this->colour.red = r;
 	this->colour.green = g;
 	this->colour.blue = b;
 	this->colour.alpha = a;
+	this->pointWidth = pointSize;
 	this->shadeMat = shade;
 	this->omitDbg = allowDebugVis;
 }
@@ -259,32 +261,26 @@ Mesh::Mesh()
 	this->rotation = { 0,0,0 };
 	this->quatIdentity = Quaternion(); // Default identity quaternion
 	this->calcBaseVecs(); // Calculate base vectors
-	this->name = "New Mesh"; // Default name
 	this->quatIdentity.normalise(); // Normalise the identity quaternion	
 }
 
-string Scene::getName(string candidate) const
+string Scene::getName(string candidate = "New mesh") const
 {
 	int x = 0;
 	string original = candidate; // Store the original name
 	bool nameTaken = false;
 	// Check if the name is already taken
-	for (const Mesh& m : meshes)
+	for (const Object3D& ob : objects)
 	{
-		if (m.name == candidate)
+		if (ob.name == candidate)
 		{
 			nameTaken = true;
 			x += 1;
 			candidate = original + "." + std::to_string(x); // Append a number to the name
 		}
 	}
-	if (nameTaken) { cout << "Warning: name" << original << " wasn't available." << endl; }
+	if (nameTaken) { cout << "Warning: name " << original << " wasn't available." << endl; }
 	return candidate;
-}
-
-string Scene::getName() const
-{
-	return getName("New Mesh");
 }
 
 //void Mesh::instanceOnMesh(Mesh& instancer)
@@ -302,6 +298,18 @@ string Scene::getName() const
 //	for (int& i : tmpInds) { i += numVerts; }
 //	this->indices.insert(this->indices.end(), tmpInds.begin(), tmpInds.end());
 //}
+
+Object3D::Object3D()
+{
+	this->name = "New object"; // Default name
+}
+
+Object3D::Object3D(Mesh* meshin)
+{
+
+	this->name = "New mesh object"; // Default name
+	this->mesh = meshin;
+}
 
 void Mesh::addVertex(Position3d pos)
 {
@@ -468,10 +476,10 @@ void Camera::calcBaseVecs()
 	this->right.rotateQuat(this->quatIdentity);
 }
 
-void Scene::addMesh(Mesh& mesh) 
+void Scene::addObject(Object3D& ob)
 {
-	mesh.name = this->getName(mesh.name);
-	this->meshes.emplace_back(mesh);
+	ob.name = this->getName(ob.name);
+	this->objects.emplace_back(ob);
 }
 
 float lerp(float a, float b, float ratio) 
