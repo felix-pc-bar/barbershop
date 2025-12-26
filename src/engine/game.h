@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "engTools.h"
+#include "SDL.h"
+#include "render/ARenderer.h"
 
 class Game
 {
