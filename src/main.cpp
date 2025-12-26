@@ -109,11 +109,8 @@ int main(int argc, char** args) {
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				//mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
 				mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
-				mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, {1,0,0});
-				//pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
-				//pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
+				mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, mainScene.cams[0].right);
 			}
 			if (event.type == SDL_MOUSEWHEEL)
 			{

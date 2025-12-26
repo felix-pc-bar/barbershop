@@ -463,10 +463,10 @@ bool bb3d::containsMesh(Mesh m) const
 		(p.z >= minZ && p.z <= maxZ);
 }
 
-void Camera::rotateCam(float angle, const Position3d& axis)
+void Camera::rotateCam(float angle, const Position3d& axis) // Axis is in global space!
 {
 	Quaternion qDelta(angle, axis);
-	this->quatIdentity = this->quatIdentity * qDelta;
+	this->quatIdentity = qDelta * this->quatIdentity;
 	this->quatIdentity.normalise();
 }
 
