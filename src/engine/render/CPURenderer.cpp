@@ -42,17 +42,15 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h)
+CPURenderer::CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height) //constructor
 {
-	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+	texture = screentex;
+	sdlRenderer = renderer;
+	this->width = width;
+	this->height = height;
 	bufShaded.resize(width * height, 0xFF000000); // opaque black
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
-}
-
-CPURenderer::~CPURenderer() 
-{
-	SDL_DestroyTexture(texture);
 }
 
 void CPURenderer::Clear(uint32_t color) 
@@ -317,14 +315,6 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	if (srcA == 0) {
 		return;
 	}
-
-	// Blending path: partially transparent
-	//Rect2d bb(v1, v2, v3);
-
-	//int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
-	//int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
-	//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
-
 	// We copy by refernce the data of the pixbuf vector to a C-style array
 	uint32_t* pixShaded = bufShaded.data();
 

@@ -6,8 +6,7 @@
 
 class CPURenderer : public ARenderer{
 public:
-	CPURenderer(SDL_Renderer* renderer, int width, int height); //constructer
-	~CPURenderer();
+	CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height); //constructor
 
 	void Clear(uint32_t color) override;
 	void Present(); // push pixels to texture and draw to screen
