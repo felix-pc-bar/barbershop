@@ -42,17 +42,15 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h)
+CPURenderer::CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height) //constructor
 {
-	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+	texture = screentex;
+	sdlRenderer = renderer;
+	this->width = width;
+	this->height = height;
 	bufShaded.resize(width * height, 0xFF000000); // opaque black
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
-}
-
-CPURenderer::~CPURenderer() 
-{
-	SDL_DestroyTexture(texture);
 }
 
 void CPURenderer::Clear(uint32_t color) 
@@ -64,7 +62,7 @@ void CPURenderer::Clear(uint32_t color)
 
 inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 {
-	int screenY = screenheight - y;
+	int screenY = this->height - y;
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
 		return;
 
@@ -80,7 +78,6 @@ inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 		// Fully transparent: do nothing
 		return;
 	}
-	cout << "transparent" << endl;
 	// Extract source color components
 	uint8_t srcR = (color >> 16) & 0xFF;
 	uint8_t srcG = (color >> 8) & 0xFF;
@@ -212,63 +209,66 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 
 	// Extract alpha from colour
 	uint8_t srcA = mat.colour.alpha * 255;
-	// ====== Depth shading ======
 	Rect2d bb(v1, v2, v3);
 
 	int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
 	int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
 	int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-	float* pixDepth = bufDepth.data();
-
-	for (int y = bb.min.y; y < bb.max.y; y++)
+	// ====== Depth shading ======
+	if (false) //Condition for whether we render to bufDepth
 	{
-		int flippedY = screenheight - y;
-		if (flippedY < 0 || flippedY >= screenheight) continue;
+		float* pixDepth = bufDepth.data();
 
-		int baseIndex = flippedY * width;
-
-		int w1 = A12 * bb.min.x + B12 * y + C12;
-		int w2 = A23 * bb.min.x + B23 * y + C23;
-		int w3 = A31 * bb.min.x + B31 * y + C31;
-
-		int dw1 = A12, dw2 = A23, dw3 = A31;
-
-		for (int x = bb.min.x; x < bb.max.x; x++)
+		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
-			if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
+			int flippedY = this->height - y;
+			if (flippedY < 0 || flippedY >= this->height) continue;
+
+			int baseIndex = flippedY * width;
+
+			int w1 = A12 * bb.min.x + B12 * y + C12;
+			int w2 = A23 * bb.min.x + B23 * y + C23;
+			int w3 = A31 * bb.min.x + B31 * y + C31;
+
+			int dw1 = A12, dw2 = A23, dw3 = A31;
+
+			for (int x = bb.min.x; x < bb.max.x; x++)
 			{
-				// calculate depth
-				// easynote[20:]
-				// We want to find the tested pixel in terms of a ratio between each vertex.
-				// we know the distance from each vert to the camera, and can lerp these to get the tested pixel's depth.			
-				float grad1 = ((float)y - p1.y)/((float)x - p1.x); // AP->
-				float grad2 = ((float)p3.y - p2.y)/((float)p3.x - p2.x); // BC->
-				float const1 = (grad1 * p1.x) - p1.y;
-				float const2 = (grad2 * p2.x) - p2.y;
-				int qx = (const2 - const1) / (grad2 - grad1); // The x value of the intersection point of AP-> and BC->
-				Point2d q(
-					qx,
-					(grad1 * qx) + const1
-				); // Intersection of AP and BC
-				// Ratio of q along BC
-				float qbybc = (float)(qx - p2.x) / p3.x;
-				// p along aq
-				float pbyaq = (float)(x - p1.x) / qx;
-				float adepth = std::sqrt((loc1 - currentScene->currentCam->pos).lengthSquared());
-				float bdepth = std::sqrt((loc2 - currentScene->currentCam->pos).lengthSquared());
-				float cdepth = std::sqrt((loc3 - currentScene->currentCam->pos).lengthSquared());
-				float qdepth = lerp(bdepth, cdepth, qbybc);
-				float pdepth = lerp(adepth, qdepth, pbyaq);
-				if (pdepth < pixDepth[baseIndex + x])
+				if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 				{
-					pixDepth[baseIndex + x] = pdepth;
-					bufIsDrawn[baseIndex + x] = true;
+					// calculate depth
+					// easynote[20:]
+					// We want to find the tested pixel in terms of a ratio between each vertex.
+					// we know the distance from each vert to the camera, and can lerp these to get the tested pixel's depth.			
+					float grad1 = ((float)y - p1.y) / ((float)x - p1.x); // AP->
+					float grad2 = ((float)p3.y - p2.y) / ((float)p3.x - p2.x); // BC->
+					float const1 = (grad1 * p1.x) - p1.y;
+					float const2 = (grad2 * p2.x) - p2.y;
+					int qx = (const2 - const1) / (grad2 - grad1); // The x value of the intersection point of AP-> and BC->
+					Point2d q(
+						qx,
+						(grad1 * qx) + const1
+					); // Intersection of AP and BC
+					// Ratio of q along BC
+					float qbybc = (float)(qx - p2.x) / p3.x;
+					// p along aq
+					float pbyaq = (float)(x - p1.x) / qx;
+					float adepth = std::sqrt((loc1 - currentScene->currentCam->pos).lengthSquared());
+					float bdepth = std::sqrt((loc2 - currentScene->currentCam->pos).lengthSquared());
+					float cdepth = std::sqrt((loc3 - currentScene->currentCam->pos).lengthSquared());
+					float qdepth = lerp(bdepth, cdepth, qbybc);
+					float pdepth = lerp(adepth, qdepth, pbyaq);
+					if (pdepth < pixDepth[baseIndex + x])
+					{
+						pixDepth[baseIndex + x] = pdepth;
+						bufIsDrawn[baseIndex + x] = true;
+					}
 				}
+				w1 += dw1;
+				w2 += dw2;
+				w3 += dw3;
 			}
-			w1 += dw1;
-			w2 += dw2;
-			w3 += dw3;
 		}
 	}
 	// ======
@@ -285,8 +285,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
-			int flippedY = screenheight - y;
-			if (flippedY < 0 || flippedY >= screenheight) continue;
+			int flippedY = this->height - y;
+			if (flippedY < 0 || flippedY >= this->height) continue;
 
 			int baseIndex = flippedY * width;
 
@@ -315,14 +315,6 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	if (srcA == 0) {
 		return;
 	}
-
-	// Blending path: partially transparent
-	//Rect2d bb(v1, v2, v3);
-
-	//int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
-	//int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
-	//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
-
 	// We copy by refernce the data of the pixbuf vector to a C-style array
 	uint32_t* pixShaded = bufShaded.data();
 
@@ -332,8 +324,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 
 	for (int y = bb.min.y; y < bb.max.y; y++)
 	{
-		int flippedY = screenheight - y;
-		if (flippedY < 0 || flippedY >= screenheight) continue;
+		int flippedY = this->height - y;
+		if (flippedY < 0 || flippedY >= this->height) continue;
 
 		int baseIndex = flippedY * width;
 
