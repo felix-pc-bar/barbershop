@@ -3,7 +3,7 @@
 #include "../logic2d.h"
 #include "../engTools.h"
 
-class ARenderer
+class ARenderer //Generic class outlining the functions of renderer components
 {
 public:
 	virtual ~ARenderer() = default;

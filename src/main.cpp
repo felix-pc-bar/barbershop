@@ -19,7 +19,7 @@ int main(int argc, char** args) {
 	// =========
 
 	// Pointers to our window and surface
-	SDL_Surface* winSurface = NULL;
+	//SDL_Surface* winSurface = NULL;
 	SDL_Window* window = NULL;
 	SDL_Renderer* mainRenderer = NULL;
 	int result;
@@ -42,7 +42,6 @@ int main(int argc, char** args) {
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 	ARenderer* bRenderer = new CPURenderer(mainRenderer, screenwidth, screenheight);
-	//CPURenderer bRenderer->mainRenderer, screenwidth, screenheight); // Create viewport
 	bRenderer->Clear(0xFF000000);
 	// ====
 	// TIME
