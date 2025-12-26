@@ -7,6 +7,7 @@
 #include "engine/render/cpurenderer.h"
 #include "engine/import3d.h"
 #include "engine/engconfig.h"
+#include "engine/render/ARenderer.h"
 #include <chrono>
 
 using std::endl, std::cout;
@@ -40,8 +41,9 @@ int main(int argc, char** args) {
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
-	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
-	vp.Clear(0xFF000000);
+	ARenderer* bRenderer = new CPURenderer(mainRenderer, screenwidth, screenheight);
+	//CPURenderer bRenderer->mainRenderer, screenwidth, screenheight); // Create viewport
+	bRenderer->Clear(0xFF000000);
 	// ====
 	// TIME
 	// ====
@@ -138,10 +140,10 @@ int main(int argc, char** args) {
 
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
-		vp.drawScene(*currentScene);
-		vp.Present();
+		bRenderer->drawScene(*currentScene);
+		bRenderer->Present();
 		frame++;
-		vp.Clear(0xFF000000);
+		bRenderer->Clear(0xFF000000);
 		//mainScene.meshes[0].rotateQuat(qDelta);
 		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}
