@@ -24,7 +24,7 @@ add_executable(barbershop
  "app_icon.rc"
  "src/engine/game.cpp"
  "src/engine/game.h"
- "src/engine/render/ARenderer.h")
+  "src/engine/render/CPU2D.h" )
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(barbershop PROPERTIES
 LINK_FLAGS "/SUBSYSTEM:CONSOLE"

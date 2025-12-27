@@ -53,14 +53,14 @@ CPURenderer::CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int wid
 	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
-	bufShaded.resize(width * height, 0xFF000000); // opaque black
+	bufMain.resize(width * height, 0xFF000000); // opaque black
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
 }
 
 void CPURenderer::Clear(uint32_t color) 
 {
-	std::fill(bufShaded.begin(), bufShaded.end(), color);
+	std::fill(bufMain.begin(), bufMain.end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
@@ -71,7 +71,7 @@ inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
 		return;
 
-	uint32_t& dest = bufShaded[screenY * width + x];
+	uint32_t& dest = bufMain[screenY * width + x];
 
 	uint8_t srcA = color >> 24;
 	if (srcA == 255) {
@@ -286,7 +286,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 		//int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
 		//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-		uint32_t* pixShaded = bufShaded.data();
+		uint32_t* pixShaded = bufMain.data();
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
@@ -321,7 +321,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 		return;
 	}
 	// We copy by refernce the data of the pixbuf vector to a C-style array
-	uint32_t* pixShaded = bufShaded.data();
+	uint32_t* pixShaded = bufMain.data();
 
 	uint8_t srcR = (rawColour >> 16) & 0xFF;
 	uint8_t srcG = (rawColour >> 8) & 0xFF;
@@ -371,7 +371,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 
 void CPURenderer::Present()
 {
-	SDL_UpdateTexture(texture, nullptr, bufShaded.data(), width * sizeof(uint32_t));
+	SDL_UpdateTexture(texture, nullptr, bufMain.data(), width * sizeof(uint32_t));
 	// Generate depth buffer visualisation
 
 	//std::vector<uint32_t> dbgDepth;

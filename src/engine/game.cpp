@@ -54,7 +54,7 @@ Game::Game()
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->currentRenderer= new CPURenderer(screenTexture, sdlRenderer, screenwidth, screenheight); // Create viewport
+	this->cpu3d= new CPURenderer(screenTexture, sdlRenderer, screenwidth, screenheight); // Create viewport
 }
 
 void Game::run()
@@ -160,9 +160,9 @@ void Game::run()
 
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
-		this->currentRenderer->Clear(0xFF000000);
-		this->currentRenderer->drawScene(*currentScene);
-		this->currentRenderer->Present();
+		this->cpu3d->Clear(0xFF000000);
+		this->cpu3d->drawScene(*currentScene);
+		this->cpu3d->Present();
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
 		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
