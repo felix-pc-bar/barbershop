@@ -291,6 +291,15 @@ string Scene::getName(string candidate = "New mesh") const
 	return candidate;
 }
 
+Object3D* Scene::objectByName(std::string name)
+{
+	auto ob = std::find_if(this->objects.begin(), this->objects.end(), [&name](const Object3D& tOb)
+		{
+			return tOb.name == name;
+		});
+	return ob != this->objects.end() ? &(*ob) : nullptr;
+}
+
 //void Mesh::instanceOnMesh(Mesh& instancer)
 //{
 //	int numVerts = this->vertices.size();

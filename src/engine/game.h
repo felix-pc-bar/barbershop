@@ -19,9 +19,9 @@ private:
 	std::vector<Scene> scenes;
 
 	// Pointers to our window and surface
-	SDL_Surface* winSurface;
-	SDL_Window* window;
-	// This stuff is GPU
-	SDL_Texture* screenTexture;
-	SDL_Renderer* sdlRenderer;
+	//SDL_Surface* winSurface;
+	//SDL_Window* window;
+	//// This stuff is GPU
+	//SDL_Texture* screenTexture;
+	//SDL_Renderer* sdlRenderer;
 };

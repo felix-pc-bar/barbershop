@@ -160,23 +160,16 @@ void Game::run()
 		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
 		//if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
 
-
-		//cout << mainScene.meshes[0].position.cameraspace() << endl;
-		//this->cpu3d->Clear(0xFF000000);
-		//this->cpu3d->drawScene(*currentScene);
-		//this->cpu3d->Present();
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		//mainScene.objects[0].mesh->setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
+		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, sin((float)frame / 10) , 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 
 	return;
 	// lol, lmao even
 	system("pause");
-
-	SDL_DestroyWindow(window);
 
 	//SDL_Quit();
 

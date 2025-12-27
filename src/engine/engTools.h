@@ -199,6 +199,7 @@ public:
 	vector<Camera> cams;
 	void addObject(Object3D& ob); // Add an object to the scene
 	string getName(string candidate) const; // Get a name for a object
+	Object3D* objectByName(std::string name);
 };
 
 
