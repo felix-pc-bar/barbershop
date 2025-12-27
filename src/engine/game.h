@@ -4,7 +4,7 @@
 #include <SDL_surface.h>
 #include <SDL_video.h>
 #include "engTools.h"
-#include "render/CPU3D.h"
+#include "render/render.h"
 
 class Game
 {
@@ -12,7 +12,9 @@ public:
 	Game();
 	~Game();
 	void run();
-	CPU3DRenderer* cpu3d;
+	//CPU3DRenderer* cpu3d;
+	cRenderer* renderer;
+
 private:
 	std::vector<Scene> scenes;
 

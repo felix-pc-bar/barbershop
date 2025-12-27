@@ -7,29 +7,11 @@
 #include <SDL_render.h>
 
 #include "CPU3D.h"
-#include "../engTools.h"
-#include "../logic2d.h"
-#include "../engconfig.h"
+#include "../../engTools.h"
+#include "../../logic2d.h"
+#include "../../engconfig.h"
 
 using std::endl, std::cout;
-
-void CPU3DRenderer::drawPoint(Position3d pos, int sizePx)
-{
-	Point2d point(pos);
-	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
-	int offset = std::floor(sizePx / 2.0f);
-	for (int x = point.x - offset; x < point.x + offset + sizePx % 2; x++)
-	{
-		for (int y = point.y - offset; y < point.y + offset + sizePx % 2; y++)
-		{
-			if (x - point.x == 0 || y - point.y  == 0 || sizePx != 3)
-			{
-				this->SetPixel(x, y, 0xFF808080);
-			}
-		}
-	}
-	return;
-}
 
 TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat) : v1(a), v2(b), v3(c)
 {
@@ -47,130 +29,25 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPU3DRenderer::CPU3DRenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height) //constructor
+CPU3D::CPU3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
 	texture = screentex;
 	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
-	bufMain.resize(width * height, 0xFF000000); // opaque black
+	this->bufMain = screenbuffer;
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
 }
 
-void CPU3DRenderer::Clear(uint32_t color) 
+void CPU3D::Clear(uint32_t color) 
 {
-	std::fill(bufMain.begin(), bufMain.end(), color);
+	std::fill(bufMain->begin(), bufMain->end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-inline void CPU3DRenderer::SetPixel(int x, int y, uint32_t color)
-{
-	int screenY = this->height - y;
-	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
-		return;
-
-	uint32_t& dest = bufMain[screenY * width + x];
-
-	uint8_t srcA = color >> 24;
-	if (srcA == 255) {
-		// Fully opaque: just write
-		dest = color;
-		return;
-	}
-	if (srcA == 0) {
-		// Fully transparent: do nothing
-		return;
-	}
-	// Extract source color components
-	uint8_t srcR = (color >> 16) & 0xFF;
-	uint8_t srcG = (color >> 8) & 0xFF;
-	uint8_t srcB = color & 0xFF;
-
-	// Extract destination color components
-	uint8_t dstR = (dest >> 16) & 0xFF;
-	uint8_t dstG = (dest >> 8) & 0xFF;
-	uint8_t dstB = dest & 0xFF;
-
-	// Blend (non-premultiplied alpha)
-	uint8_t outR = (srcR * srcA + dstR * (255 - srcA)) / 255;
-	uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
-	uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
-
-	// Optionally blend alpha too — here we just preserve max of src/dst
-	uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
-
-	// Repack
-	dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;
-}
-
-void CPU3DRenderer::drawScene(Scene& scene)
-{
-	std::vector<TriangleToRender> triangles;
-	std::vector<PointToRender> renderPoints;
-
-	if (!scene.currentCam) return;
-	Position3d camPos = scene.currentCam->pos;
-
-	for (Object3D& ob : scene.objects)
-	{
-		if (!(ob.mesh == nullptr))
-		{
-			if (!ob.mesh->vertices.empty())
-			{
-				Mesh& mesh = *ob.mesh;
-				Position3d pos = mesh.position;
-				Rotation3d rot = mesh.rotation;
-				for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
-				{
-					Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
-					Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
-					Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-					//Material mat = mesh.materials[mesh.matIndices[i / 3]];
-					Material mat(1.0f, 0.0f, 1.0f); // magenta
-					if (ob.materials.size() != 0)
-					{
-						mat = ob.materials[0];
-					}
-					triangles.emplace_back(v1, v2, v3, camPos, &mat);
-				}
-			}
-		}
-		if (!ob.points.empty() && drawPoints)
-		{
-			for (Position3d point : ob.points)
-			{
-				Material mat(1.0f, 0.0f, 1.0f); // magenta
-				if (ob.materials.size() != 0)
-				{
-					mat = ob.materials[0];
-				}
-				renderPoints.emplace_back(point, camPos, &mat);
-			}
-		}
-	}
-
-	std::sort(triangles.begin(), triangles.end(),
-		[](const TriangleToRender& a, const TriangleToRender& b) {
-			return a.distanceToCamera > b.distanceToCamera;
-		});
-
-	// Draw
-	for (TriangleToRender& tri : triangles)
-	{
-		drawTri(tri.v1, tri.v2, tri.v3, tri.material);
-	}
-	for (PointToRender& pt : renderPoints)
-	{
-		if (pt.material.pointWidth != 0)
-		{
-			drawPoint(pt.pos, pt.material.pointWidth);
-		}
-	}
-}
-
-void CPU3DRenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
+void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 {
 	Point2d p1(v1);
 	Point2d p2(v2);
@@ -286,7 +163,7 @@ void CPU3DRenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& 
 		//int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
 		//int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-		uint32_t* pixShaded = bufMain.data();
+		uint32_t* pixShaded = bufMain->data();
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
@@ -321,7 +198,7 @@ void CPU3DRenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& 
 		return;
 	}
 	// We copy by refernce the data of the pixbuf vector to a C-style array
-	uint32_t* pixShaded = bufMain.data();
+	uint32_t* pixShaded = bufMain->data();
 
 	uint8_t srcR = (rawColour >> 16) & 0xFF;
 	uint8_t srcG = (rawColour >> 8) & 0xFF;
@@ -369,9 +246,9 @@ void CPU3DRenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& 
 	}
 }
 
-void CPU3DRenderer::Present()
+void CPU3D::Present()
 {
-	SDL_UpdateTexture(texture, nullptr, bufMain.data(), width * sizeof(uint32_t));
+	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
 	// Generate depth buffer visualisation
 
 	//std::vector<uint32_t> dbgDepth;
