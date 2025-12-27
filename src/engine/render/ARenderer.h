@@ -1,7 +1,6 @@
 #pragma once
-#include <SDL.h>
-#include "../logic2d.h"
 #include "../engTools.h"
+#include <cstdint>
 
 class ARenderer //Generic class outlining the functions of renderer components
 {

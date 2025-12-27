@@ -1,10 +1,15 @@
-#include "CPURenderer.h"
-#include "../engconfig.h"
 #include <iostream>
 #include <vector>
 #include <cstdint>
 #include <algorithm>
 #include <limits>
+#include <cmath>
+#include <SDL_render.h>
+
+#include "CPURenderer.h"
+#include "../engTools.h"
+#include "../logic2d.h"
+#include "../engconfig.h"
 
 using std::endl, std::cout;
 

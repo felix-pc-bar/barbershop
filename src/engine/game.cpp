@@ -1,15 +1,25 @@
 #include <iostream>
 #include <sdl.h>
-#include <cstdint>
 #include <vector>
-#include <cmath>
-#include <filesystem>
+#include <cstdlib>
+#include <chrono>
+
+#include <SDL_error.h>
+#include <SDL_events.h>
+#include <SDL_keyboard.h>
+#include <SDL_mouse.h>
+#include <SDL_pixels.h>
+#include <SDL_render.h>
+#include <SDL_scancode.h>
+#include <SDL_stdinc.h>
+#include <SDL_timer.h>
+#include <SDL_video.h>
+
 #include "render/cpurenderer.h"
 #include "import3d.h"
 #include "engconfig.h"
 #include "game.h"
-#include <chrono>
-#include <SDL.h>
+#include "engTools.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;

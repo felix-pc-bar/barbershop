@@ -1,7 +1,10 @@
 #pragma once
-#include <SDL.h>
+
+#include <cstdint>
+#include <vector>
+#include <SDL_render.h>
+
 #include "ARenderer.h"
-#include "../logic2d.h"
 #include "../engTools.h"
 
 class CPURenderer : public ARenderer{

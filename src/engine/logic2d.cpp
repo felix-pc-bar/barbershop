@@ -1,6 +1,10 @@
 #include <algorithm>
+#include <iostream>
+#include <vector>
+
 #include "logic2d.h"
 #include "engconfig.h"
+#include "engTools.h"
 
 using std::vector, std::cout, std::endl;
 

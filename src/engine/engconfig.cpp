@@ -1,4 +1,5 @@
 #include "engconfig.h"
+#include "engTools.h"
 
 float fpsTarget = 30.0f;
 float perspectiveFac = 1.0f;

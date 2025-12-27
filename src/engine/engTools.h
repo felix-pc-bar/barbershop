@@ -1,9 +1,9 @@
 #pragma once
-//#include <SDL.h>
+
 #include <vector>
-//#include <cstdint>
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 using std::vector, std::ostream, std::string;
 

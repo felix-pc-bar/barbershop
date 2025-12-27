@@ -1,7 +1,12 @@
-#include "engTools.h"
 #include <cmath>
-#include "logic2d.h"
-#include "render/CPURenderer.h"
+#include <algorithm>
+#include <cstdint>
+#include <iostream>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "engTools.h"
 
 using std::vector, std::cout, std::endl, std::sin, std::cos;
 

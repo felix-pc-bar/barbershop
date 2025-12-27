@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include <SDL_render.h>
+#include <SDL_surface.h>
+#include <SDL_video.h>
 #include "engTools.h"
-#include "SDL.h"
 #include "render/ARenderer.h"
 
 class Game
