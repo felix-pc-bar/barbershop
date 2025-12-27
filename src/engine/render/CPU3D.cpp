@@ -6,14 +6,14 @@
 #include <cmath>
 #include <SDL_render.h>
 
-#include "CPURenderer.h"
+#include "CPU3D.h"
 #include "../engTools.h"
 #include "../logic2d.h"
 #include "../engconfig.h"
 
 using std::endl, std::cout;
 
-void CPURenderer::drawPoint(Position3d pos, int sizePx)
+void CPU3DRenderer::drawPoint(Position3d pos, int sizePx)
 {
 	Point2d point(pos);
 	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
@@ -47,7 +47,7 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPURenderer::CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height) //constructor
+CPU3DRenderer::CPU3DRenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height) //constructor
 {
 	texture = screentex;
 	sdlRenderer = renderer;
@@ -58,14 +58,14 @@ CPURenderer::CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int wid
 	bufIsDrawn.resize(width * height, false);
 }
 
-void CPURenderer::Clear(uint32_t color) 
+void CPU3DRenderer::Clear(uint32_t color) 
 {
 	std::fill(bufMain.begin(), bufMain.end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
+inline void CPU3DRenderer::SetPixel(int x, int y, uint32_t color)
 {
 	int screenY = this->height - y;
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
@@ -105,7 +105,7 @@ inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 	dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;
 }
 
-void CPURenderer::drawScene(Scene& scene)
+void CPU3DRenderer::drawScene(Scene& scene)
 {
 	std::vector<TriangleToRender> triangles;
 	std::vector<PointToRender> renderPoints;
@@ -170,7 +170,7 @@ void CPURenderer::drawScene(Scene& scene)
 	}
 }
 
-void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
+void CPU3DRenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 {
 	Point2d p1(v1);
 	Point2d p2(v2);
@@ -369,7 +369,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& ma
 	}
 }
 
-void CPURenderer::Present()
+void CPU3DRenderer::Present()
 {
 	SDL_UpdateTexture(texture, nullptr, bufMain.data(), width * sizeof(uint32_t));
 	// Generate depth buffer visualisation

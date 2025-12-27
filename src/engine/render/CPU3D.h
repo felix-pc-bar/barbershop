@@ -7,9 +7,9 @@
 //#include "ARenderer.h"
 #include "../engTools.h"
 
-class CPURenderer{
+class CPU3DRenderer{
 public:
-	CPURenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height); //constructor
+	CPU3DRenderer(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height); //constructor
 
 	void Clear(uint32_t color);
 	void Present(); // push pixels to texture and draw to screen

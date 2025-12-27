@@ -11,8 +11,8 @@ link_directories("${SDL2_ROOT}/lib/x64")
 
 add_executable(barbershop
  src/main.cpp
- "src/engine/render/CPURenderer.cpp" 
- "src/engine/render/CPURenderer.h" 
+ "src/engine/render/CPU3D.cpp" 
+ "src/engine/render/CPU3D.h" 
  "src/engine/engTools.cpp" 
  "src/engine/engTools.h" 
  "src/engine/logic2d.cpp" 
@@ -24,7 +24,7 @@ add_executable(barbershop
  "app_icon.rc"
  "src/engine/game.cpp"
  "src/engine/game.h"
-  "src/engine/render/CPU2D.h" )
+  "src/engine/render/CPU2D.h"  "src/engine/render/CPU2D.cpp")
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(barbershop PROPERTIES
 LINK_FLAGS "/SUBSYSTEM:CONSOLE"

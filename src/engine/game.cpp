@@ -15,7 +15,7 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 
-#include "render/cpurenderer.h"
+#include "render/CPU3D.h"
 #include "import3d.h"
 #include "engconfig.h"
 #include "game.h"
@@ -54,7 +54,7 @@ Game::Game()
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->cpu3d= new CPURenderer(screenTexture, sdlRenderer, screenwidth, screenheight); // Create viewport
+	this->cpu3d= new CPU3DRenderer(screenTexture, sdlRenderer, screenwidth, screenheight); // Create viewport
 }
 
 void Game::run()
