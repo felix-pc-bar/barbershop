@@ -73,7 +73,8 @@ void Game::run()
 	auto lastTime = dtclock::now();
 	int fpsLimit = 0;
 	float fpsLimTick = 1.0f / fpsLimit;
-
+	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
+	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// ===========
 	// SCENE SETUP
@@ -112,17 +113,22 @@ void Game::run()
 	{
 		auto currentTime = dtclock::now();
 		std::chrono::duration<float> elapsed = currentTime - lastTime;
-		float deltaTime = elapsed.count(); // Raw frametime (s)
-		if (fpsLimit != 0 && deltaTime < fpsLimTick)
+		float dt = elapsed.count(); // Raw frametime (s)
+		gameTime += dt;
+		if (fpsLimit != 0 && dt < fpsLimTick)
 		{
-			SDL_Delay((fpsLimTick - deltaTime) * 1000);
-			deltaTime += fpsLimTick - deltaTime;
+			SDL_Delay((fpsLimTick - dt) * 1000);
+			dt += fpsLimTick - dt;
 			currentTime = dtclock::now();
 		}
-		float dtMulti = deltaTime / (1.0f / fpsTarget);
+		float dtMulti = dt / (1.0f / fpsTarget);
 		lastTime = currentTime;
-		float fps = 1.0f / deltaTime;
-		cout << fps << endl;
+		float fps = 1.0f / dt;
+		dtFac = dt * 60.0f;
+		if (frame % 10 == 0)
+		{
+			cout << fps << endl;
+		}
 
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
@@ -143,8 +149,9 @@ void Game::run()
 			}
 		}
 
-		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = freecamspeedbase * 5; }
-		else { freecamspeed = freecamspeedbase; }
+
+		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = freecamspeedbase * 5 * dtFac; }
+		else { freecamspeed = freecamspeedbase * dtFac; }
 		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
 		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos += mainScene.cams[0].right * freecamspeed; }
@@ -163,7 +170,7 @@ void Game::run()
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, sin((float)frame / 10) , 0.0f});
+		//mainScene.objectByName("nomesh")->mesh->setPos({0.0f, sin(gameTime * 5) , 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 
