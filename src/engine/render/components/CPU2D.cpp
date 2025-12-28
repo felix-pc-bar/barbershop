@@ -1,15 +1,12 @@
-#include <iostream>
 #include <vector>
 #include <cstdint>
 #include <algorithm>
-#include <limits>
 #include <cmath>
 #include <SDL_render.h>
 
 #include "CPU2D.h"
 #include "../../engTools.h"
 #include "../../logic2d.h"
-#include "../../engconfig.h"
 
 CPU2D::CPU2D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
