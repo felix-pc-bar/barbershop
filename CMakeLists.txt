@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # SDL2
-set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2-2.32.8")
+set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2")
 
 add_executable(barbershop
     src/main.cpp
@@ -65,6 +65,6 @@ add_custom_command(
 )
 
 file(COPY
-    ${CMAKE_SOURCE_DIR}/SDL2.dll
+    ${CMAKE_SOURCE_DIR}/external/SDL2/lib/x64/SDL2.dll
     DESTINATION ${CMAKE_BINARY_DIR}
 )
