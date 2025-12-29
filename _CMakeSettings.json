@@ -1,0 +1,39 @@
+﻿{
+  "configurations": [
+    {
+      "name": "msvc-x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\msvc-x64-Debug",
+      "installRoot": "${projectDir}\\out\\install\\msvc-x64-Debug"
+    },
+
+    {
+      "name": "msvc-x64-Release",
+      "generator": "Ninja",
+      "configurationType": "MinSizeRel",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\msvc-x64-Release",
+      "installRoot": "${projectDir}\\out\\install\\msvc-x64-Release"
+    },
+
+    {
+      "name": "mingw-x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\mingw-x64-Debug",
+      "installRoot": "${projectDir}\\out\\install\\mingw-x64-Debug",
+      "cmakeCommandArgs": "-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
+    },
+
+    {
+      "name": "mingw-x64-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\out\\build\\mingw-x64-Release",
+      "installRoot": "${projectDir}\\out\\install\\mingw-x64-Release",
+      "cmakeCommandArgs": "-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
+    }
+  ]
+}

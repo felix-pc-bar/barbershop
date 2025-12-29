@@ -494,7 +494,7 @@ void Camera::calcBaseVecs()
 	this->right.rotateQuat(this->quatIdentity);
 }
 
-void Scene::addObject(Object3D& ob)
+void Scene::addObject(Object3D ob)
 {
 	ob.name = this->getName(ob.name);
 	this->objects.emplace_back(ob);

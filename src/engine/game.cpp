@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdlib>
 #include <chrono>
+#include <cmath>
 
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
@@ -163,7 +164,7 @@ void Game::run()
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		//mainScene.objectByName("nomesh")->mesh->setPos({0.0f, sin(gameTime * 5) , 0.0f});
+		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5) , 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 

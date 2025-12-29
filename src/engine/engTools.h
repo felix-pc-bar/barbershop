@@ -197,7 +197,7 @@ public:
 	Camera* currentCam = nullptr;
 	vector<Object3D> objects;
 	vector<Camera> cams;
-	void addObject(Object3D& ob); // Add an object to the scene
+	void addObject(Object3D ob); // Add an object to the scene
 	string getName(string candidate) const; // Get a name for a object
 	Object3D* objectByName(std::string name);
 };

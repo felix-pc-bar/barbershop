@@ -30,14 +30,14 @@ Object3D importObj(string filepath) // Objects should be exported as Forward = +
 		result.name = p.stem().string();
 		while (getline(objfile, line))
 		{
-			if (line._Starts_with("v "))
+			if (!line.compare(0, 2, "v "))
 			{
 				istringstream substr(line.substr(2));
 				double xin, yin, zin;
 				substr >> xin >> yin >> zin;
 				mesh->addVertex(Position3d(xin, yin, zin));
 			}
-			if (line._Starts_with("f "))
+			if (!line.compare(0, 2, "f "))
 			{
 				istringstream ss(line.substr(2));
 				string token;
