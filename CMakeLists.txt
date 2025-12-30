@@ -37,6 +37,7 @@ target_link_directories(barbershop PRIVATE
     "${SDL2_ROOT}/lib/x64"
 )
 
+# TODO: we need to fix that issue on freshly cloning the repo
 target_link_libraries(barbershop PRIVATE SDL2main SDL2)
 
 # Windows-specific linker handling
