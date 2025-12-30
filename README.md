@@ -9,5 +9,5 @@ Requirements:
 - ninja
 - cmake
 ## Alpha
-![buggy lmao](content/bug.png)
+![buggy lmao](content/branding/bug.png)
 This project is and will be for the considerable future in alpha. It is not recommended to use this project for game development until a beta is released.
