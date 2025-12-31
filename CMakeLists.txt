@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
+
+#include(${CMAKE_SOURCE_DIR}/cmake/bootstrap_toolchain.cmake)
+set(CMAKE_CXX_COMPILER_FORCED TRUE)
 project(barbershop LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)

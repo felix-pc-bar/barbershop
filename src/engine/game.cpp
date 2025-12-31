@@ -21,35 +21,6 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-//	// =========
-//	// SDL SETUP
-//	// =========
-//
-//	// Pointers to our window and surface
-//	this->winSurface = NULL;
-//	this->window = NULL;
-//	this->sdlRenderer = NULL;
-//
-//	int result;
-//	result = SDL_Init(SDL_INIT_EVERYTHING);
-//	if (result < 0) 
-//	{
-//		cout << "Error initializing SDL: " << SDL_GetError() << endl;
-//		system("pause");
-//	}
-//
-//	result = SDL_CreateWindowAndRenderer(screenwidth, screenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
-//	if (result < 0)
-//	{
-//		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
-//	}
-//
-//	SDL_SetWindowTitle(window, "Barbershop Engine");
-//	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
-//	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
-//	// Setup screenTexture and other GPU stuff
-//	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-//	this->cpu3d= new CPU3DRenderer(screenTexture, sdlRenderer, screenwidth, screenheight); // Create viewport
 	this->renderer = new cRenderer();
 }
 
@@ -164,7 +135,7 @@ void Game::run()
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5) , 0.0f});
+		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5) * 5, 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 
