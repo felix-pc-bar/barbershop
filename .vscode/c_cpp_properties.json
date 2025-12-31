@@ -6,7 +6,7 @@
             "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.3x.xxxxx/bin/Hostx64/x64/cl.exe",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/external/SDL2-2.32.8/include"
+                "${workspaceFolder}/external/SDL2/include"
             ],
             "defines": [
                 "_DEBUG"
