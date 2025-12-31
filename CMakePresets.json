@@ -9,7 +9,6 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/mingw-toolchain.cmake",
                 "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
                 "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
                 "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
@@ -25,7 +24,6 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/mingw-toolchain.cmake",
                 "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
                 "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
                 "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
