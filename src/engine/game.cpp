@@ -135,7 +135,7 @@ void Game::run()
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5) * 5, 0.0f});
+		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5), 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 

@@ -28,7 +28,7 @@ add_executable(barbershop
     src/engine/render/components/CPU2D.cpp
     src/engine/render/render.h
     src/engine/render/render.cpp
-    app_icon.rc
+    src/app_icon.rc
 )
 
 # SDL include + lib paths (scoped)
