@@ -28,20 +28,34 @@ void CPU2D::Present()
 	SDL_RenderPresent(sdlRenderer);
 }
 
-void CPU2D::drawPoint(Position3d pos, int sizePx)
+void CPU2D::drawPoint(Point2d pt, int sizePx)
 {
-	Point2d point(pos);
-	if (pos.cameraspace().z <= 0 || point.x == -99999) { return; }
 	int offset = std::floor(sizePx / 2.0f);
-	for (int x = point.x - offset; x < point.x + offset + sizePx % 2; x++)
+	for (int x = pt.x - offset; x < pt.x + offset + sizePx % 2; x++)
 	{
-		for (int y = point.y - offset; y < point.y + offset + sizePx % 2; y++)
+		for (int y = pt.y - offset; y < pt.y + offset + sizePx % 2; y++)
 		{
-			if (x - point.x == 0 || y - point.y == 0 || sizePx != 3)
+			if (x - pt.x == 0 || y - pt.y == 0 || sizePx != 3)
 			{
 				this->SetPixel(x, y, 0xFF808080);
 			}
 		}
+	}
+	return;
+}
+
+void CPU2D::drawLine(Point2d p1, Point2d p2, int stroke)
+{
+	float length = (p2.x - p1.x)^2 + (p2.y - p1.y)^2;
+	float xStep = (p2.x - p1.x) / length;
+	float yStep = (p2.y - p1.y) / length;
+	float x = p1.x;
+	float y = p1.y;
+	for (int i = 0; i < length; i++)
+	{
+		this->SetPixel((int)x, (int)y, 0xFF808080);
+		x += xStep;
+		y += yStep;
 	}
 	return;
 }
@@ -79,7 +93,7 @@ inline void CPU2D::SetPixel(int x, int y, uint32_t color)
 	uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
 	uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
 
-	// Optionally blend alpha too — here we just preserve max of src/dst
+	// Optionally blend alpha too ï¿½ here we just preserve max of src/dst
 	uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
 
 	// Repack

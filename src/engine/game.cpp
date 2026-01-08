@@ -65,9 +65,9 @@ void Game::run()
 		}
 	}
 
-	mainScene.addObject(importObj("content/obj/obj.obj"));
+	mainScene.addObject(importObj("content/obj/suzanne.obj"));
 
-	mainScene.objects[1].materials.emplace_back(0.8f, 0.8f, 0.8f);
+	mainScene.objects[1].materials.emplace_back(0.1f, 0.1f, 0.1f);
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -135,7 +135,7 @@ void Game::run()
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		mainScene.objectByName("nomesh")->mesh->setPos({0.0f, std::sin(gameTime * 5), 0.0f});
+		// mainScene.objectByName("cube")->mesh->setPos({0.0f, std::sin(gameTime * 5), 0.0f});
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 

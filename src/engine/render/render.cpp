@@ -129,12 +129,15 @@ void cRenderer::renderScene(Scene& scene) const
 	for (TriangleToRender& tri : triangles)
 	{
 		this->cpu3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
+		this->cpu2d->drawLine(Point2d(tri.v1), Point2d(tri.v2));
+		this->cpu2d->drawLine(Point2d(tri.v2), Point2d(tri.v3));
+		this->cpu2d->drawLine(Point2d(tri.v3), Point2d(tri.v1));
 	}
 	for (PointToRender& pt : renderPoints)
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			this->cpu2d->drawPoint(pt.pos, pt.material.pointWidth);
+			this->cpu2d->drawPoint(Point2d(pt.pos), pt.material.pointWidth);
 		}
 	}
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu2d->width * sizeof(uint32_t));
