@@ -59,6 +59,7 @@ Object3D importObj(string filepath) // Objects should be exported as Forward = +
 		}
 		std::cout << "Imported " << filepath << " - " << mesh->vertices.size() << " vertices" << std::endl;
 		result.mesh = mesh;
+		result.materials.emplace_back(1.0f, 0.0f, 1.0f);
 		return result;
 	}
 	std::cout << "Import error" << endl;

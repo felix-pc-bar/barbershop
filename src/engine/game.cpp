@@ -67,7 +67,7 @@ void Game::run()
 
 	mainScene.addObject(importObj("content/obj/sz2.obj"));
 
-	mainScene.objects[1].materials.emplace_back(1.0f, 0.1f, 1.0f);
+	mainScene.objects[1].materials[0] = Material(1.0f, 0.1f, 1.0f);
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
