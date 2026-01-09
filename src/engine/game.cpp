@@ -65,9 +65,9 @@ void Game::run()
 		}
 	}
 
-	mainScene.addObject(importObj("content/obj/ico4.obj"));
+	mainScene.addObject(importObj("content/obj/sz2.obj"));
 
-	mainScene.objects[1].materials[0] = Material(Colour("white"));
+	mainScene.objects[1].materials[0] = Material(Colour("orange"));
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -130,15 +130,12 @@ void Game::run()
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
-		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
-		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
-		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
-		//if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
 		this->renderer->clear(Colour("grey"));
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);
-		// mainScene.objectByName("cube")->mesh->setPos({0.0f, std::sin(gameTime * 5), 0.0f});
+		mainScene.objectByName("sz2")->mesh->rotateAxis(std::sin(gameTime * pi * 0.5f) / 5.0f, Position3d(1.0f, 0.0f, 0.0f));
+		mainScene.objectByName("sz2")->mesh->rotateAxis(0.1f, Position3d(0.0f, 1.0f, 0.0f));
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
 
