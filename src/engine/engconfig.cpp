@@ -3,15 +3,16 @@
 
 float fpsTarget = 30.0f;
 float perspectiveFac = 1.0f;
-bool drawPoints = false;
+bool drawPoints = false; //whether to draw the (ground plane?) points
+bool wireframe = false; // Toggle between shaded and wireframe
 
 Position3d lightNormal = Position3d(-.577f, -.577f, .577f); // roughly normal, this is temporary anyway
 //Position3d lightNormal = Position3d(1.0f, -0.0f, 0.0f); 
 
-int screenheight = 360;
-int screenwidth = 640;
-// int screenheight = 1080;
-// int screenwidth = 1920;
+// int screenheight = 360;
+// int screenwidth = 640;
+int screenheight = 1080;
+int screenwidth = 1920;
 
 /*
 1920x1080

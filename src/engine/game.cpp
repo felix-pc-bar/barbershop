@@ -65,9 +65,9 @@ void Game::run()
 		}
 	}
 
-	mainScene.addObject(importObj("content/obj/suzanne.obj"));
+	mainScene.addObject(importObj("content/obj/sz2.obj"));
 
-	mainScene.objects[1].materials.emplace_back(0.1f, 0.1f, 0.1f);
+	mainScene.objects[1].materials.emplace_back(1.0f, 0.1f, 1.0f);
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -112,9 +112,15 @@ void Game::run()
 				if (event.wheel.y > 0) { freecamspeedbase += 0.01f; }
 				if (event.wheel.y < 0 && freecamspeedbase > 0.01f) { freecamspeedbase -= 0.01f; }
 			}
+			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+			{
+				// Keypress events here
+				if (event.key.keysym.sym == SDLK_f) {drawPoints = !drawPoints;}
+				if (event.key.keysym.sym == SDLK_v) {wireframe = !wireframe;}
+			}
 		}
 
-
+		// Key hold events here
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = freecamspeedbase * 5 * dtFac; }
 		else { freecamspeed = freecamspeedbase * dtFac; }
 		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
@@ -123,10 +129,7 @@ void Game::run()
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
-		if (gk[SDL_SCANCODE_F]) {
-			if (drawPoints) { drawPoints = false; }
-			else { drawPoints = true; }
-		}
+
 		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
 		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
 		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up

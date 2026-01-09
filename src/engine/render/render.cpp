@@ -128,10 +128,26 @@ void cRenderer::renderScene(Scene& scene) const
 	// Draw
 	for (TriangleToRender& tri : triangles)
 	{
-		this->cpu3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
-		this->cpu2d->drawLine(Point2d(tri.v1), Point2d(tri.v2));
-		this->cpu2d->drawLine(Point2d(tri.v2), Point2d(tri.v3));
-		this->cpu2d->drawLine(Point2d(tri.v3), Point2d(tri.v1));
+		Point2d p1(tri.v1);
+		Point2d p2(tri.v2);
+		Point2d p3(tri.v3);
+
+		if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) && 
+			(isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) &&
+			(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
+		)
+		{
+			if (wireframe)
+			{
+				this->cpu2d->drawLine(Point2d(tri.v1), Point2d(tri.v2), tri.material.colour.raw());
+				this->cpu2d->drawLine(Point2d(tri.v2), Point2d(tri.v3), tri.material.colour.raw());
+				this->cpu2d->drawLine(Point2d(tri.v3), Point2d(tri.v1), tri.material.colour.raw());
+			}
+			else
+			{
+				this->cpu3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
+			}
+		}
 	}
 	for (PointToRender& pt : renderPoints)
 	{

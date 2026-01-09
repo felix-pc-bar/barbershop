@@ -44,18 +44,37 @@ void CPU2D::drawPoint(Point2d pt, int sizePx)
 	return;
 }
 
-void CPU2D::drawLine(Point2d p1, Point2d p2, int stroke)
+void CPU2D::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 {
-	float length = (p2.x - p1.x)^2 + (p2.y - p1.y)^2;
-	float xStep = (p2.x - p1.x) / length;
-	float yStep = (p2.y - p1.y) / length;
-	float x = p1.x;
-	float y = p1.y;
-	for (int i = 0; i < length; i++)
+
+	if (p1.x == p2.x && p1.y == p2.y)
 	{
-		this->SetPixel((int)x, (int)y, 0xFF808080);
-		x += xStep;
-		y += yStep;
+		this->SetPixel(p1.x, p1.y, col);
+		return;
+	}
+	if (p2.x - p1.x >= p2.y - p1.y)
+	{
+		float yStep = 0.0f;
+		if (p2.x - p1.x != 0)
+		{
+			yStep = (float)(p2.y - p1.y) / (float)(p2.x - p1.x); 
+		}
+		for (int i = 0; i <= p2.x - p1.x; i++)
+		{
+			this->SetPixel(p1.x + i, (int)(p1.y + (yStep * i)), col);
+		}
+	}
+	else
+	{
+		float xStep = 0.0f;
+		if (p2.y - p1.y != 0)
+		{
+			xStep = (float)(p2.x - p1.x) / (float)(p2.y - p1.y); 
+		}
+		for (int i = 0; i <= p2.y - p1.y; i++)
+		{
+			this->SetPixel((int)(p1.x + (xStep * i)), p1.y + i, col);
+		}
 	}
 	return;
 }
