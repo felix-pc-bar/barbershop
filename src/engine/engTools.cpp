@@ -213,32 +213,34 @@ Material::Material()
 	this->shadeMat = true;
 }
 
-Material::Material(float r, float g, float b, int pointSize, bool shade, bool allowDebugVis)
+Material::Material(Colour col, int pointSize, bool shade, bool allowDebugVis)
 {
-	this->colour.red = r;
-	this->colour.green = g;
-	this->colour.blue = b;
+	this->colour = col;
 	this->pointWidth = pointSize;
 	this->shadeMat = shade;
 	this->omitDbg = allowDebugVis;
 }
 
-Material::Material(float r, float g, float b, float a, int pointSize, bool shade, bool allowDebugVis)
-{
-	this->colour.red = r;
-	this->colour.green = g;
-	this->colour.blue = b;
-	this->colour.alpha = a;
-	this->pointWidth = pointSize;
-	this->shadeMat = shade;
-	this->omitDbg = allowDebugVis;
-}
 
 Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b), alpha(1){}
 
 Colour::Colour(float r, float g, float b, float a) : red(r), green(g), blue(b), alpha(a){}
 
-Colour::Colour() : red(1), green(1), blue(1), alpha(1){}
+Colour::Colour() : red(1), green(0), blue(1), alpha(1){}
+
+Colour::Colour(const std::string& gruvName)
+{
+	auto result = gruvCols().find(gruvName);
+	if (result == gruvCols().end())
+	{
+		std::cout << "Error: could not find gruv colour \"" << gruvName << "\"" << std::endl;
+		this->alpha = 1;
+		this->red = 1;
+		this->green = 0;
+		this->blue = 1;
+	}
+	*this = result->second;
+}
 
 Colour& Colour::operator*=(const float val)
 {
@@ -246,6 +248,19 @@ Colour& Colour::operator*=(const float val)
 	green *= val;
 	blue *= val;
 	return *this;
+}
+
+Colour::Colour(uint32_t col)
+{
+	this->alpha = (col >> 24) & 0xFF;
+	this->red = (col >> 16) & 0xFF;
+	this->green = (col >> 8) & 0xFF;
+	this->blue = col & 0xFF;
+
+	alpha = alpha / 0xFF;
+	red = red / 0xFF;
+	green = green / 0xFF;
+	blue = blue / 0xFF;
 }
 
 Colour operator*(const Colour& c1, const float val) 

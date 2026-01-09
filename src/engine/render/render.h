@@ -18,6 +18,7 @@ public:
 	CPU3D* cpu3d;
 	CPU2D* cpu2d;
 	void renderScene(Scene& scene) const;
+	void clear(Colour col);
 private:
 	// Pointers to our window and surface
 	SDL_Surface* winSurface;

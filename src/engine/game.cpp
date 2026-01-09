@@ -53,7 +53,7 @@ void Game::run()
 
 	// Add the ground points object
 	mainScene.objects.emplace_back();
-	mainScene.objects[0].materials.emplace_back(0.5f, 0.5f, 0.5f, 3, false);
+	mainScene.objects[0].materials.emplace_back(Colour("white3"), 3, false);
 	mainScene.objects[0].name = mainScene.getName("Ground plane points");
 
 	const int gridSize = 100;
@@ -67,7 +67,7 @@ void Game::run()
 
 	mainScene.addObject(importObj("content/obj/sz2.obj"));
 
-	mainScene.objects[1].materials[0] = Material(1.0f, 0.0f, 1.0f);
+	mainScene.objects[1].materials[0] = Material(Colour("yellow"));
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -134,7 +134,7 @@ void Game::run()
 		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
 		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
 		//if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
-
+		this->renderer->clear(Colour("grey"));
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		//mainScene.meshes[0].rotateQuat(qDelta);

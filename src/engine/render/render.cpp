@@ -74,8 +74,6 @@ cRenderer::~cRenderer() {
 
 void cRenderer::renderScene(Scene& scene) const
 {
-	this->cpu3d->Clear(0x00000000);
-	this->cpu2d->Clear(0x00000000);
 	std::vector<TriangleToRender> triangles;
 	std::vector<PointToRender> renderPoints;
 
@@ -160,4 +158,10 @@ void cRenderer::renderScene(Scene& scene) const
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu3d->width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, screenTexture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);
+}
+
+void cRenderer::clear(Colour col)
+{
+	this->cpu2d->Clear(col.raw());
+	this->cpu3d->Clear(col.raw());
 }
