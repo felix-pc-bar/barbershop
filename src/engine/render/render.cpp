@@ -53,8 +53,8 @@ cRenderer::cRenderer()
 	// Setup screenTexture and other GPU stuff
 	this->bufScreen.resize(screenwidth * screenheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->cpu3d = new CPU3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
-	this->cpu2d = new CPU2D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
+	this->razor3d = new Razor3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
+	this->hairline = new Hairline(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
 }
 
 cRenderer::~cRenderer() {
@@ -137,13 +137,13 @@ void cRenderer::renderScene(Scene& scene) const
 		{
 			if (wireframe)
 			{
-				this->cpu2d->drawLine(Point2d(tri.v1), Point2d(tri.v2), tri.material.colour.raw());
-				this->cpu2d->drawLine(Point2d(tri.v2), Point2d(tri.v3), tri.material.colour.raw());
-				this->cpu2d->drawLine(Point2d(tri.v3), Point2d(tri.v1), tri.material.colour.raw());
+				this->hairline->drawLine(Point2d(tri.v1), Point2d(tri.v2), tri.material.colour.raw());
+				this->hairline->drawLine(Point2d(tri.v2), Point2d(tri.v3), tri.material.colour.raw());
+				this->hairline->drawLine(Point2d(tri.v3), Point2d(tri.v1), tri.material.colour.raw());
 			}
 			else
 			{
-				this->cpu3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
+				this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
 			}
 		}
 	}
@@ -151,17 +151,17 @@ void cRenderer::renderScene(Scene& scene) const
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			this->cpu2d->drawPoint(Point2d(pt.pos), pt.material.pointWidth);
+			this->hairline->drawPoint(Point2d(pt.pos), pt.material.pointWidth);
 		}
 	}
-	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu2d->width * sizeof(uint32_t));
-	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu3d->width * sizeof(uint32_t));
+	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
+	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), razor3d->width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, screenTexture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);
 }
 
 void cRenderer::clear(Colour col)
 {
-	this->cpu2d->Clear(col.raw());
-	this->cpu3d->Clear(col.raw());
+	this->hairline->Clear(col.raw());
+	this->razor3d->Clear(col.raw());
 }

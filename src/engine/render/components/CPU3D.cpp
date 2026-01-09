@@ -29,7 +29,7 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPU3D::CPU3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
+Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
 	texture = screentex;
 	sdlRenderer = renderer;
@@ -40,14 +40,14 @@ CPU3D::CPU3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int heig
 	bufIsDrawn.resize(width * height, false);
 }
 
-void CPU3D::Clear(uint32_t color) 
+void Razor3D::Clear(uint32_t color) 
 {
 	std::fill(bufMain->begin(), bufMain->end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
+void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 {
 	Point2d p1(v1);
 	Point2d p2(v2);
@@ -234,7 +234,7 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 				uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
 				uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
 
-				// Optionally blend alpha too — here we just preserve max of src/dst
+				// Optionally blend alpha too ï¿½ here we just preserve max of src/dst
 				uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
 
 				dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;
@@ -246,7 +246,7 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 	}
 }
 
-void CPU3D::Present()
+void Razor3D::Present()
 {
 	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
 	// Generate depth buffer visualisation

@@ -7,9 +7,9 @@
 //#include "ARenderer.h"
 #include "../../engTools.h"
 
-class CPU3D{
+class Razor3D{
 public:
-	CPU3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer); //constructor
+	Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer); //constructor
 
 	void Clear(uint32_t color);
 	void Present(); // push pixels to texture and draw to screen

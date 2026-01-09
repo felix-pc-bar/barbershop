@@ -15,8 +15,8 @@ class cRenderer
 public:
 	cRenderer();
 	~cRenderer();
-	CPU3D* cpu3d;
-	CPU2D* cpu2d;
+	Razor3D* razor3d;
+	Hairline* hairline;
 	void renderScene(Scene& scene) const;
 	void clear(Colour col);
 private:
