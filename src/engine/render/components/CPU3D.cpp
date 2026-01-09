@@ -79,8 +79,9 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
 		float dot = normal.dot(lightNormal);
-		float value = 0.5f * dot + 0.75f;
-		value = std::min(value, 1.0f);
+		float value = (dot * 0.9f);
+		value += 0.5f;
+		value = std::max(std::min(value, 1.0f), 0.1f);
 		ucol *= value;
 		rawColour = ucol.raw();
 	}

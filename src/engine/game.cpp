@@ -65,9 +65,9 @@ void Game::run()
 		}
 	}
 
-	mainScene.addObject(importObj("content/obj/sz2.obj"));
+	mainScene.addObject(importObj("content/obj/ico4.obj"));
 
-	mainScene.objects[1].materials[0] = Material(Colour("yellow"));
+	mainScene.objects[1].materials[0] = Material(Colour("white"));
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;

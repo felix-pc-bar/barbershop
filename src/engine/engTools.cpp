@@ -161,10 +161,10 @@ Position3d Position3d::cross(const Position3d& operand) const
 }
 float Position3d::dot(const Position3d& operand) const
 {
-	return x * operand.x * y * operand.y + z * operand.z;
+	return x * operand.x + y * operand.y + z * operand.z;
 }
 
-void Position3d::normalise()
+Position3d& Position3d::normalise()
 {
 	float magnitude = std::sqrt(x * x + y * y + z * z); // find magnitude by pythaagoras
 	if (magnitude > 0.0f)
@@ -173,6 +173,7 @@ void Position3d::normalise()
 		y /= magnitude;
 		z /= magnitude;
 	}
+	return *this;
 }
 
 void Position3d::flip()

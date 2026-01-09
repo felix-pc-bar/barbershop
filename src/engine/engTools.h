@@ -25,7 +25,7 @@ public:
 	// Vector stuff
 	Position3d cross(const Position3d& operand) const;
 	float dot(const Position3d& operand) const;
-	void normalise();
+	Position3d& normalise();
 	void flip();
 	float lengthSquared() const;
 
@@ -122,7 +122,7 @@ private:
 			{"darkyellow", Colour(0xFFd79921)},
 			{"darkblue", Colour(0xFF458588)},
 			{"darkpurple", Colour(0xFFb16286)},
-			{"darkaqua", Colour(0xF689d6a)},
+			{"darkaqua", Colour(0xFF689d6a)},
 			{"gray5", Colour(0xFFa89984)},
 			{"gray6", Colour(0xFF928374)},
 			{"red", Colour(0xFFfb4934)},
