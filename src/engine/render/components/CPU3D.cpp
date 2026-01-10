@@ -29,7 +29,7 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
+Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered) //constructor
 {
 	texture = screentex;
 	sdlRenderer = renderer;
@@ -38,6 +38,7 @@ Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int 
 	this->bufMain = screenbuffer;
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
+	dither = renderdithered;
 }
 
 void Razor3D::Clear(uint32_t color) 
@@ -75,15 +76,28 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 	Position3d viewDir = (currentScene->currentCam->pos - triCentre);
 	viewDir.normalise();
 	uint32_t rawColour = 0xFFFF00FF; // Magenta by default
+	uint16_t ditherVal = 0;
 	if (mat.colour.alpha == 1.0f && mat.shadeMat) // Shade with hybrid diffuse algorithm (not physically acccurate)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
 		float dot = normal.dot(lightNormal);
-		float value = (dot * 0.9f);
-		value += 0.5f;
-		value = std::max(std::min(value, 1.0f), 0.1f);
-		ucol *= value;
-		rawColour = ucol.raw();
+
+		if (dither) 
+		{
+			float value = (dot * 0.75f);
+			value += 0.2f;
+			value = std::max(std::min(value, 1.0f), 0.01f);
+			ditherVal = (uint8_t)(value * 0xFF); 
+			rawColour = mat.colour.raw(); // rawColour set to what i want it to be
+		}
+		else 
+		{
+			float value = (dot * 0.9f);
+			value += 0.2f;
+			value = std::max(std::min(value, 1.0f), 0.1f);
+			ucol *= value; 
+			rawColour = ucol.raw();
+		}
 	}
 	else
 	{
@@ -183,7 +197,10 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 			{
 				if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 				{
-					pixShaded[baseIndex + x] = rawColour;
+					// rawColour = Colour("white").raw();
+					if (dither && ditherVal < bayer8x8[x % 7][y % 7])
+					{ pixShaded[baseIndex + x] = Colour("black").raw(); }
+					else { pixShaded[baseIndex + x] = rawColour; }
 					bufIsDrawn[baseIndex + x] = true;
 				}
 				w1 += dw1;

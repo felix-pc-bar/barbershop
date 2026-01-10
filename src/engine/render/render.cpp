@@ -53,7 +53,7 @@ cRenderer::cRenderer()
 	// Setup screenTexture and other GPU stuff
 	this->bufScreen.resize(screenwidth * screenheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->razor3d = new Razor3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
+	this->razor3d = new Razor3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen, true); // Create viewport
 	this->hairline = new Hairline(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
 }
 

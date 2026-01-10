@@ -75,6 +75,8 @@ void Game::run()
 	mainScene.objects[3].materials[0] = Material(Colour("yellow"));
 	mainScene.objects[4].materials[0] = Material(Colour("red"));
 	mainScene.objects[5].materials[0] = Material(Colour("aqua"));
+	// mainScene.addObject(importObj("content/obj/sz2.obj"));
+	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -122,8 +124,9 @@ void Game::run()
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
 				// Keypress events here
-				if (event.key.keysym.sym == SDLK_f) {drawPoints = !drawPoints;}
-				if (event.key.keysym.sym == SDLK_v) {wireframe = !wireframe;}
+				if (event.key.keysym.sym == SDLK_1) {drawPoints = !drawPoints;}
+				if (event.key.keysym.sym == SDLK_2) {wireframe = !wireframe;}
+				if (event.key.keysym.sym == SDLK_3) {this->renderer->razor3d->dither = !this->renderer->razor3d->dither;}
 			}
 		}
 
@@ -140,7 +143,7 @@ void Game::run()
 		this->renderer->clear(Colour("grey"));
 		this->renderer->renderScene(*currentScene);
 		frame++;
-		//mainScene.meshes[0].rotateQuat(qDelta);
+		
 		for (int i = 1; i < mainScene.objects.size(); i++)
 		{
 			mainScene.objects[i].mesh->rotateAxis(std::sin(gameTime * pi * (0.5f * (float)i)) / 5.0f, Position3d(1.0f, 0.0f, 0.0f));

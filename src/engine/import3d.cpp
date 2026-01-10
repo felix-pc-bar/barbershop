@@ -58,6 +58,8 @@ Object3D importObj(string filepath) // Objects should be exported as Forward = +
 			}
 		}
 		std::cout << "Imported " << filepath << " - " << mesh->vertices.size() << " vertices" << std::endl;
+		mesh->rotateAxis(pi * 0.5f, {1, 0, 0});
+		mesh->rotateAxis(pi, {0, 0, -1});
 		result.mesh = mesh;
 		result.materials.emplace_back(Colour(1.0f, 0.0f, 1.0f));
 		return result;
