@@ -47,6 +47,9 @@ cRenderer::cRenderer()
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
+	this->width = screenwidth; // from global config, can be changed later
+	this->height = screenheight;
+
 	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
@@ -162,6 +165,21 @@ void cRenderer::renderScene(Scene& scene) const
 
 void cRenderer::clear(Colour col)
 {
-	this->hairline->Clear(col.raw());
-	this->razor3d->Clear(col.raw());
+	this->razor3d->clear(col.raw());
+	std::fill(bufScreen.begin(), bufScreen.end(), col.raw());
+	return;
+}
+
+void cRenderer::clear(Material mat) 
+{
+	for (int y = 0; y < this->height; y++)
+	{
+		for (int x = 0; x < this->width; x++)
+		{
+			if (mat.ditherValue < this->razor3d->bayer8x8[x % 8][y % 8])
+			{ bufScreen[(y * this->height) + x] = Colour("black").raw(); }
+			else {  bufScreen[(y * this->height) + x] = mat.colour.raw(); }
+		}
+	}
+	return;
 }

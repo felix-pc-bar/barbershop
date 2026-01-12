@@ -212,14 +212,16 @@ Material::Material()
 	this->omitDbg = false;
 	this->pointWidth = 0;
 	this->shadeMat = true;
+	this->ditherValue = 0.0f;
 }
 
-Material::Material(Colour col, int pointSize, bool shade, bool allowDebugVis)
+Material::Material(Colour col, int pointSize, bool shade, bool allowDebugVis, uint16_t ditherVal)
 {
 	this->colour = col;
 	this->pointWidth = pointSize;
 	this->shadeMat = shade;
 	this->omitDbg = allowDebugVis;
+	this->ditherValue = ditherVal;
 }
 
 

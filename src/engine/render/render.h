@@ -10,7 +10,7 @@
 #include "components/CPU3D.h"
 #include "../engTools.h"
 
-class cRenderer
+class cRenderer // Composite render class housing other specialised renderer objects
 {
 public:
 	cRenderer();
@@ -19,6 +19,9 @@ public:
 	Hairline* hairline;
 	void renderScene(Scene& scene) const;
 	void clear(Colour col);
+	void clear(Material mat);
+	int width;
+	int height;
 private:
 	// Pointers to our window and surface
 	SDL_Surface* winSurface;

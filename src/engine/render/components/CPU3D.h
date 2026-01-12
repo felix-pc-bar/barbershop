@@ -11,7 +11,8 @@ class Razor3D{
 public:
 	Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered = false); //constructor
 
-	void Clear(uint32_t color);
+	void clear(uint32_t color);
+	void Clear(Material mat);
 	void Present(); // push pixels to texture and draw to screen
 	// void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
@@ -26,7 +27,6 @@ public:
 	int width;
 	int height;
 	bool dither;
-private:
 	static inline constexpr std::uint8_t bayer8x8[8][8] = {
     {  2, 193,  48, 239,  14, 205,  60, 251 },
     {129,  66, 177, 112, 141,  78, 189, 124 },

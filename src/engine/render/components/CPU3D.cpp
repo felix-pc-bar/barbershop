@@ -41,13 +41,11 @@ Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int 
 	dither = renderdithered;
 }
 
-void Razor3D::Clear(uint32_t color) 
+void Razor3D::clear(uint32_t color) 
 {
-	std::fill(bufMain->begin(), bufMain->end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
-
 void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 {
 	Point2d p1(v1);
@@ -182,7 +180,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
-			int flippedY = this->height - y;
+			int flippedY = (this->height - 1) - y;
 			if (flippedY < 0 || flippedY >= this->height) continue;
 
 			int baseIndex = flippedY * width;
@@ -198,7 +196,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 				if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 				{
 					// rawColour = Colour("white").raw();
-					if (dither && ditherVal < bayer8x8[x % 7][y % 7])
+					if (dither && ditherVal < bayer8x8[x % 8][y % 8])
 					{ pixShaded[baseIndex + x] = Colour("black").raw(); }
 					else { pixShaded[baseIndex + x] = rawColour; }
 					bufIsDrawn[baseIndex + x] = true;

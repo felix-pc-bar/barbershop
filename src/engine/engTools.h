@@ -155,11 +155,13 @@ class Material
 {
 public:
 	Material();
-	Material(Colour col, int pointSize = 0, bool shade = true, bool allowDebugVis = true);
+	Material(Colour col, int pointSize = 0, bool shade = true, bool allowDebugVis = true, uint16_t ditherValue = 128);
 	int pointWidth; //Size of squares to draw for points in scene
 	Colour colour;
 	bool shadeMat; //Whether to shade this material
 	bool omitDbg; //Don't change shading in debug
+	// Dither stuff
+	uint16_t ditherValue; // set value offset for dithering (0-255, 128 by default)
 };
 
 class Mesh;

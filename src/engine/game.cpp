@@ -65,7 +65,9 @@ void Game::run()
 		}
 	}
 
-	for (int i = 1; i <= 5; i++)
+	int numMonkeys = 5;
+
+	for (int i = 1; i <= numMonkeys; i++)
 	{
 		mainScene.addObject(importObj("content/obj/suzanne.obj"));
 	}
@@ -77,6 +79,9 @@ void Game::run()
 	mainScene.objects[5].materials[0] = Material(Colour("aqua"));
 	// mainScene.addObject(importObj("content/obj/sz2.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
+
+	// mainScene.addObject(importObj("content/obj/skysphere.obj"));
+	// mainScene.objectByName("skysphere")->materials[0] = Material(Colour("grey"));
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	float freecamspeedbase = 0.01f;
@@ -140,11 +145,13 @@ void Game::run()
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
-		this->renderer->clear(Colour("grey"));
+		// this->renderer->clear(Colour("grey"));
+		// this->renderer->clear(Material(Colour("black")));
+		// if (wireframe) {this->renderer->clear(Colour("black")); }
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		
-		for (int i = 1; i < mainScene.objects.size(); i++)
+		for (int i = 1; i <= numMonkeys; i++)
 		{
 			mainScene.objects[i].mesh->rotateAxis(std::sin(gameTime * pi * (0.5f * (float)i)) / 5.0f, Position3d(1.0f, 0.0f, 0.0f));
 			mainScene.objects[i].mesh->rotateAxis(0.1f, Position3d(0.0f, 1.0f, 0.0f));

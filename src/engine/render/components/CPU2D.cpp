@@ -17,10 +17,6 @@ Hairline::Hairline(SDL_Texture* screentex, SDL_Renderer* renderer, int width, in
 	this->bufMain = screenbuffer;
 }
 
-void Hairline::Clear(uint32_t color)
-{
-	std::fill(bufMain->begin(), bufMain->end(), color);
-}
 void Hairline::Present()
 {
 	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
