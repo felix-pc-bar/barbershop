@@ -1,49 +1,63 @@
 {
-    "version": 8,
-    "configurePresets": [
-        {
-            "name": "mingw-debug",
-            "displayName": "mingw-debug",
-            "description": "Using vended compilers",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
-                "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
-                "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
-				"CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "mingw-release",
-            "displayName": "mingw-release",
-            "description": "Using vended compilers",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
-                "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
-                "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
-				"CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
-                "CMAKE_BUILD_TYPE": "MinSizeRel"
-            }
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "mingw-release",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "mingw-release"
-        },
-        {
-            "name": "mingw-debug",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "mingw-debug"
-        }
-    ]
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "mingw-debug",
+      "displayName": "mingw-debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
+        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
+        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "mingw-release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
+        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
+        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    },
+
+    {
+      "name": "msvc-profile",
+      "displayName": "MSVC Profile",
+      "description": "MSVC build with symbols and optimisations for CPU profiling",
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "architecture": "x64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "ProgramDatabase",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "OFF"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "mingw-debug",
+      "configurePreset": "mingw-debug"
+    },
+    {
+      "name": "mingw-release",
+      "configurePreset": "mingw-release"
+    },
+    {
+      "name": "msvc-profile",
+      "configurePreset": "msvc-profile"
+    }
+  ]
 }

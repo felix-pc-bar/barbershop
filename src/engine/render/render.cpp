@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include <cstdlib>
 #include <iostream>
 #include <ostream>
 #include <begin_code.h>
@@ -12,13 +11,16 @@
 #include <SDL_video.h>
 #include <process.h>
 #include <algorithm>
+#include <vector>
+#include <cstdint>
 
 #include "render.h"
-#include "../engconfig.h"
 #include "components/CPU3D.h"
-#include <vector>
-#include "../engTools.h"
 #include "components/CPU2D.h"
+
+#include "../engconfig.h"
+#include "../engTools.h"
+#include "../logic2d.h"
 
 using std::cout, std::endl;
 
@@ -82,6 +84,7 @@ void cRenderer::renderScene(Scene& scene) const
 
 	if (!scene.currentCam) return;
 	Position3d camPos = scene.currentCam->pos;
+	Quaternion inverseRotaton = scene.currentCam->quatIdentity.conjugate();
 
 	for (Object3D& ob : scene.objects)
 	{
@@ -91,7 +94,7 @@ void cRenderer::renderScene(Scene& scene) const
 			{
 				Mesh& mesh = *ob.mesh;
 				Position3d pos = mesh.position;
-				Rotation3d rot = mesh.rotation;
+				//Rotation3d rot = mesh.rotation;
 				for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
 				{
 					Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
@@ -170,16 +173,57 @@ void cRenderer::clear(Colour col)
 	return;
 }
 
-void cRenderer::clear(Material mat) 
+// void cRenderer::clear(Material mat) 
+// {
+// 	for (int y = 0; y < this->height; y++)
+// 	{
+// 		for (int x = 0; x < this->width; x++)
+// 		{
+// 			if (mat.ditherValue < this->razor3d->bayer8x8[x % 8][y % 8])
+// 			{ bufScreen[(y * this->height) + x] = Colour("black").raw(); }
+// 			else {  bufScreen[(y * this->height) + x] = mat.colour.raw(); }
+// 		}
+// 	}
+// 	return;
+// }
+
+void cRenderer::clearGrad(Colour colBot, Colour colTop, bool dither)
 {
-	for (int y = 0; y < this->height; y++)
+	if (!dither)
 	{
-		for (int x = 0; x < this->width; x++)
+		float r = colTop.red;
+		float rStep = (colBot.red - colTop.red) / (float)this->height;
+		float g = colTop.green;
+		float gStep = (colBot.green - colTop.green) / (float)this->height;
+		float b = colTop.blue;
+		float bStep = (colBot.blue - colTop.blue) / (float)this->height;
+
+		for (int y = 0; y < this->height; y++)
 		{
-			if (mat.ditherValue < this->razor3d->bayer8x8[x % 8][y % 8])
-			{ bufScreen[(y * this->height) + x] = Colour("black").raw(); }
-			else {  bufScreen[(y * this->height) + x] = mat.colour.raw(); }
+			for (int x = 0; x < this->width; x++)
+			{
+				this->bufScreen[(y*this->width) + x] = Colour(r, g, b).raw();	
+			}
+			r += rStep;
+			g += gStep;
+			b += bStep;
 		}
+		return;
 	}
-	return;
+	else
+	{
+		float val = 0;
+		float valStep = 256 / (float)this->height;
+		uint32_t colBotRaw = colBot.raw();
+		uint32_t colTopRaw = colTop.raw();
+		for (int y = 0; y < this->height; y++)
+		{
+			for (int x = 0; x < this->width; x++)
+			{
+				this->bufScreen[(y*this->width) + x] = val > this->razor3d->bayer8x8[x % 8][y % 8] ? colBotRaw : colTopRaw;
+			}
+			val += valStep;
+		}
+		return;
+	}
 }

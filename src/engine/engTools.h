@@ -8,7 +8,6 @@
 
 using std::vector, std::ostream, std::string;
 
-class Rotation3d;
 class Quaternion;
 
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
@@ -19,7 +18,6 @@ public:
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
 	Position3d cameraspace() const;
-	void rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot);
 	void rotateQuat(const Quaternion& q);
 
 	// Vector stuff
@@ -45,18 +43,6 @@ public:
 	friend bool operator>(const Position3d& p1, const Position3d& p2);
 };
 
-class Rotation3d
-{
-public:
-	float pitch, yaw, roll;
-	Rotation3d();
-	Rotation3d(float x_, float y_, float z_);
-	friend Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2);
-	friend Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2);
-	friend Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2);
-	Rotation3d& operator+=(const Rotation3d& other);
-};
-
 class Quaternion // fml
 {
 public:
@@ -66,7 +52,7 @@ public:
 	Quaternion(double w_, double x_, double y_, double z_);
 
 	Quaternion operator*(const Quaternion& q) const;
-	Quaternion inverse() const;
+	Quaternion conjugate() const;
 	void normalise();
 
 	friend std::ostream& operator<<(std::ostream& os, const Quaternion& q);
@@ -76,7 +62,6 @@ class Camera
 {
 public:
 	Position3d pos;
-	Rotation3d rot;
 	Quaternion quatIdentity; // Stores the "identity" of the cam orientation, for base vecs
 
 	Position3d up;
@@ -93,7 +78,6 @@ public:
 	Vertex3d(Position3d pos);
 	Position3d position; 
 	void offsetPosition(Position3d offset);
-	void rotatePosition(const Rotation3d& rot, const Position3d& pivot);
 };
 
 class Colour // Store colour as decimal fractions of RGB
@@ -200,12 +184,6 @@ public:
 	void move(Position3d offset); 
 	void setPos(Position3d pos);
 
-	void rotate(const Rotation3d& rot, const Position3d& pivot); 
-	void setRotation(const Rotation3d& rot, const Position3d& pivot);
-
-	void rotate(const Rotation3d& rot); // Depracated, use quaternion instead
-	void setRotation(const Rotation3d& rot); // Depracated, use quaternion instead
-
 	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 
 	void rotateAxis(float angle, const Position3d& axis);
@@ -221,7 +199,6 @@ public:
 	vector<Mesh*> children;
 
 	Position3d position;
-	Rotation3d rotation;
 	Quaternion quatIdentity;
 
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri

@@ -53,7 +53,7 @@ void Game::run()
 
 	// Add the ground points object
 	mainScene.objects.emplace_back();
-	mainScene.objects[0].materials.emplace_back(Colour("white3"), 3, false);
+	mainScene.objects[0].materials.emplace_back(Colour("black"), 3, false);
 	mainScene.objects[0].name = mainScene.getName("Ground plane points");
 
 	const int gridSize = 100;
@@ -88,6 +88,8 @@ void Game::run()
 	float freecamspeed = 0.0f;
 	currentScene->currentCam->pos = currentScene->currentCam->pos - Position3d(0, 0, 10);
 
+	float fpsRunningTotal = 0;
+	int runningAvgPeriodFrames = 30;
 	do
 	{
 		auto currentTime = dtclock::now();
@@ -104,9 +106,11 @@ void Game::run()
 		lastTime = currentTime;
 		float fps = 1.0f / dt;
 		dtFac = dt * 60.0f;
-		if (frame % 10 == 0)
+		fpsRunningTotal += fps;
+		if (frame % runningAvgPeriodFrames == 0)
 		{
-			cout << fps << endl;
+			cout << fpsRunningTotal / (float)runningAvgPeriodFrames << endl;
+			fpsRunningTotal = 0;
 		}
 
 		// Handle inputs
@@ -148,6 +152,7 @@ void Game::run()
 		// this->renderer->clear(Colour("grey"));
 		// this->renderer->clear(Material(Colour("black")));
 		// if (wireframe) {this->renderer->clear(Colour("black")); }
+		this->renderer->clearGrad(Colour("blue"), Colour("red"), true);
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		

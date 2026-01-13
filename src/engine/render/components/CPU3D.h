@@ -12,10 +12,9 @@ public:
 	Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered = false); //constructor
 
 	void clear(uint32_t color);
-	void Clear(Material mat);
 	void Present(); // push pixels to texture and draw to screen
 	// void drawScene(Scene& scene);
-	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat); // Draw a triangle in screen space
+	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat, Quaternion* camRotInv = nullptr); // Draw a triangle in screen space
 
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
@@ -28,14 +27,14 @@ public:
 	int height;
 	bool dither;
 	static inline constexpr std::uint8_t bayer8x8[8][8] = {
-    {  2, 193,  48, 239,  14, 205,  60, 251 },
-    {129,  66, 177, 112, 141,  78, 189, 124 },
-    { 34, 225,  18, 209,  44, 235,  30, 221 },
-    {161,  98, 145,  82, 173, 110, 157,  94 },
-    { 10, 201,  56, 247,   6, 197,  52, 243 },
-    {137,  74, 185, 120, 133,  70, 181, 116 },
-    { 42, 233,  26, 217,  38, 229,  22, 213 },
-    {169, 106, 153,  90, 165, 102, 149,  86 }
+	{  2, 193,  48, 239,  14, 205,  60, 251 },
+	{129,  66, 177, 112, 141,  78, 189, 124 },
+	{ 34, 225,  18, 209,  44, 235,  30, 221 },
+	{161,  98, 145,  82, 173, 110, 157,  94 },
+	{ 10, 201,  56, 247,   6, 197,  52, 243 },
+	{137,  74, 185, 120, 133,  70, 181, 116 },
+	{ 42, 233,  26, 217,  38, 229,  22, 213 },
+	{169, 106, 153,  90, 165, 102, 149,  86 }
 	};	
 };
 

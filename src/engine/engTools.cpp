@@ -47,11 +47,6 @@ void Vertex3d::offsetPosition(Position3d offset)
 	this->position = this->position + offset;
 }
 
-void Vertex3d::rotatePosition(const Rotation3d& rot, const Position3d& pivot)
-{
-	this->position.rotateAroundPoint(rot, pivot);
-}
-
 Position3d::Position3d() //if not passed a position, we just put it at origin
 {
 	this->x = 0;
@@ -66,49 +61,27 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 	this->z = zPos;
 }
 
-// just the rotation matrices hardcoded (it's not like we're gonna want skew later on, right?)
-void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot)
+inline void Position3d::rotateQuat(const Quaternion& q) 
 {
-	// Translate to origin relative to pivot
-	float x = this->x - pivot.x;
-	float y = this->y - pivot.y;
-	float z = this->z - pivot.z;
+	// q assumed normalized
+	const float ux = q.x;
+	const float uy = q.y;
+	const float uz = q.z;
+	const float w = q.w;
 
-	// Rotate around Z
-	float cosZ = cos(rotation.roll);
-	float sinZ = sin(rotation.roll);
-	float x1 = cosZ * x - sinZ * y;
-	float y1 = sinZ * x + cosZ * y;
+	// t = 2 * (u × v)
+	const float tx = 2.0f * (uy * z - uz * y);
+	const float ty = 2.0f * (uz * x - ux * z);
+	const float tz = 2.0f * (ux * y - uy * x);
 
-	// Rotate around Y
-	float cosY = cos(rotation.yaw);
-	float sinY = sin(rotation.yaw);
-	float x2 = cosY * x1 + sinY * z;
-	float z1 = -sinY * x1 + cosY * z;
-
-	// Rotate around X
-	float cosX = cos(rotation.pitch);
-	float sinX = sin(rotation.pitch);
-	float y2 = cosX * y1 - sinX * z1;
-	float z2 = sinX * y1 + cosX * z1;
-
-	// Translate back from origin
-	this->x = x2 + pivot.x;
-	this->y = y2 + pivot.y;
-	this->z = z2 + pivot.z;
+	// v' = v + w * t + (u × t)
+	x += w * tx + (uy * tz - uz * ty);
+	y += w * ty + (uz * tx - ux * tz);
+	z += w * tz + (ux * ty - uy * tx);
 }
 
-void Position3d::rotateQuat(const Quaternion& q)
-{
-	Quaternion qv{ 0, x, y, z };
-	Quaternion result = q * qv * q.inverse();
-	this->x = result.x;
-	this->y = result.y;
-	this->z = result.z;
-}
-
-// QUATERNION (please work)
 Quaternion::Quaternion() : w(1), x(0), y(0), z(0) {}
+
 Quaternion::Quaternion(float angle, const Position3d& axis)
 {
 	float half = angle * 0.5f;
@@ -130,7 +103,7 @@ Quaternion Quaternion::operator*(const Quaternion& q) const {
 	};
 }
 
-Quaternion Quaternion::inverse() const
+Quaternion Quaternion::conjugate() const // Equivalent to inverse for unit-length quat
 {
 	return { w, -x, -y, -z };
 }
@@ -189,7 +162,7 @@ Position3d Position3d::cameraspace() const
 	if (currentScene->currentCam != nullptr)
 	{
 		cs = *this - currentScene->currentCam->pos; // Set cameraspace position by subtracting camera pos from this pos
-		Quaternion camRotQ = currentScene->currentCam->quatIdentity.inverse();
+		Quaternion camRotQ = currentScene->currentCam->quatIdentity.conjugate();
 
 		cs.rotateQuat(camRotQ);
 	}
@@ -284,7 +257,6 @@ uint32_t Colour::raw() const
 Mesh::Mesh() 
 { 
 	this->position = { 0,0,0 };
-	this->rotation = { 0,0,0 };
 	this->quatIdentity = Quaternion(); // Default identity quaternion
 	this->calcBaseVecs(); // Calculate base vectors
 	this->quatIdentity.normalise(); // Normalise the identity quaternion	
@@ -374,47 +346,6 @@ void Mesh::setPos(Position3d pos)
 	this->move(offset);
 }
 
-Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch + p2.pitch, p1.yaw + p2.yaw, p1.roll + p2.roll); }
-Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch - p2.pitch, p1.yaw - p2.yaw, p1.roll - p2.roll); }
-Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch * p2.pitch, p1.yaw * p2.yaw, p1.roll * p2.roll); }
-
-Rotation3d& Rotation3d::operator+=(const Rotation3d& other) {
-	pitch += other.pitch;
-	yaw += other.yaw;
-	roll += other.roll;
-	return *this;
-}
-
-void Mesh::rotate(const Rotation3d& rot, const Position3d& pivot)
-{
-	for (Vertex3d& vert : this->vertices)
-	{
-		vert.rotatePosition(rot, pivot);
-	}
-	this->rotation += rot;
-}
-
-void Mesh::setRotation(const Rotation3d& rot, const Position3d& pivot)
-{
-	Rotation3d offset = rot - this->rotation; // find the offset that will change the current pos to the new one
-	this->rotate(offset);
-}
-
-void Mesh::rotate(const Rotation3d& rot)
-{
-	for (Vertex3d& vert : this->vertices)
-	{
-		vert.rotatePosition(rot, this->position);
-	}
-	this->rotation += rot;
-}
-
-void Mesh::setRotation(const Rotation3d& rot)
-{
-	Rotation3d offset = rot - this->rotation; // find the offset that will change the current pos to the new one
-	this->rotate(offset);
-}
-
 void Mesh::rotateQuat(const Quaternion& q)
 {
 	Position3d center = this->position;
@@ -453,7 +384,7 @@ void Mesh::rotateAxis(float angle, const Position3d& axis, const Position3d& piv
 }
 
 void Mesh::setRotationQuat(const Quaternion& qTarget) {
-	Quaternion qDelta = qTarget * this->quatIdentity.inverse();
+	Quaternion qDelta = qTarget * this->quatIdentity.conjugate();
 	this->rotateQuat(qDelta);
 }
 
@@ -465,15 +396,6 @@ void Mesh::calcBaseVecs() // (re)calculate forward/right/up vectors
 	this->up.rotateQuat(this->quatIdentity);
 	this->right = { 1,0,0 }; // World right
 	this->right.rotateQuat(this->quatIdentity);
-}
-
-Rotation3d::Rotation3d() { pitch = 0; yaw = 0; roll = 0; }
-
-Rotation3d::Rotation3d(float x_, float y_, float z_)
-{
-	this->pitch = x_;
-	this->yaw = y_;
-	this->roll = z_;
 }
 
 bb3d::bb3d() : p1(), p2() {}

@@ -46,13 +46,19 @@ void Razor3D::clear(uint32_t color)
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
-void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
+void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Quaternion* camRotInv)
 {
+	if (camRotInv == nullptr) { camRotInv = &currentScene->currentCam->quatIdentity.conjugate(); }
+
+	Vertex3d v1c(v1.position - currentScene->currentCam->pos);
+
 	Point2d p1(v1);
 	Point2d p2(v2);
 	Point2d p3(v3);
 
+
 	// Cull tris behind the camera viewplane 
+
 	if ((v1.position.cameraspace().z <= 0 && v2.position.cameraspace().z <= 0 && v3.position.cameraspace().z <= 0) ||
 		(!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) ||
 		(p1.x == -99999 || p2.x == -99999 || p3.x == -99999)

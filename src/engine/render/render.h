@@ -19,7 +19,8 @@ public:
 	Hairline* hairline;
 	void renderScene(Scene& scene) const;
 	void clear(Colour col);
-	void clear(Material mat);
+	// void clear(Material mat);
+	void clearGrad(Colour colBot, Colour colTop, bool dither = false); // Clear display buffer in a gradient from bottom to top of screen
 	int width;
 	int height;
 private:
