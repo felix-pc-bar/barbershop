@@ -3,12 +3,14 @@
 #include <cstdlib>
 #include <chrono>
 #include <cmath>
+#include <algorithm>
 
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
 #include <SDL_scancode.h>
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
+#include <SDL_keycode.h>
 
 #include "import3d.h"
 #include "engconfig.h"
@@ -152,7 +154,8 @@ void Game::run()
 		// this->renderer->clear(Colour("grey"));
 		// this->renderer->clear(Material(Colour("black")));
 		// if (wireframe) {this->renderer->clear(Colour("black")); }
-		this->renderer->clearGrad(Colour("blue"), Colour("red"), true);
+		float inclination = (mainScene.cams[0].forward.dot({ 0, 1, 0 }) / 2) + 0.5f;
+		this->renderer->clearGrad(Colour("grey"), Colour("blue"), std::max(inclination - 0.1f, 0.0f), std::min(inclination + 0.1f, 1.0f));
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		

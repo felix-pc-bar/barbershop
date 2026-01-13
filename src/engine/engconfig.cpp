@@ -8,10 +8,10 @@ bool wireframe = false; // Toggle between shaded and wireframe
 
 Position3d lightNormal = Position3d(3.0f, 5.0f, 1.0f).normalise();
 
-int screenheight = 360;
-int screenwidth = 640;
-// int screenheight = 1080;
-// int screenwidth = 1920;
+//int screenheight = 360;
+//int screenwidth = 640;
+ int screenheight = 1080;
+ int screenwidth = 1920;
 
 /*
 1920x1080

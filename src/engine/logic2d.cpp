@@ -12,9 +12,9 @@ Point2d::Point2d() { this->x = 0; this->y = 0; }
 
 Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
-Point2d::Point2d(const Vertex3d& from3d)
+Point2d::Point2d(const Vertex3d& from3d, Quaternion* camRotInv)
 {
-	Position3d cs = from3d.position.cameraspace();
+	Position3d cs = from3d.position.cameraspace(camRotInv);
 	// Perspective projection
 	float pf = perspectiveFac / screenheight;
 	float perspscale = pf * cs.z;

@@ -156,15 +156,20 @@ void Position3d::flip()
 	this->z = -this->z;
 }
 
-Position3d Position3d::cameraspace() const
+Position3d Position3d::cameraspace(Quaternion* camRotInv) const
 {	
 	Position3d cs;
 	if (currentScene->currentCam != nullptr)
 	{
 		cs = *this - currentScene->currentCam->pos; // Set cameraspace position by subtracting camera pos from this pos
-		Quaternion camRotQ = currentScene->currentCam->quatIdentity.conjugate();
+		Quaternion cri = Quaternion();
+		if (camRotInv == nullptr)
+		{
+			cri = currentScene->currentCam->quatIdentity.conjugate();
+		}
+		else { cri = *camRotInv; }
 
-		cs.rotateQuat(camRotQ);
+		cs.rotateQuat(cri);
 	}
 	return cs;
 }

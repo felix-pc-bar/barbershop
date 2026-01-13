@@ -46,15 +46,21 @@ void Razor3D::clear(uint32_t color)
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
+
 void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Quaternion* camRotInv)
 {
-	if (camRotInv == nullptr) { camRotInv = &currentScene->currentCam->quatIdentity.conjugate(); }
+	//Quaternion cri = Quaternion();
+	//if (camRotInv == nullptr) 
+	//{
+	//	cri = currentScene->currentCam->quatIdentity.conjugate();
+	//}
+	//else { cri = *camRotInv;  }
 
 	Vertex3d v1c(v1.position - currentScene->currentCam->pos);
 
-	Point2d p1(v1);
-	Point2d p2(v2);
-	Point2d p3(v3);
+	Point2d p1(v1, camRotInv);
+	Point2d p2(v2, camRotInv);
+	Point2d p3(v3, camRotInv);
 
 
 	// Cull tris behind the camera viewplane 
@@ -81,6 +87,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 	viewDir.normalise();
 	uint32_t rawColour = 0xFFFF00FF; // Magenta by default
 	uint16_t ditherVal = 0;
+	uint32_t ditherDark = Colour("black").raw();
 	if (mat.colour.alpha == 1.0f && mat.shadeMat) // Shade with hybrid diffuse algorithm (not physically acccurate)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
@@ -203,7 +210,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 				{
 					// rawColour = Colour("white").raw();
 					if (dither && ditherVal < bayer8x8[x % 8][y % 8])
-					{ pixShaded[baseIndex + x] = Colour("black").raw(); }
+					{ pixShaded[baseIndex + x] = ditherDark; }
 					else { pixShaded[baseIndex + x] = rawColour; }
 					bufIsDrawn[baseIndex + x] = true;
 				}
@@ -243,7 +250,6 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 		{
 			if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 			{
-				// We get a reference to the current pixel in the array made above; still by refernce so changes the vector
 				uint32_t& dest = pixShaded[baseIndex + x];
 				bufIsDrawn[baseIndex + x] = true;
 
@@ -256,7 +262,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 				uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
 				uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
 
-				// Optionally blend alpha too � here we just preserve max of src/dst
+				// Optionally blend alpha too; here we just preserve max of src/dst
 				uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
 
 				dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;

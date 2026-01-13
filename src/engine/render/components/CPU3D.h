@@ -45,6 +45,7 @@ struct TriangleToRender
 	Material material;
 	TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat);
 };
+
 struct PointToRender 
 {
 	Position3d pos;

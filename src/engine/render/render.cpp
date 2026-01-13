@@ -130,27 +130,28 @@ void cRenderer::renderScene(Scene& scene) const
 		});
 
 	// Draw
+	Quaternion cameraRotationInverse = currentScene->currentCam->quatIdentity.conjugate();
 	for (TriangleToRender& tri : triangles)
 	{
-		Point2d p1(tri.v1);
-		Point2d p2(tri.v2);
-		Point2d p3(tri.v3);
-
-		if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) && 
-			(isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) &&
-			(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
-		)
+		if (wireframe)
 		{
-			if (wireframe)
+			Point2d p1(tri.v1);
+			Point2d p2(tri.v2);
+			Point2d p3(tri.v3);
+
+			if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) &&
+				(isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) &&
+				(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
+				)
 			{
 				this->hairline->drawLine(Point2d(tri.v1), Point2d(tri.v2), tri.material.colour.raw());
 				this->hairline->drawLine(Point2d(tri.v2), Point2d(tri.v3), tri.material.colour.raw());
 				this->hairline->drawLine(Point2d(tri.v3), Point2d(tri.v1), tri.material.colour.raw());
 			}
-			else
-			{
-				this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
-			}
+		}
+		else
+		{
+			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, &cameraRotationInverse);
 		}
 	}
 	for (PointToRender& pt : renderPoints)
@@ -187,9 +188,9 @@ void cRenderer::clear(Colour col)
 // 	return;
 // }
 
-void cRenderer::clearGrad(Colour colBot, Colour colTop, bool dither)
+void cRenderer::clearGrad(Colour colBot, Colour colTop, float ditherValBot, float ditherValTop)
 {
-	if (!dither)
+	if (ditherValBot == -1.0f)
 	{
 		float r = colTop.red;
 		float rStep = (colBot.red - colTop.red) / (float)this->height;
@@ -212,18 +213,34 @@ void cRenderer::clearGrad(Colour colBot, Colour colTop, bool dither)
 	}
 	else
 	{
-		float val = 0;
-		float valStep = 256 / (float)this->height;
+		float val = ditherValTop * 256.0f;
+		float valStep = (-256 * ditherValTop) / (float)this->height;
 		uint32_t colBotRaw = colBot.raw();
 		uint32_t colTopRaw = colTop.raw();
-		for (int y = 0; y < this->height; y++)
+		for (int y = 0; y < height; ++y)
 		{
-			for (int x = 0; x < this->width; x++)
+			const uint8_t* b = razor3d->bayer8x8[y & 7];
+			uint32_t* row = bufScreen.data() + y * width;
+
+			int x = 0;
+			for (; x + 7 < width; x += 8)
 			{
-				this->bufScreen[(y*this->width) + x] = val > this->razor3d->bayer8x8[x % 8][y % 8] ? colBotRaw : colTopRaw;
+				row[x + 0] = val < b[0] ? colBotRaw : colTopRaw;
+				row[x + 1] = val < b[1] ? colBotRaw : colTopRaw;
+				row[x + 2] = val < b[2] ? colBotRaw : colTopRaw;
+				row[x + 3] = val < b[3] ? colBotRaw : colTopRaw;
+				row[x + 4] = val < b[4] ? colBotRaw : colTopRaw;
+				row[x + 5] = val < b[5] ? colBotRaw : colTopRaw;
+				row[x + 6] = val < b[6] ? colBotRaw : colTopRaw;
+				row[x + 7] = val < b[7] ? colBotRaw : colTopRaw;
+			}
+
+			for (; x < width; ++x)
+			{
+				row[x] = val < b[x & 7] ? colBotRaw : colTopRaw;
 			}
 			val += valStep;
-		}
+		}	
 		return;
 	}
 }

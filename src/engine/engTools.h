@@ -17,7 +17,7 @@ public:
 	double x, y, z;
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
-	Position3d cameraspace() const;
+	Position3d cameraspace(Quaternion* camInvRot = nullptr) const;
 	void rotateQuat(const Quaternion& q);
 
 	// Vector stuff
