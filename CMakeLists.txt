@@ -27,9 +27,8 @@ add_executable(barbershop
     src/engine/render/components/CPU2D.h
     src/engine/render/components/CPU2D.cpp
 
-    src/engine/engTools.cpp
-
     src/engine/general3d.h
+    src/engine/general3d.cpp
 
     src/engine/general2d.h
     src/engine/general2d.cpp
@@ -47,6 +46,7 @@ add_executable(barbershop
     src/engine/quaternion.cpp
 
     src/engine/material.h
+    src/engine/material.cpp
 
     src/app_icon.rc
 )

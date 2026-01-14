@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <chrono>
 #include <cmath>
-#include <algorithm>
 
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
@@ -17,6 +16,8 @@
 #include "game.h"
 #include "general3d.h"
 #include "render/render.h"
+#include "material.h"
+#include "quaternion.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -72,11 +73,13 @@ void Game::run()
 	for (int i = 1; i <= numMonkeys; i++)
 	{
 		mainScene.addObject(importObj("content/obj/ico.obj"));
-		if (i % 5 == 0) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
-		if (i % 5 == 1) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
-		if (i % 5 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
-		if (i % 5 == 3) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
-		if (i % 5 == 4) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
+		if (i % 7 == 0) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
+		if (i % 7 == 1) { mainScene.objects[i].materials[0] = Material(Colour("green")); }
+		if (i % 7 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
+		if (i % 7 == 3) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
+		if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
+		if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
+		if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
 	}
 
 	// mainScene.addObject(importObj("content/obj/sz2.obj"));
@@ -155,10 +158,10 @@ void Game::run()
 		// this->renderer->clear(Material(Colour("black")));
 		// if (wireframe) {this->renderer->clear(Colour("black")); }
 		Position3d botVec = mainScene.cams[0].forward;
-		botVec.rotateQuat(Quaternion(pi / 6.0f, mainScene.cams[0].right));
+		botVec.rotateQuat(Quaternion(mainScene.cams[0].fov / 2.0f, mainScene.cams[0].right));
 		float botInclination = botVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
 		Position3d topVec = mainScene.cams[0].forward;
-		topVec.rotateQuat(Quaternion(pi / -6.0f, mainScene.cams[0].right));
+		topVec.rotateQuat(Quaternion(mainScene.cams[0].fov / -2.0f, mainScene.cams[0].right));
 		float topInclination = topVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
 		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), botInclination, topInclination);
 		this->renderer->renderScene(*currentScene);

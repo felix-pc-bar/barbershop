@@ -1,6 +1,8 @@
-#include "quaternion.h"
 #include <ostream>
 #include <cmath>
+
+#include "quaternion.h"
+#include "general3d.h"
 
 using std::ostream;
 
@@ -29,6 +31,18 @@ void Quaternion::normalise()
 	x /= mag;
 	y /= mag;
 	z /= mag;
+}
+
+Quaternion::Quaternion() : w(1), x(0), y(0), z(0) {}
+
+Quaternion::Quaternion(float angle, const Position3d& axis)
+{
+	float half = angle * 0.5f;
+	float s = sin(half);
+	w = cos(half);
+	x = axis.x * s;
+	y = axis.y * s;
+	z = axis.z * s;
 }
 
 ostream& operator<<(ostream& os, const Quaternion& q)
