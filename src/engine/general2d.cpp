@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 
-#include "logic2d.h"
+#include "general2d.h"
 #include "globals.h"
-#include "engTools.h"
+#include "general3d.h"
 
 using std::vector, std::cout, std::endl;
 

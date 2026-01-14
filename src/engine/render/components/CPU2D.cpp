@@ -5,8 +5,8 @@
 #include <SDL_render.h>
 
 #include "CPU2D.h"
-#include "../../engTools.h"
-#include "../../logic2d.h"
+#include "../../general3d.h"
+#include "../../general2d.h"
 
 Hairline::Hairline(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {

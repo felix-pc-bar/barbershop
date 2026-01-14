@@ -4,8 +4,8 @@
 #include <vector>
 #include <SDL_render.h>
 
-#include "../../engTools.h"
-#include "../../logic2d.h"
+#include "../../general3d.h"
+#include "../../general2d.h"
 
 class Hairline{
 public:

@@ -21,9 +21,9 @@ add_executable(barbershop
     src/engine/render/components/CPU3D.cpp
     src/engine/render/components/CPU3D.h
     src/engine/engTools.cpp
-    src/engine/engTools.h
-    src/engine/logic2d.cpp
-    src/engine/logic2d.h
+    src/engine/general3d.h
+    src/engine/general2d.cpp
+    src/engine/general2d.h
     src/engine/globals.h
     src/engine/globals.cpp
     src/engine/import3d.cpp

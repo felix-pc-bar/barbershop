@@ -5,7 +5,7 @@
 #include <SDL_render.h>
 
 //#include "ARenderer.h"
-#include "../../engTools.h"
+#include "../../general3d.h"
 
 class Razor3D{
 public:

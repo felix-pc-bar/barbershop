@@ -19,8 +19,8 @@
 #include "components/CPU2D.h"
 
 #include "../globals.h"
-#include "../engTools.h"
-#include "../logic2d.h"
+#include "../general3d.h"
+#include "../general2d.h"
 
 using std::cout, std::endl;
 

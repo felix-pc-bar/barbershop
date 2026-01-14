@@ -7,8 +7,8 @@
 #include <SDL_render.h>
 
 #include "CPU3D.h"
-#include "../../engTools.h"
-#include "../../logic2d.h"
+#include "../../general3d.h"
+#include "../../general2d.h"
 #include "../../globals.h"
 
 using std::endl, std::cout;

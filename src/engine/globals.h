@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engTools.h"
+#include "general3d.h"
 
 extern float globfpsTarget;
 extern float globFOVrads;

@@ -8,7 +8,7 @@
 
 #include "components/CPU2D.h"
 #include "components/CPU3D.h"
-#include "../engTools.h"
+#include "../general3d.h"
 
 class cRenderer // Composite render class housing other specialised renderer objects
 {

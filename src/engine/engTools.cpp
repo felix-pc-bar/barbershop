@@ -6,8 +6,10 @@
 #include <string>
 #include <vector>
 
-#include "engTools.h"
+#include "general3d.h"
+#include "material.h"
 #include "globals.h"
+#include "quaternion.h"
 
 using std::vector, std::cout, std::endl, std::sin, std::cos;
 

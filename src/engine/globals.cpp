@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "engTools.h"
+#include "general3d.h"
 
 float globfpsTarget = 30.0f;
 float globFOVrads = pi / 1.5f;
