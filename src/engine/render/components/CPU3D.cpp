@@ -9,7 +9,7 @@
 #include "CPU3D.h"
 #include "../../engTools.h"
 #include "../../logic2d.h"
-#include "../../engconfig.h"
+#include "../../globals.h"
 
 using std::endl, std::cout;
 
@@ -47,7 +47,7 @@ void Razor3D::clear(uint32_t color)
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Quaternion* camRotInv)
+void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Camera* cam)
 {
 	//Quaternion cri = Quaternion();
 	//if (camRotInv == nullptr) 
@@ -58,15 +58,17 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 
 	Vertex3d v1c(v1.position - currentScene->currentCam->pos);
 
-	Point2d p1(v1, camRotInv);
-	Point2d p2(v2, camRotInv);
-	Point2d p3(v3, camRotInv);
-
+	// Point2d p1(v1, camRotInv);
+	// Point2d p2(v2, camRotInv);
+	// Point2d p3(v3, camRotInv);
+	Point2d p1 = v1.position.project(cam);
+	Point2d p2 = v2.position.project(cam);
+	Point2d p3 = v3.position.project(cam);
 
 	// Cull tris behind the camera viewplane 
 
 	if ((v1.position.cameraspace().z <= 0 && v2.position.cameraspace().z <= 0 && v3.position.cameraspace().z <= 0) ||
-		(!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) ||
+		(!isTriangleOnScreen(p1, p2, p3, globScreenwidth, globScreenheight)) ||
 		(p1.x == -99999 || p2.x == -99999 || p3.x == -99999)
 		)
 	{
@@ -91,7 +93,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 	if (mat.colour.alpha == 1.0f && mat.shadeMat) // Shade with hybrid diffuse algorithm (not physically acccurate)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
-		float dot = normal.dot(lightNormal);
+		float dot = normal.dot(globLightNormal);
 
 		if (dither) 
 		{
@@ -117,7 +119,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Q
 
 	// Extract alpha from colour
 	uint8_t srcA = mat.colour.alpha * 255;
-	Rect2d bb(v1, v2, v3);
+	Rect2d bb(p1, p2, p3);
 
 	int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
 	int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;

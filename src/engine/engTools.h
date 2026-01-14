@@ -6,9 +6,13 @@
 #include <cstdint>
 #include <unordered_map>
 
+#include "logic2d.h"
+
 using std::vector, std::ostream, std::string;
 
 class Quaternion;
+
+class Camera;
 
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
@@ -19,7 +23,8 @@ public:
 	Position3d();
 	Position3d cameraspace(Quaternion* camInvRot = nullptr) const;
 	void rotateQuat(const Quaternion& q);
-
+	Point2d project(Camera* cam);
+	
 	// Vector stuff
 	Position3d cross(const Position3d& operand) const;
 	float dot(const Position3d& operand) const;
@@ -61,15 +66,21 @@ public:
 class Camera
 {
 public:
+	Camera();
 	Position3d pos;
 	Quaternion quatIdentity; // Stores the "identity" of the cam orientation, for base vecs
+	Quaternion camRotInv; //Used for cameraspace calcs
+	float invTanHalfFov; //NEEDS TO BE RECALCULATED WITH FOV CHANGE
+	float fov; // Don't set manually!
+	float aspect; //Ratio of screen
 
 	Position3d up;
 	Position3d right;
 	Position3d forward;
 
 	void rotateCam(float angle, const Position3d& axis);
-	void calcBaseVecs(); // (re)calculate forward/right/up vectors
+	void calcCamData(); // (re)calculate base vectors, inverse rotation
+	void setFov(float fov);
 };
 
 class Vertex3d

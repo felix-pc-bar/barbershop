@@ -24,8 +24,8 @@ add_executable(barbershop
     src/engine/engTools.h
     src/engine/logic2d.cpp
     src/engine/logic2d.h
-    src/engine/engconfig.h
-    src/engine/engconfig.cpp
+    src/engine/globals.h
+    src/engine/globals.cpp
     src/engine/import3d.cpp
     src/engine/import3d.h
     src/engine/game.cpp

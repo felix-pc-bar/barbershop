@@ -18,7 +18,7 @@
 #include "components/CPU3D.h"
 #include "components/CPU2D.h"
 
-#include "../engconfig.h"
+#include "../globals.h"
 #include "../engTools.h"
 #include "../logic2d.h"
 
@@ -43,23 +43,23 @@ cRenderer::cRenderer()
 		system("pause");
 	}
 
-	result = SDL_CreateWindowAndRenderer(screenwidth, screenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
+	result = SDL_CreateWindowAndRenderer(globScreenwidth, globScreenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
 	if (result < 0)
 	{
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
-	this->width = screenwidth; // from global config, can be changed later
-	this->height = screenheight;
+	this->width = globScreenwidth; // from global config, can be changed later
+	this->height = globScreenheight;
 
 	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
-	this->bufScreen.resize(screenwidth * screenheight, 0xFF000000);
-	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->razor3d = new Razor3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen, true); // Create viewport
-	this->hairline = new Hairline(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
+	this->bufScreen.resize(globScreenwidth * globScreenheight, 0xFF000000);
+	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, globScreenwidth, globScreenheight);
+	this->razor3d = new Razor3D(screenTexture, sdlRenderer, globScreenwidth, globScreenheight, &this->bufScreen, true); // Create viewport
+	this->hairline = new Hairline(screenTexture, sdlRenderer, globScreenwidth, globScreenheight, &this->bufScreen); // Create viewport
 }
 
 cRenderer::~cRenderer() {
@@ -110,7 +110,7 @@ void cRenderer::renderScene(Scene& scene) const
 				}
 			}
 		}
-		if (!ob.points.empty() && drawPoints)
+		if (!ob.points.empty() && globDrawPoints)
 		{
 			for (Position3d point : ob.points)
 			{
@@ -133,32 +133,32 @@ void cRenderer::renderScene(Scene& scene) const
 	Quaternion cameraRotationInverse = currentScene->currentCam->quatIdentity.conjugate();
 	for (TriangleToRender& tri : triangles)
 	{
-		if (wireframe)
+		if (globWireframe)
 		{
-			Point2d p1(tri.v1);
-			Point2d p2(tri.v2);
-			Point2d p3(tri.v3);
+			Point2d p1 = tri.v1.position.project(scene.currentCam);
+			Point2d p2 = tri.v2.position.project(scene.currentCam);
+			Point2d p3 = tri.v3.position.project(scene.currentCam);
 
 			if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) &&
-				(isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) &&
+				(isTriangleOnScreen(p1, p2, p3, globScreenwidth, globScreenheight)) &&
 				(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
 				)
 			{
-				this->hairline->drawLine(Point2d(tri.v1), Point2d(tri.v2), tri.material.colour.raw());
-				this->hairline->drawLine(Point2d(tri.v2), Point2d(tri.v3), tri.material.colour.raw());
-				this->hairline->drawLine(Point2d(tri.v3), Point2d(tri.v1), tri.material.colour.raw());
+				this->hairline->drawLine(p1, p2, tri.material.colour.raw());
+				this->hairline->drawLine(p2, p3, tri.material.colour.raw());
+				this->hairline->drawLine(p3, p1, tri.material.colour.raw());
 			}
 		}
 		else
 		{
-			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, &cameraRotationInverse);
+			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, scene.currentCam);
 		}
 	}
 	for (PointToRender& pt : renderPoints)
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			this->hairline->drawPoint(Point2d(pt.pos), pt.material.pointWidth);
+			this->hairline->drawPoint(pt.pos.project(scene.currentCam), pt.material.pointWidth);
 		}
 	}
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
@@ -214,7 +214,7 @@ void cRenderer::clearGrad(Colour colBot, Colour colTop, float ditherValBot, floa
 	else
 	{
 		float val = ditherValTop * 256.0f;
-		float valStep = (-256 * ditherValTop) / (float)this->height;
+		float valStep = ((ditherValBot * 256.0f) - val) / (float)this->height;
 		uint32_t colBotRaw = colBot.raw();
 		uint32_t colTopRaw = colTop.raw();
 		for (int y = 0; y < height; ++y)

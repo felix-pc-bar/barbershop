@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "logic2d.h"
-#include "engconfig.h"
+#include "globals.h"
 #include "engTools.h"
 
 using std::vector, std::cout, std::endl;
@@ -12,21 +12,21 @@ Point2d::Point2d() { this->x = 0; this->y = 0; }
 
 Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
-Point2d::Point2d(const Vertex3d& from3d, Quaternion* camRotInv)
-{
-	Position3d cs = from3d.position.cameraspace(camRotInv);
-	// Perspective projection
-	float pf = perspectiveFac / screenheight;
-	float perspscale = pf * cs.z;
+// Point2d::Point2d(const Vertex3d& from3d, Quaternion* camRotInv)
+// {
+// 	Position3d cs = from3d.position.cameraspace(camRotInv);
+// 	// Perspective projection
+// 	float pf = perspectiveFac / screenheight;
+// 	float perspscale = pf * cs.z;
 
-	if (perspscale <= 0.0001f) {
-		this->x = this->y = -99999;  // sentinel
-		return;
-	}
+// 	if (perspscale <= 0.0001f) {
+// 		this->x = this->y = -99999;  // sentinel
+// 		return;
+// 	}
 
-	this->x = cs.x / perspscale + screenwidth * 0.5f;
-	this->y = cs.y / perspscale + screenheight * 0.5f;
-}
+// 	this->x = cs.x / perspscale + screenwidth * 0.5f;
+// 	this->y = cs.y / perspscale + screenheight * 0.5f;
+// }
 
 Point2d operator+(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x + p2.x, p1.y + p2.y); }
 Point2d operator-(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x - p2.x, p1.y - p2.y); }
@@ -61,6 +61,6 @@ Rect2d::Rect2d(Point2d v1, Point2d v2, Point2d v3) // Bounding box of 3 points
 {
 	this->min.x = std::max(std::min(v1.x, std::min(v2.x, v3.x )), 0);
 	this->min.y = std::max(std::min(v1.y, std::min(v2.y, v3.y )), 0);
-	this->max.x = std::min(std::max(v1.x, std::max(v2.x, v3.x )),screenwidth);
-	this->max.y = std::min(std::max(v1.y, std::max(v2.y, v3.y )),screenheight);
+	this->max.x = std::min(std::max(v1.x, std::max(v2.x, v3.x )),globScreenwidth);
+	this->max.y = std::min(std::max(v1.y, std::max(v2.y, v3.y )),globScreenheight);
 }

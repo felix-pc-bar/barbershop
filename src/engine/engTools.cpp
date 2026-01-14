@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "engTools.h"
+#include "globals.h"
 
 using std::vector, std::cout, std::endl, std::sin, std::cos;
 
@@ -69,15 +70,31 @@ inline void Position3d::rotateQuat(const Quaternion& q)
 	const float uz = q.z;
 	const float w = q.w;
 
-	// t = 2 * (u × v)
+	// t = 2 * (u * v)
 	const float tx = 2.0f * (uy * z - uz * y);
 	const float ty = 2.0f * (uz * x - ux * z);
 	const float tz = 2.0f * (ux * y - uy * x);
 
-	// v' = v + w * t + (u × t)
+	// v' = v + w * t + (u * t)
 	x += w * tx + (uy * tz - uz * ty);
 	y += w * ty + (uz * tx - ux * tz);
 	z += w * tz + (ux * ty - uy * tx);
+}
+
+Point2d Position3d::project(Camera* cam)
+{
+	Point2d result = Point2d(-99999, -99999);
+	Position3d cs = this->cameraspace(&cam->camRotInv);
+	float z = cs.z;
+	if (z <= 0.00001f) { return result; }
+
+	// Perspective projection
+	// float perspScale =  z / cam->invTanHalfFov;
+	float perspScale =  (z / globScreenheight) / cam->invTanHalfFov;
+
+	result.x = cs.x / perspScale + globScreenwidth * 0.5f;
+	result.y = cs.y / perspScale + globScreenheight * 0.5f;
+	return result;
 }
 
 Quaternion::Quaternion() : w(1), x(0), y(0), z(0) {}
@@ -422,6 +439,18 @@ bool bb3d::containsMesh(Mesh m) const
 		(p.z >= minZ && p.z <= maxZ);
 }
 
+Camera::Camera() 
+{
+	this->aspect = (float)globScreenwidth / (float)globScreenheight; //Fix this later? not priority
+	this->setFov(globFOVrads);
+}
+
+void Camera::setFov(float newFovRads)
+{
+	this->fov = newFovRads;
+	this->invTanHalfFov = 1.0f / std::tanf(fov * 0.5f);
+}
+
 void Camera::rotateCam(float angle, const Position3d& axis) // Axis is in global space!
 {
 	Quaternion qDelta(angle, axis);
@@ -429,7 +458,7 @@ void Camera::rotateCam(float angle, const Position3d& axis) // Axis is in global
 	this->quatIdentity.normalise();
 }
 
-void Camera::calcBaseVecs() 
+void Camera::calcCamData() 
 {
 	this->forward = { 0,0,1 }; // World forward
 	this->forward.rotateQuat(this->quatIdentity);
@@ -437,6 +466,7 @@ void Camera::calcBaseVecs()
 	this->up.rotateQuat(this->quatIdentity);
 	this->right = { 1,0,0 }; // World right
 	this->right.rotateQuat(this->quatIdentity);
+	this->camRotInv = this->quatIdentity.conjugate();
 }
 
 void Scene::addObject(Object3D ob)

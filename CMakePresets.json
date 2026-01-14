@@ -3,7 +3,8 @@
   "configurePresets": [
     {
       "name": "mingw-debug",
-      "displayName": "mingw-debug",
+      "displayName": "MinGW (Debug)",
+      "description": "MinGW build for everyday debugging (no profiling)",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
@@ -17,7 +18,8 @@
     },
     {
       "name": "mingw-release",
-      "displayName": "mingw-release",
+      "displayName": "MinGW (Release)",
+      "description": "MinGW build for releases (no debugging symbols)",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {

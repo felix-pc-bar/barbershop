@@ -13,7 +13,7 @@
 #include <SDL_keycode.h>
 
 #include "import3d.h"
-#include "engconfig.h"
+#include "globals.h"
 #include "game.h"
 #include "engTools.h"
 #include "render/render.h"
@@ -67,18 +67,18 @@ void Game::run()
 		}
 	}
 
-	int numMonkeys = 5;
+	int numMonkeys = 150;
 
 	for (int i = 1; i <= numMonkeys; i++)
 	{
-		mainScene.addObject(importObj("content/obj/suzanne.obj"));
+		mainScene.addObject(importObj("content/obj/ico.obj"));
+		if (i % 5 == 0) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
+		if (i % 5 == 1) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
+		if (i % 5 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
+		if (i % 5 == 3) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
+		if (i % 5 == 4) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
 	}
 
-	mainScene.objects[1].materials[0] = Material(Colour("orange"));
-	mainScene.objects[2].materials[0] = Material(Colour("blue"));
-	mainScene.objects[3].materials[0] = Material(Colour("yellow"));
-	mainScene.objects[4].materials[0] = Material(Colour("red"));
-	mainScene.objects[5].materials[0] = Material(Colour("aqua"));
 	// mainScene.addObject(importObj("content/obj/sz2.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
 
@@ -104,7 +104,7 @@ void Game::run()
 			dt += fpsLimTick - dt;
 			currentTime = dtclock::now();
 		}
-		float dtMulti = dt / (1.0f / fpsTarget);
+		float dtMulti = dt / (1.0f / globfpsTarget);
 		lastTime = currentTime;
 		float fps = 1.0f / dt;
 		dtFac = dt * 60.0f;
@@ -116,7 +116,7 @@ void Game::run()
 		}
 
 		// Handle inputs
-		mainScene.cams[0].calcBaseVecs();
+		mainScene.cams[0].calcCamData();
 		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)){
 			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
@@ -135,8 +135,8 @@ void Game::run()
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
 				// Keypress events here
-				if (event.key.keysym.sym == SDLK_1) {drawPoints = !drawPoints;}
-				if (event.key.keysym.sym == SDLK_2) {wireframe = !wireframe;}
+				if (event.key.keysym.sym == SDLK_1) {globDrawPoints = !globDrawPoints;}
+				if (event.key.keysym.sym == SDLK_2) {globWireframe = !globWireframe;}
 				if (event.key.keysym.sym == SDLK_3) {this->renderer->razor3d->dither = !this->renderer->razor3d->dither;}
 			}
 		}
@@ -154,16 +154,23 @@ void Game::run()
 		// this->renderer->clear(Colour("grey"));
 		// this->renderer->clear(Material(Colour("black")));
 		// if (wireframe) {this->renderer->clear(Colour("black")); }
-		float inclination = (mainScene.cams[0].forward.dot({ 0, 1, 0 }) / 2) + 0.5f;
-		this->renderer->clearGrad(Colour("grey"), Colour("blue"), std::max(inclination - 0.1f, 0.0f), std::min(inclination + 0.1f, 1.0f));
+		Position3d botVec = mainScene.cams[0].forward;
+		botVec.rotateQuat(Quaternion(pi / 6.0f, mainScene.cams[0].right));
+		float botInclination = botVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
+		Position3d topVec = mainScene.cams[0].forward;
+		topVec.rotateQuat(Quaternion(pi / -6.0f, mainScene.cams[0].right));
+		float topInclination = topVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
+		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), botInclination, topInclination);
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		
 		for (int i = 1; i <= numMonkeys; i++)
 		{
-			mainScene.objects[i].mesh->rotateAxis(std::sin(gameTime * pi * (0.5f * (float)i)) / 5.0f, Position3d(1.0f, 0.0f, 0.0f));
-			mainScene.objects[i].mesh->rotateAxis(0.1f, Position3d(0.0f, 1.0f, 0.0f));
-			mainScene.objects[i].mesh->setPos(Position3d(std::sin(gameTime * pi * (0.1f * (float)i)) * 2, std::sin(gameTime * pi * (0.3f * (float)i)) * 2, std::sin(gameTime * pi * (0.2f * (float)i))) * 2);
+			mainScene.objects[i].mesh->rotateAxis(std::sin(gameTime * pi * (0.05f * (float)i)) * 0.05f * dtFac, Position3d(1.0f, 0.0f, 0.0f));
+			mainScene.objects[i].mesh->rotateAxis(0.05f * dtFac, Position3d(0.0f, 1.0f, 0.0f));
+			mainScene.objects[i].mesh->setPos(Position3d(std::sin((gameTime * pi * 0.22f) - 0.31f * (float)i) * 3, std::sin((gameTime * pi * 0.3f) - 0.41f * (float)i) * 3, std::sin((gameTime * pi * 0.41f) - 0.31f * i)) * 5);
+
+
 		}
 
 	}
