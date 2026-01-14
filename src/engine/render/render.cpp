@@ -21,6 +21,7 @@
 #include "../globals.h"
 #include "../general3d.h"
 #include "../general2d.h"
+#include "../quaternion.h"
 
 using std::cout, std::endl;
 

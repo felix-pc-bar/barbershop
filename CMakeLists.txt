@@ -18,22 +18,36 @@ set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2")
 
 add_executable(barbershop
     src/main.cpp
-    src/engine/render/components/CPU3D.cpp
-    src/engine/render/components/CPU3D.h
-    src/engine/engTools.cpp
-    src/engine/general3d.h
-    src/engine/general2d.cpp
-    src/engine/general2d.h
-    src/engine/globals.h
-    src/engine/globals.cpp
-    src/engine/import3d.cpp
-    src/engine/import3d.h
-    src/engine/game.cpp
+
     src/engine/game.h
+    src/engine/game.cpp
+
+    src/engine/render/components/CPU3D.h
+    src/engine/render/components/CPU3D.cpp
     src/engine/render/components/CPU2D.h
     src/engine/render/components/CPU2D.cpp
+
+    src/engine/engTools.cpp
+
+    src/engine/general3d.h
+
+    src/engine/general2d.h
+    src/engine/general2d.cpp
+
+    src/engine/globals.h
+    src/engine/globals.cpp
+
+    src/engine/import3d.h
+    src/engine/import3d.cpp
+
     src/engine/render/render.h
     src/engine/render/render.cpp
+
+    src/engine/quaternion.h
+    src/engine/quaternion.cpp
+
+    src/engine/material.h
+
     src/app_icon.rc
 )
 
