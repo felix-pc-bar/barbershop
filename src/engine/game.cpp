@@ -82,7 +82,7 @@ void Game::run()
 		if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
 	}
 
-	// mainScene.addObject(importObj("content/obj/sz2.obj"));
+	// mainScene.addObject(importObj("content/obj/szfl.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
 
 	// mainScene.addObject(importObj("content/obj/skysphere.obj"));
@@ -137,10 +137,9 @@ void Game::run()
 			}
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
-				// Keypress events here
-				if (event.key.keysym.sym == SDLK_1) {globDrawPoints = !globDrawPoints;}
-				if (event.key.keysym.sym == SDLK_2) {globWireframe = !globWireframe;}
-				if (event.key.keysym.sym == SDLK_3) {this->renderer->razor3d->dither = !this->renderer->razor3d->dither;}
+				if (event.key.keysym.sym == SDLK_z) {globDrawPoints = !globDrawPoints;}
+				if (event.key.keysym.sym == SDLK_x) {globWireframe = !globWireframe;}
+				if (event.key.keysym.sym == SDLK_c) {this->renderer->razor3d->dither = !this->renderer->razor3d->dither;}
 			}
 		}
 
@@ -153,6 +152,22 @@ void Game::run()
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
+
+		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_1])
+		{
+			this->renderer->~cRenderer();
+			this->renderer = new cRenderer(globScreenwidth / 1, globScreenheight / 1);
+		} 
+		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_2])
+		{
+			this->renderer->~cRenderer();
+			this->renderer = new cRenderer(globScreenwidth / 2, globScreenheight / 2);
+		} 
+		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_3])
+		{
+			this->renderer->~cRenderer();
+			this->renderer = new cRenderer(globScreenwidth / 3, globScreenheight / 3);
+		} 
 
 		// this->renderer->clear(Colour("grey"));
 		// this->renderer->clear(Material(Colour("black")));
@@ -172,8 +187,6 @@ void Game::run()
 			mainScene.objects[i].mesh->rotateAxis(std::sin(gameTime * pi * (0.05f * (float)i)) * 0.05f * dtFac, Position3d(1.0f, 0.0f, 0.0f));
 			mainScene.objects[i].mesh->rotateAxis(0.05f * dtFac, Position3d(0.0f, 1.0f, 0.0f));
 			mainScene.objects[i].mesh->setPos(Position3d(std::sin((gameTime * pi * 0.22f) - 0.31f * (float)i) * 3, std::sin((gameTime * pi * 0.3f) - 0.41f * (float)i) * 3, std::sin((gameTime * pi * 0.41f) - 0.31f * i)) * 5);
-
-
 		}
 
 	}

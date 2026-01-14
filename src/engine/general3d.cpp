@@ -10,6 +10,7 @@
 #include "material.h"
 #include "globals.h"
 #include "quaternion.h"
+#include "render/render.h"
 
 using std::vector, std::cout, std::endl, std::sin, std::cos;
 
@@ -83,7 +84,7 @@ inline void Position3d::rotateQuat(const Quaternion& q)
 	z += w * tz + (ux * ty - uy * tx);
 }
 
-Point2d Position3d::project(Camera* cam)
+Point2d Position3d::project(Camera* cam, const cRenderer* renderer)
 {
 	Point2d result = Point2d(-99999, -99999);
 	Position3d cs = this->cameraspace(&cam->camRotInv);
@@ -92,10 +93,10 @@ Point2d Position3d::project(Camera* cam)
 
 	// Perspective projection
 	// float perspScale =  z / cam->invTanHalfFov;
-	float perspScale =  (z / globScreenheight) / cam->invTanHalfFov;
+	float perspScale =  (z / (renderer == nullptr ? globScreenheight : renderer->height)) / cam->invTanHalfFov;
 
-	result.x = cs.x / perspScale + globScreenwidth * 0.5f;
-	result.y = cs.y / perspScale + globScreenheight * 0.5f;
+	result.x = cs.x / perspScale + (renderer == nullptr ? globScreenwidth : renderer->width) * 0.5f;
+	result.y = cs.y / perspScale + (renderer == nullptr ? globScreenheight : renderer->height) * 0.5f;
 	return result;
 }
 

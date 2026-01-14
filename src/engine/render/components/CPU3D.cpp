@@ -47,7 +47,7 @@ void Razor3D::clear(uint32_t color)
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Camera* cam)
+void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Camera* cam, const cRenderer* renderer)
 {
 	//Quaternion cri = Quaternion();
 	//if (camRotInv == nullptr) 
@@ -61,9 +61,9 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, C
 	// Point2d p1(v1, camRotInv);
 	// Point2d p2(v2, camRotInv);
 	// Point2d p3(v3, camRotInv);
-	Point2d p1 = v1.position.project(cam);
-	Point2d p2 = v2.position.project(cam);
-	Point2d p3 = v3.position.project(cam);
+	Point2d p1 = v1.position.project(cam, renderer);
+	Point2d p2 = v2.position.project(cam, renderer);
+	Point2d p3 = v3.position.project(cam, renderer);
 
 	// Cull tris behind the camera viewplane 
 

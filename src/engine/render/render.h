@@ -9,11 +9,12 @@
 #include "components/CPU2D.h"
 #include "components/CPU3D.h"
 #include "../general3d.h"
+#include "../globals.h"
 
 class cRenderer // Composite render class housing other specialised renderer objects
 {
 public:
-	cRenderer();
+	cRenderer(int width = globScreenwidth, int height = globScreenheight);
 	~cRenderer();
 	Razor3D* razor3d;
 	Hairline* hairline;

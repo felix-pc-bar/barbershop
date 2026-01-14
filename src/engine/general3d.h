@@ -15,6 +15,7 @@ using std::vector, std::ostream, std::string;
 class Quaternion;
 
 class Camera;
+class cRenderer;
 
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
@@ -25,7 +26,7 @@ public:
 	Position3d();
 	Position3d cameraspace(Quaternion* camInvRot = nullptr) const;
 	void rotateQuat(const Quaternion& q);
-	Point2d project(Camera* cam);
+	Point2d project(Camera* cam, const cRenderer* renderer = nullptr); // Don't like this much
 	
 	// Vector stuff
 	Position3d cross(const Position3d& operand) const;

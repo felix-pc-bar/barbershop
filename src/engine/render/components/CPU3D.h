@@ -4,7 +4,6 @@
 #include <vector>
 #include <SDL_render.h>
 
-//#include "ARenderer.h"
 #include "../../general3d.h"
 
 class Razor3D{
@@ -14,7 +13,7 @@ public:
 	void clear(uint32_t color);
 	void Present(); // push pixels to texture and draw to screen
 	// void drawScene(Scene& scene);
-	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat, Camera* cam); // Draw a triangle in screen space
+	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat, Camera* cam, const cRenderer* renderer = nullptr); // Draw a triangle in screen space
 
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;

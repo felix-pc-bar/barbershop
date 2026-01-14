@@ -25,7 +25,7 @@
 
 using std::cout, std::endl;
 
-cRenderer::cRenderer()
+cRenderer::cRenderer(int renderwidth, int renderheight)
 {
 	// =========
 	// SDL SETUP
@@ -44,23 +44,23 @@ cRenderer::cRenderer()
 		system("pause");
 	}
 
-	result = SDL_CreateWindowAndRenderer(globScreenwidth, globScreenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
+	result = SDL_CreateWindowAndRenderer(renderwidth, renderheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
 	if (result < 0)
 	{
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
-	this->width = globScreenwidth; // from global config, can be changed later
-	this->height = globScreenheight;
+	this->width = renderwidth; // from global config, can be changed later
+	this->height = renderheight;
 
 	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
-	this->bufScreen.resize(globScreenwidth * globScreenheight, 0xFF000000);
-	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, globScreenwidth, globScreenheight);
-	this->razor3d = new Razor3D(screenTexture, sdlRenderer, globScreenwidth, globScreenheight, &this->bufScreen, true); // Create viewport
-	this->hairline = new Hairline(screenTexture, sdlRenderer, globScreenwidth, globScreenheight, &this->bufScreen); // Create viewport
+	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
+	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
+	this->razor3d = new Razor3D(screenTexture, sdlRenderer, renderwidth, renderheight, &this->bufScreen, true); // Create viewport
+	this->hairline = new Hairline(screenTexture, sdlRenderer, renderwidth, renderheight, &this->bufScreen); // Create viewport
 }
 
 cRenderer::~cRenderer() {
@@ -136,9 +136,9 @@ void cRenderer::renderScene(Scene& scene) const
 	{
 		if (globWireframe)
 		{
-			Point2d p1 = tri.v1.position.project(scene.currentCam);
-			Point2d p2 = tri.v2.position.project(scene.currentCam);
-			Point2d p3 = tri.v3.position.project(scene.currentCam);
+			Point2d p1 = tri.v1.position.project(scene.currentCam, this);
+			Point2d p2 = tri.v2.position.project(scene.currentCam, this);
+			Point2d p3 = tri.v3.position.project(scene.currentCam, this);
 
 			if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) &&
 				(isTriangleOnScreen(p1, p2, p3, globScreenwidth, globScreenheight)) &&
@@ -152,14 +152,14 @@ void cRenderer::renderScene(Scene& scene) const
 		}
 		else
 		{
-			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, scene.currentCam);
+			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, scene.currentCam, this);
 		}
 	}
 	for (PointToRender& pt : renderPoints)
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			this->hairline->drawPoint(pt.pos.project(scene.currentCam), pt.material.pointWidth);
+			this->hairline->drawPoint(pt.pos.project(scene.currentCam, this), pt.material.pointWidth);
 		}
 	}
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
