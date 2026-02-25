@@ -155,18 +155,21 @@ void Game::run()
 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_1])
 		{
-			this->renderer->~cRenderer();
-			this->renderer = new cRenderer(globScreenwidth / 1, globScreenheight / 1);
+			// this->renderer->~cRenderer();
+			// this->renderer = new cRenderer(globScreenwidth / 1, globScreenheight / 1);
+			this->renderer->resize(globScreenwidth, globScreenheight);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_2])
 		{
-			this->renderer->~cRenderer();
-			this->renderer = new cRenderer(globScreenwidth / 2, globScreenheight / 2);
+			// this->renderer->~cRenderer();
+			// this->renderer = new cRenderer(globScreenwidth / 2, globScreenheight / 2);
+			this->renderer->resize(globScreenwidth / 2, globScreenheight / 2);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_3])
 		{
-			this->renderer->~cRenderer();
-			this->renderer = new cRenderer(globScreenwidth / 3, globScreenheight / 3);
+			// this->renderer->~cRenderer();
+			// this->renderer = new cRenderer(globScreenwidth / 3, globScreenheight / 3);
+			this->renderer->resize(globScreenwidth / 3, globScreenheight / 3);
 		} 
 
 		// this->renderer->clear(Colour("grey"));

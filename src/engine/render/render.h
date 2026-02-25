@@ -16,6 +16,7 @@ class cRenderer // Composite render class housing other specialised renderer obj
 public:
 	cRenderer(int width = globScreenwidth, int height = globScreenheight);
 	~cRenderer();
+	void resize(int newWidth, int newHeight); // Broken lol
 	Razor3D* razor3d;
 	Hairline* hairline;
 	void renderScene(Scene& scene) const;

@@ -50,7 +50,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
-	this->width = renderwidth; // from global config, can be changed later
+	this->width = renderwidth;
 	this->height = renderheight;
 
 	SDL_SetWindowTitle(window, "Barbershop Engine");
@@ -61,6 +61,39 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	this->razor3d = new Razor3D(screenTexture, sdlRenderer, renderwidth, renderheight, &this->bufScreen, true); // Create viewport
 	this->hairline = new Hairline(screenTexture, sdlRenderer, renderwidth, renderheight, &this->bufScreen); // Create viewport
+}
+
+void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
+{
+	if (screenTexture)
+	{
+		SDL_DestroyTexture(screenTexture);
+		screenTexture = nullptr;
+	}
+	if (sdlRenderer)
+	{
+		SDL_DestroyRenderer(sdlRenderer);
+		sdlRenderer = nullptr;
+	}
+	sdlRenderer = SDL_CreateRenderer(
+		window,
+		-1,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
+	if (!sdlRenderer)
+	{
+		std::cout << "Error: failed to resize renderer";
+		return;
+	}	
+	this->width = newWidth;
+	this->height = newHeight;
+
+
+	this->bufScreen.resize(newWidth * newHeight, 0xFF000000);
+	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, newWidth, newHeight);
+	this->razor3d = new Razor3D(screenTexture, sdlRenderer, newWidth, newHeight, &this->bufScreen, true); // Create viewport
+	this->hairline = new Hairline(screenTexture, sdlRenderer, newWidth, newHeight, &this->bufScreen); // Create viewport
+	return;
 }
 
 cRenderer::~cRenderer() {
