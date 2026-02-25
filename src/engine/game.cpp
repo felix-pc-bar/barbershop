@@ -40,7 +40,7 @@ void Game::run()
 	int frame = 0;
 	auto lastTime = dtclock::now();
 	int fpsLimit = 0;
-	float fpsLimTick = 1.0f / fpsLimit;
+	float fpsLimTick = fpsLimit > 0 ? 1.0f / static_cast<float>(fpsLimit) : 0.0f;
 	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
@@ -95,6 +95,7 @@ void Game::run()
 
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
+	bool quitRequested = false;
 	do
 	{
 		auto currentTime = dtclock::now();
@@ -123,7 +124,8 @@ void Game::run()
 		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)){
 			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
-				break;  
+				quitRequested = true;
+				break;
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
@@ -155,17 +157,17 @@ void Game::run()
 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_1])
 		{
-			this->renderer->~cRenderer();
+			delete this->renderer;
 			this->renderer = new cRenderer(globScreenwidth / 1, globScreenheight / 1);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_2])
 		{
-			this->renderer->~cRenderer();
+			delete this->renderer;
 			this->renderer = new cRenderer(globScreenwidth / 2, globScreenheight / 2);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_3])
 		{
-			this->renderer->~cRenderer();
+			delete this->renderer;
 			this->renderer = new cRenderer(globScreenwidth / 3, globScreenheight / 3);
 		} 
 
@@ -190,18 +192,12 @@ void Game::run()
 		}
 
 	}
-	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
+	while (!quitRequested);
 
 	return;
-	// lol, lmao even
-	system("pause");
-
-	//SDL_Quit();
-
-	return;
-} 
+}
 
 Game::~Game()
 {
-	//SDL_DestroyTexture(this->screenTexture);
+	delete this->renderer;
 }
