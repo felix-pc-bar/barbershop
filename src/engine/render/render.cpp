@@ -35,9 +35,6 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->winSurface = NULL;
 	this->window = NULL;
 	this->sdlRenderer = NULL;
-	this->screenTexture = NULL;
-	this->razor3d = nullptr;
-	this->hairline = nullptr;
 
 	int result;
 	result = SDL_Init(SDL_INIT_EVERYTHING);
@@ -67,11 +64,6 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 }
 
 cRenderer::~cRenderer() {
-	delete razor3d;
-	razor3d = nullptr;
-	delete hairline;
-	hairline = nullptr;
-
 	if (screenTexture) {
 		SDL_DestroyTexture(screenTexture);
 		screenTexture = nullptr;
@@ -84,7 +76,6 @@ cRenderer::~cRenderer() {
 		SDL_DestroyWindow(window);
 		window = nullptr;
 	}
-	SDL_Quit();
 }
 
 void cRenderer::renderScene(Scene& scene) const
