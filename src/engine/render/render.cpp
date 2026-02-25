@@ -91,8 +91,14 @@ void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second 
 
 	this->bufScreen.resize(newWidth * newHeight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, newWidth, newHeight);
-	this->razor3d = new Razor3D(newWidth, newHeight, &this->bufScreen, true); // Create viewport
-	this->hairline = new Hairline(newWidth, newHeight, &this->bufScreen); // Create viewport
+	// this->razor3d = new Razor3D(newWidth, newHeight, &this->bufScreen, true); // Create viewport
+	// this->hairline = new Hairline(newWidth, newHeight, &this->bufScreen); // Create viewport
+	this->razor3d->width = newWidth;
+	this->razor3d->height = newHeight;
+	this->razor3d->bufMain = &bufScreen;
+	this->hairline->width = newWidth;
+	this->hairline->height = newHeight;
+	this->hairline->bufMain = &bufScreen;
 	return;
 }
 
