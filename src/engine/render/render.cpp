@@ -65,34 +65,19 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 
 void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
 {
+	// if (newWidth == width && newHeight == height) { return; }
+
 	if (screenTexture)
 	{
 		SDL_DestroyTexture(screenTexture);
 		screenTexture = nullptr;
 	}
-	if (sdlRenderer)
-	{
-		SDL_DestroyRenderer(sdlRenderer);
-		sdlRenderer = nullptr;
-	}
-	sdlRenderer = SDL_CreateRenderer(
-		window,
-		-1,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
-	if (!sdlRenderer)
-	{
-		std::cout << "Error: failed to resize renderer";
-		return;
-	}	
+
 	this->width = newWidth;
 	this->height = newHeight;
 
-
 	this->bufScreen.resize(newWidth * newHeight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, newWidth, newHeight);
-	// this->razor3d = new Razor3D(newWidth, newHeight, &this->bufScreen, true); // Create viewport
-	// this->hairline = new Hairline(newWidth, newHeight, &this->bufScreen); // Create viewport
 	this->razor3d->width = newWidth;
 	this->razor3d->height = newHeight;
 	this->razor3d->bufMain = &bufScreen;
