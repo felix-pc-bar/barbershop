@@ -29,10 +29,8 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-Razor3D::Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered) //constructor
+Razor3D::Razor3D(int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered) //constructor
 {
-	texture = screentex;
-	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
 	this->bufMain = screenbuffer;
@@ -274,37 +272,4 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, C
 			w3 += dw3;
 		}
 	}
-}
-
-void Razor3D::Present()
-{
-	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
-	// Generate depth buffer visualisation
-
-	//std::vector<uint32_t> dbgDepth;
-	//dbgDepth.resize(width * height, 0xFF000000);
-	//float minDepth = std::numeric_limits<float>::infinity(), maxDepth = 0;
-	//for (int i = 0; i < bufDepth.size(); ++i)
-	//{
-	//	if (bufIsDrawn[i])
-	//	{
-	//		if (bufDepth[i] > maxDepth) { maxDepth = bufDepth[i]; }
-	//		// Questionable optimisation to elif here but we're not gonna have 1 pixel on the screen and need a depthmap
-	//		else if (bufDepth[i] < minDepth) { minDepth = bufDepth[i]; }
-	//	}
-	//}
-	//for (int i = 0; i < bufDepth.size(); ++i)
-	//{
-	//	uint8_t v = 0x00;
-	//	if (bufIsDrawn[i])
-	//	{
-	//		v = (uint8_t)(((bufDepth[i] - minDepth) / maxDepth) * 255);
-	//		//std::cout << "v: " << v << '\n';
-	//	}
-	//	dbgDepth[i] = 0xFF000000 | (v << 16) | (v << 8) | v;
-	//}
-
-	//SDL_UpdateTexture(texture, nullptr, dbgDepth.data(), width * sizeof(uint32_t));
-	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
-	SDL_RenderPresent(sdlRenderer);
 }

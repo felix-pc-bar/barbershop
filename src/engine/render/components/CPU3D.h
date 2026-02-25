@@ -8,15 +8,10 @@
 
 class Razor3D{
 public:
-	Razor3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered = false); //constructor
+	Razor3D(int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered = false); //constructor
 
 	void clear(uint32_t color);
-	void Present(); // push pixels to texture and draw to screen
-	// void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Material& mat, Camera* cam, const cRenderer* renderer = nullptr); // Draw a triangle in screen space
-
-	SDL_Renderer* sdlRenderer;
-	SDL_Texture* texture;
 
 	std::vector<uint32_t>* bufMain; 
 	std::vector<float> bufDepth; // Depth pixel buffer

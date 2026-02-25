@@ -8,20 +8,11 @@
 #include "../../general3d.h"
 #include "../../general2d.h"
 
-Hairline::Hairline(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
+Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
-	texture = screentex;
-	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
 	this->bufMain = screenbuffer;
-}
-
-void Hairline::Present()
-{
-	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
-	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
-	SDL_RenderPresent(sdlRenderer);
 }
 
 void Hairline::drawPoint(Point2d pt, int sizePx)
