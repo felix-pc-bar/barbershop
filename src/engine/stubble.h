@@ -17,9 +17,14 @@ public:
     using objectPointer = std::variant<
         Colour*
     >;
+    using extendedValue = std::variant<baseValue, objectPointer>;
 
-    void parse(std::string filepath);
+    extendedValue parse(std::string filepath);
 };
+
+// (C) Rob Cusimano (MIT)
+std::string stripws(const std::string& s);
+
 
 // using translatorFunc = std::function<baseValue(std::string)>;
 
