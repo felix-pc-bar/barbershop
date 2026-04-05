@@ -48,6 +48,9 @@ add_executable(barbershop
     src/engine/material.h
     src/engine/material.cpp
 
+    src/engine/stubble.h
+    src/engine/stubble.cpp
+
     src/app_icon.rc
 )
 

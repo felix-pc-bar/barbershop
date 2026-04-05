@@ -18,6 +18,7 @@
 #include "render/render.h"
 #include "material.h"
 #include "quaternion.h"
+#include "stubble.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -29,6 +30,12 @@ Game::Game()
 
 void Game::run()
 {
+	StubbleParser* sp = new StubbleParser;
+	sp->parse("content/stubble/test1.sttbl");
+
+
+
+
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 
