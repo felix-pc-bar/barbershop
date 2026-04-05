@@ -75,3 +75,12 @@ uint32_t Colour::raw() const
 			((uint32_t)(0xFF * this->green) << 8)|
 			((uint32_t)(0xFF * this->blue));
 }
+
+Colour* mixbyfac(Colour c1, Colour c2, float fac)
+{
+	float newR = c1.red + ((c2.red - c1.red) * fac);
+	float newG = c1.green + ((c2.green - c1.green) * fac);
+	float newB = c1.blue + ((c2.blue - c1.blue) * fac);
+	float newA = c1.alpha + ((c2.alpha - c1.alpha) * fac);
+	return new Colour(newR, newG, newB, newA);
+}

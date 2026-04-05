@@ -61,6 +61,9 @@ private:
 	};
 };
 
+// Mix two colours, biased by the fac (0.0f->1.0f, 0.0f being fully c1.)
+Colour* mixbyfac(Colour c1, Colour c2, float fac);
+
 class Material
 {
 public:

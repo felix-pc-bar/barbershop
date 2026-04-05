@@ -213,22 +213,37 @@ void cRenderer::clear(Colour col)
 // 	return;
 // }
 
-void cRenderer::clearGrad(Colour colBot, Colour colTop, float ditherValBot, float ditherValTop)
+void cRenderer::clearGrad(Colour colBot, Colour colTop, bool dither, float facBot, float facTop)
 {
-	if (ditherValBot == -1.0f)
+	if (!dither) 
 	{
-		float r = colTop.red;
-		float rStep = (colBot.red - colTop.red) / (float)this->height;
-		float g = colTop.green;
-		float gStep = (colBot.green - colTop.green) / (float)this->height;
-		float b = colTop.blue;
-		float bStep = (colBot.blue - colTop.blue) / (float)this->height;
+		// If we aren't dithering, we need to calculate the true values of top and bottom based on the facs
+		Colour ct = colTop;
+		Colour cb = colBot;
+
+		if (facTop != 1.0f)
+		{
+			ct = *mixbyfac(colBot, colTop, facTop);
+		}
+
+		if (facBot != 0.0f)
+		{
+			cb = *mixbyfac(colBot, colTop, facBot);
+		}
+
+		float r = ct.red;
+		float rStep = (cb.red - ct.red) / (float)this->height;
+		float g = ct.green;
+		float gStep = (cb.green - ct.green) / (float)this->height;
+		float b = ct.blue;
+		float bStep = (cb.blue - ct.blue) / (float)this->height;
 
 		for (int y = 0; y < this->height; y++)
 		{
+			uint32_t rawcol = Colour(r, g, b).raw();
 			for (int x = 0; x < this->width; x++)
 			{
-				this->bufScreen[(y*this->width) + x] = Colour(r, g, b).raw();	
+				this->bufScreen[(y*this->width) + x] = rawcol;
 			}
 			r += rStep;
 			g += gStep;
@@ -238,8 +253,8 @@ void cRenderer::clearGrad(Colour colBot, Colour colTop, float ditherValBot, floa
 	}
 	else
 	{
-		float val = ditherValTop * 256.0f;
-		float valStep = ((ditherValBot * 256.0f) - val) / (float)this->height;
+		float val = facTop * 256.0f;
+		float valStep = ((facBot * 256.0f) - val) / (float)this->height;
 		uint32_t colBotRaw = colBot.raw();
 		uint32_t colTopRaw = colTop.raw();
 		for (int y = 0; y < height; ++y)

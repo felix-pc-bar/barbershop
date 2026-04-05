@@ -81,7 +81,6 @@ void Game::run()
 		if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
 		if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
 	}
-
 	// mainScene.addObject(importObj("content/obj/szfl.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
 
@@ -155,20 +154,14 @@ void Game::run()
 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_1])
 		{
-			// this->renderer->~cRenderer();
-			// this->renderer = new cRenderer(globScreenwidth / 1, globScreenheight / 1);
 			this->renderer->resize(globScreenwidth, globScreenheight);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_2])
 		{
-			// this->renderer->~cRenderer();
-			// this->renderer = new cRenderer(globScreenwidth / 2, globScreenheight / 2);
 			this->renderer->resize(globScreenwidth / 2, globScreenheight / 2);
 		} 
 		if (gk[SDL_SCANCODE_LALT] && gk[SDL_SCANCODE_3])
 		{
-			// this->renderer->~cRenderer();
-			// this->renderer = new cRenderer(globScreenwidth / 3, globScreenheight / 3);
 			this->renderer->resize(globScreenwidth / 3, globScreenheight / 3);
 		} 
 
@@ -181,7 +174,7 @@ void Game::run()
 		Position3d topVec = mainScene.cams[0].forward;
 		topVec.rotateQuat(Quaternion(mainScene.cams[0].fov / -2.0f, mainScene.cams[0].right));
 		float topInclination = topVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
-		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), botInclination, topInclination);
+		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), this->renderer->razor3d->dither, botInclination, topInclination);
 		this->renderer->renderScene(*currentScene);
 		frame++;
 		

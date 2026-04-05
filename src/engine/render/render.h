@@ -21,8 +21,10 @@ public:
 	Hairline* hairline;
 	void renderScene(Scene& scene) const;
 	void clear(Colour col);
-	// void clear(Material mat);
-	void clearGrad(Colour colBot, Colour colTop, float ditherValBot = -1.0f, float ditherValTop = -1.0f); // Clear display buffer in a gradient from bottom to top of screen. If ditherVals are selected, they should be 0 to 1, with bot being lower than top to retain the bottom/topness of specified colours.
+	
+	// Clear display buffer in a gradient from bottom to top of screen.
+	// If fac values are selected, they should be 0 to 1, with bot being lower than top to retain the bottom/topness of specified colours.
+	void clearGrad(Colour colBot, Colour colTop, bool dither = false, float facBot = 0.0f, float facTop = 1.0f);
 	int width;
 	int height;
 private:
