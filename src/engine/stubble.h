@@ -20,10 +20,10 @@ public:
     using extendedValue = std::variant<baseValue, objectPointer>;
 
     extendedValue parse(std::string filepath);
+private:
+    extendedValue parseFrag(std::string token);
 };
 
-// (C) Rob Cusimano (MIT)
-std::string stripws(const std::string& s);
 
 
 // using translatorFunc = std::function<baseValue(std::string)>;
