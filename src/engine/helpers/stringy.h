@@ -6,4 +6,4 @@
 std::vector<std::string> splitRespectingBkts(const std::string& s, char delim);
 
 // (C) Rob Cusimano (MIT)
-std::string stripws(const std::string& s, bool includeBrackets = false);
+std::string stripws(const std::string& s, bool stripBrackets = false);

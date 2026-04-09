@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
+#include <optional>
 
 #include "material.h"
 
@@ -30,6 +31,21 @@ public:
         StdString
     };
 
+    enum class TokenType
+    {
+        obTypename,
+        brOpen,
+        brClose,
+        comma,
+        baseTypeData
+    };
+
+    struct Token
+    {
+        TokenType ttype;
+        std::optional<std::string> data;
+    };
+
     // Stores function pointer alongside arg types it wants
     struct FunctionEntry
     {
@@ -37,6 +53,8 @@ public:
         std::vector<TypeData> argTypes;
         FunctionEntry() = default;
     };
+
+    std::optional<extendedValue> import(std::string filepath);
 
     extendedValue parse(std::string filepath);
 private:

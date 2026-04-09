@@ -28,6 +28,27 @@ StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 	return this->parseFrag(stbtext);
 }
 
+std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
+{
+ 	if (!std::filesystem::exists(filepath))
+	{
+	    std::cout << "Error: " << filepath << " does not exist." << std::endl; 
+	    return "";
+	}
+
+    std::ifstream stbstream(filepath); // read file into ifstream
+	std::vector<Token> tokens;
+	char inpchar;
+	while (true)
+	{
+		inpchar = stbstream.get();	
+		if (inpchar == -1 ) { break; } //signifies EOF
+		std::cout << inpchar;
+		
+	}
+	return extendedValue();	
+}
+
 StubbleParser::extendedValue StubbleParser::parseFrag(std::string token)
 {
     std::size_t openPrnthIndex = token.find_first_of("("); // Index of first open bracket (npos if N/A)

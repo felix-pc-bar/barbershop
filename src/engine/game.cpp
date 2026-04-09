@@ -25,14 +25,14 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-	this->renderer = new cRenderer();
+	// this->renderer = new cRenderer();
 }
 
 void Game::run()
 {
 	StubbleParser* sp = new StubbleParser;
-	sp->parse("content/stubble/test1.sttbl");
-
+	auto result = sp->import("content/stubble/test1.sttbl");
+	if (!result) {std::cout << "Error during import." << std::endl; }
 
 
 
