@@ -2,9 +2,16 @@
 #include <sstream>
 #include <fstream>
 #include <filesystem>
+#include <algorithm>
 
 #include "stubble.h"
 #include "helpers/stringy.h"
+// #include "material.h"
+
+// static std::unordered_map<std::string, StubbleParser::FunctionEntry> builderLookup = 
+// {
+// 	{"Colour", {colourBuilder, {StubbleParser::TypeData::Int, StubbleParser::TypeData::Int, StubbleParser::TypeData::Int}}}
+// };
 
 StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 {
@@ -28,7 +35,8 @@ StubbleParser::extendedValue StubbleParser::parseFrag(std::string token)
     if (openPrnthIndex == std::string::npos) // No open bracket in string
     {
       // ====Base value translation====
-      StubbleParser::baseValue result;
+	    // std::cout << "Processing base type token: {" << token << "}\n";
+	    StubbleParser::baseValue result;
     	if (token.back() == 'f') { result = std::stof(token.substr(0, token.length() - 1)); } // case float
     	else if (std::all_of(token.begin(), token.end(), ::isdigit)) { result = std::stoi(token); } // check for all digits (https://stackoverflow.com/questions/8888748/)
     	else { std::cout << "Error: The token \"" << token << "\" could not be matched to a known base type." << std::endl;}
@@ -36,10 +44,23 @@ StubbleParser::extendedValue StubbleParser::parseFrag(std::string token)
     }
     else
     {
-    	std::string typeName = token.substr(0, openPrnthIndex);
-    	std::string args = stripws(token.substr(openPrnthIndex, token.length()));
-    	std::cout << typeName << std::endl;
-    	std::cout << args << std::endl;
+    	std::string objectName = token.substr(0, openPrnthIndex);
+
+		// Clunky way of getting what's inside the brackets
+		// TODO: clean up
+    	std::string args = token.substr(openPrnthIndex, token.length());
+		args = stripws(args).substr(1, args.length() - 2);
+    	// std::cout << args << std::endl;
+
+		std::vector<std::string> substrings = splitRespectingBkts(args, ',');
+    	// std::cout << "Processing object of type " << objectName << std::endl;
+		std::vector<StubbleParser::extendedValue> results;
+		for (std::string& substr : substrings)
+		{
+			results.emplace_back(stripws(substr));
+		}
+
+
     	return StubbleParser::baseValue();
     }
 }
