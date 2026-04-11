@@ -31,31 +31,6 @@ StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 	return this->parseFrag(stbtext);
 }
 
-// void StubbleParser::getBrOpen(std::istream s)
-// {
-// 	if (s.get() == '(') { return;}
-// 	else { throw -1; }
-// }
-// void StubbleParser::getBrClose(std::istream s)
-// {
-// 	if (s.get() == ')') { return;}
-// 	else { throw -1; }
-// }
-// void StubbleParser::getComma(std::istream s)
-// {
-// 	if (s.get() == ',') { return;}
-// 	else { throw -1; }
-// }
-// std::string StubbleParser::getData(std::istream s)
-// {
-// 	char c = s.get();
-// 	if (std::string(&c).find_first_of('(),') != std::string::npos) { throw -1;} //If first char is control char throw
-// 	else
-// 	{
-// 		return readUntil(s, [](char c) { return (std::string("(),").find_first_of(c) == std::string::npos); });
-// 	}
-// }
-
 std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
 {
  	if (!std::filesystem::exists(filepath))
@@ -67,10 +42,6 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
     std::ifstream stbstream(filepath); // read file into ifstream
 	std::vector<Token> tokens;
 
-	// auto isWhitespace = [](char c) 
-	// {
-	// 	return !(std::string(" \n\t\r\f\v").find_first_of(c) == std::string::npos);
-	// };
 	auto isntWhitespace = [](char c) 
 	{
 		return (std::string(" \n\t\r\f\v").find_first_of(c) == std::string::npos);
@@ -79,27 +50,18 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 	{
 		return (std::string("(),").find_first_of(c) != std::string::npos);
 	};
-	// auto isBrOpen = [](char c)
-	// {
-	// 	return c == '(';
-	// };
-	// auto isBrClose = [](char c)
-	// {
-	// 	return c == ')';
-	// };
-	// auto isComma = [](char c)
-	// {
-	// 	return c == ',';
-	// };
 
-	std::string currentData;
+	// ==== Tokenise ====
+	// make a flat vector of tokens representing the file.
+	// no error checking here- that's later
+
+	std::string currentData; // stores characters up to next control char
 	char c;
 	for (;;)
 	{
-		readUntil(stbstream, isntWhitespace);
+		readUntil(stbstream, isntWhitespace); // Skip whitespace
 		if (stbstream.peek() == EOF) { break; }
 		currentData = readUntil(stbstream, isControlChar);
-		std::cout << "CurrentData is \"" << currentData << "\"\n";
 		if (currentData.empty())
 		{
 			c = stbstream.get();	
@@ -123,17 +85,7 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 			tokens.emplace_back(TokenType::data, currentData);
 		}
 	}
-	for (auto currToken : tokens)
-	{
-		if (currToken.data.has_value())
-		{
-			std::cout << "\"" << currToken.data.value() << "\"" << std::endl;
-		}
-		else
-		{
-			std::cout << static_cast<std::underlying_type<TokenType>::type>(currToken.ttype) << std::endl;
-		}
-	}
+
 	return extendedValue();	
 }
 
