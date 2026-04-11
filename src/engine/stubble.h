@@ -33,18 +33,27 @@ public:
 
     enum class TokenType
     {
-        obTypename,
+        data,
         brOpen,
         brClose,
-        comma,
-        baseTypeData
+        comma
     };
 
+    // Tokens are either data, or delimiter. We don't differentiate between base type data and object type names yet.
     struct Token
     {
         TokenType ttype;
         std::optional<std::string> data;
+        
+        Token() = default;
+        Token(TokenType tt, std::optional<std::string> d = std::nullopt);
     };
+
+    void getBrOpen(std::istream s);
+    void getBrClose(std::istream s);
+    void getComma(std::istream s);
+    std::string getData(std::istream s);
+
 
     // Stores function pointer alongside arg types it wants
     struct FunctionEntry

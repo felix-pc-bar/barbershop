@@ -47,3 +47,27 @@ std::string stripws(const std::string& s, bool includeBrackets) {
 	size_t end = s.find_last_not_of(whitespace);
 	return std::string{s.substr(begin, end - begin + 1)};
 }
+
+inline bool isValidDescriptorChar(char c) {
+    return (c >= 'A' && c <= 'Z') ||
+           (c >= 'a' && c <= 'z') ||
+           (c >= '0' && c <= '9') ||
+           c == '-' || c == '_';
+}
+
+std::string readUntil(std::istream& in, std::function<bool(char)> stopCondition)
+{
+    std::string result;
+
+    while (true) {
+        int c = in.peek();               // look ahead
+        if (c == EOF) break;
+
+        if (stopCondition(static_cast<char>(c)))
+            break;
+
+        result += static_cast<char>(in.get()); // consume
+    }
+
+    return result;
+}

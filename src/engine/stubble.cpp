@@ -13,6 +13,9 @@
 // 	{"Colour", {colourBuilder, {StubbleParser::TypeData::Int, StubbleParser::TypeData::Int, StubbleParser::TypeData::Int}}}
 // };
 
+
+StubbleParser::Token::Token(TokenType tt, std::optional<std::string> d): ttype(tt), data(d) {}
+
 StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 {
  	if (!std::filesystem::exists(filepath))
@@ -28,23 +31,108 @@ StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 	return this->parseFrag(stbtext);
 }
 
+// void StubbleParser::getBrOpen(std::istream s)
+// {
+// 	if (s.get() == '(') { return;}
+// 	else { throw -1; }
+// }
+// void StubbleParser::getBrClose(std::istream s)
+// {
+// 	if (s.get() == ')') { return;}
+// 	else { throw -1; }
+// }
+// void StubbleParser::getComma(std::istream s)
+// {
+// 	if (s.get() == ',') { return;}
+// 	else { throw -1; }
+// }
+// std::string StubbleParser::getData(std::istream s)
+// {
+// 	char c = s.get();
+// 	if (std::string(&c).find_first_of('(),') != std::string::npos) { throw -1;} //If first char is control char throw
+// 	else
+// 	{
+// 		return readUntil(s, [](char c) { return (std::string("(),").find_first_of(c) == std::string::npos); });
+// 	}
+// }
+
 std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
 {
  	if (!std::filesystem::exists(filepath))
 	{
-	    std::cout << "Error: " << filepath << " does not exist." << std::endl; 
-	    return "";
+	    std::cout << "Error: file does not exist." << std::endl; 
+	    return std::nullopt;
 	}
 
     std::ifstream stbstream(filepath); // read file into ifstream
 	std::vector<Token> tokens;
-	char inpchar;
-	while (true)
+
+	// auto isWhitespace = [](char c) 
+	// {
+	// 	return !(std::string(" \n\t\r\f\v").find_first_of(c) == std::string::npos);
+	// };
+	auto isntWhitespace = [](char c) 
 	{
-		inpchar = stbstream.get();	
-		if (inpchar == -1 ) { break; } //signifies EOF
-		std::cout << inpchar;
-		
+		return (std::string(" \n\t\r\f\v").find_first_of(c) == std::string::npos);
+	};
+	auto isControlChar = [](char c) 
+	{
+		return (std::string("(),").find_first_of(c) != std::string::npos);
+	};
+	// auto isBrOpen = [](char c)
+	// {
+	// 	return c == '(';
+	// };
+	// auto isBrClose = [](char c)
+	// {
+	// 	return c == ')';
+	// };
+	// auto isComma = [](char c)
+	// {
+	// 	return c == ',';
+	// };
+
+	std::string currentData;
+	char c;
+	for (;;)
+	{
+		readUntil(stbstream, isntWhitespace);
+		if (stbstream.peek() == EOF) { break; }
+		currentData = readUntil(stbstream, isControlChar);
+		std::cout << "CurrentData is \"" << currentData << "\"\n";
+		if (currentData.empty())
+		{
+			c = stbstream.get();	
+			switch (c)
+			{
+			case '(':
+				tokens.emplace_back(TokenType::brOpen);
+				break;
+			
+			case ')':
+				tokens.emplace_back(TokenType::brClose);
+				break;
+			
+			case ',':
+				tokens.emplace_back(TokenType::comma);
+				break;
+			}
+		}
+		else
+		{
+			tokens.emplace_back(TokenType::data, currentData);
+		}
+	}
+	for (auto currToken : tokens)
+	{
+		if (currToken.data.has_value())
+		{
+			std::cout << "\"" << currToken.data.value() << "\"" << std::endl;
+		}
+		else
+		{
+			std::cout << static_cast<std::underlying_type<TokenType>::type>(currToken.ttype) << std::endl;
+		}
 	}
 	return extendedValue();	
 }
