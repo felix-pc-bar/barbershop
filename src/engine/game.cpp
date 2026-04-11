@@ -25,7 +25,8 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-	// this->renderer = new cRenderer();
+	this->renderer = new cRenderer();
+	// this->renderer = nullptr;
 }
 
 void Game::run()
@@ -35,7 +36,11 @@ void Game::run()
 	auto result = sp->import(fp);
 	if (!result) {std::cout << "Error when importing " << fp << std::endl; }
 
-
+	if (this->renderer == nullptr)
+	{
+		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
+		return;
+	}
 
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
