@@ -9,10 +9,10 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_MAKE_PROGRAM": "ninja.exe",
-        "CMAKE_C_COMPILER": "gcc.exe",
-        "CMAKE_CXX_COMPILER": "g++.exe",
-        "CMAKE_RC_COMPILER": "windres.exe",
+        "CMAKE_MAKE_PROGRAM": "ninja",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_RC_COMPILER": "windres",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
@@ -24,10 +24,10 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
-        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
-        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
-        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja",
+        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc",
+        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++",
+        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres",
         "CMAKE_BUILD_TYPE": "MinSizeRel"
       }
     },
