@@ -9,7 +9,7 @@
 #include <SDL_render.h>
 #include <SDL_stdinc.h>
 #include <SDL_video.h>
-#include <process.h>
+// #include <process.h> // Linux doesn't like this?
 #include <algorithm>
 #include <vector>
 #include <cstdint>

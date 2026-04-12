@@ -43,17 +43,26 @@ public:
     struct Token
     {
         TokenType ttype;
-        std::optional<std::string> data;
+        std::string data;
+        unsigned int lineNumber; // Line number token was read on, 0 for none specced
         
         Token() = default;
-        Token(TokenType tt, std::optional<std::string> d = std::nullopt);
+        Token(TokenType tt, unsigned int linenum = 0, std::string d = "");
+
+        std::string unexpected();
     };
 
-    void getBrOpen(std::istream s);
-    void getBrClose(std::istream s);
-    void getComma(std::istream s);
-    std::string getData(std::istream s);
 
+    // AST branch object.
+    // if no children, this branch is a base type and data stores the string to be converted
+    // otherwise, data is an identifier for the class that needs to be constructed with the parameters stored in chidren
+    class SyntacticalBranch
+    {
+    public:
+        SyntacticalBranch() = default;
+        std::string data;
+        std::vector<SyntacticalBranch> children;
+    };
 
     // Stores function pointer alongside arg types it wants
     struct FunctionEntry
