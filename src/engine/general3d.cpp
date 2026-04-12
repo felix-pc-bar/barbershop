@@ -5,6 +5,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include "general3d.h"
 #include "material.h"
@@ -331,7 +332,8 @@ Camera::Camera()
 void Camera::setFov(float newFovRads)
 {
 	this->fov = newFovRads;
-	this->invTanHalfFov = 1.0f / std::tanf(fov * 0.5f);
+	// was tanf()??? then changed to tan() to fix
+	this->invTanHalfFov = 1.0f / std::tan(fov * 0.5f);
 }
 
 void Camera::rotateCam(float angle, const Position3d& axis) // Axis is in global space!

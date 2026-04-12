@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <ostream>
 #include <filesystem>
 #include <algorithm>
 
@@ -14,7 +15,31 @@
 // };
 
 
-StubbleParser::Token::Token(TokenType tt, std::optional<std::string> d): ttype(tt), data(d) {}
+StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): ttype(tt), lineNumber(linenum), data(d) 
+{
+	switch (tt)
+	{
+	case TokenType::brOpen:
+		data = "(";
+		break;
+	
+	case TokenType::brClose:
+		data = ")";
+		break;
+	
+	case TokenType::comma:
+		data = ",";
+		break;
+	
+	default:
+		break;
+	}
+}
+
+std::string StubbleParser::Token::unexpected()
+{
+	return "Unexpected token \"" + data + "\" at line " + std::to_string(lineNumber);
+}
 
 StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 {
@@ -44,46 +69,72 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 
 	auto isntWhitespace = [](char c) 
 	{
-		return (std::string(" \n\t\r\f\v").find_first_of(c) == std::string::npos);
+		return (std::string(" \t\r\f\v").find_first_of(c) == std::string::npos);
 	};
-	auto isControlChar = [](char c) 
+	auto isPunctuator = [](char c) 
 	{
 		return (std::string("(),").find_first_of(c) != std::string::npos);
 	};
 
 	// ==== Tokenise ====
-	// make a flat vector of tokens representing the file.
+	// Performs lexical analysis on input file.
+	// make a flat vector of tokens representing the file
 	// no error checking here- that's later
 
-	std::string currentData; // stores characters up to next control char
+	std::string currentData; // stores characters up to next punctuator
 	char c;
+	unsigned int currentline = 1;
+
 	for (;;)
 	{
 		readUntil(stbstream, isntWhitespace); // Skip whitespace
 		if (stbstream.peek() == EOF) { break; }
-		currentData = readUntil(stbstream, isControlChar);
+		if (stbstream.peek() == '\n') { currentline++; stbstream.get(); } //Skip newline but incr counter
+		currentData = readUntil(stbstream, isPunctuator);
 		if (currentData.empty())
 		{
 			c = stbstream.get();	
 			switch (c)
 			{
 			case '(':
-				tokens.emplace_back(TokenType::brOpen);
+				tokens.emplace_back(TokenType::brOpen, currentline);
 				break;
 			
 			case ')':
-				tokens.emplace_back(TokenType::brClose);
+				tokens.emplace_back(TokenType::brClose, currentline);
 				break;
 			
 			case ',':
-				tokens.emplace_back(TokenType::comma);
+				tokens.emplace_back(TokenType::comma, currentline);
 				break;
 			}
 		}
 		else
 		{
-			tokens.emplace_back(TokenType::data, currentData);
+			tokens.emplace_back(TokenType::data, currentline, currentData);
 		}
+	}
+
+	// ==== Build AST ====
+	// Next, we build a heirachical structure from the lexemes/tokens 
+	// This is where structural error checking is done
+
+	if (tokens.front().ttype != TokenType::data)
+	{
+		std::cout << tokens.front().unexpected() << std::endl;
+		return std::nullopt;
+	}
+	SyntacticalBranch result;
+	result.data = tokens.front().data;
+
+	if (tokens[1].ttype != TokenType::brOpen)
+	{
+		std::cout << tokens[1].unexpected() << std::endl;
+		return std::nullopt;
+	}
+	for (size_t i = 2; i < tokens.size(); i++)
+	{
+		
 	}
 
 	return extendedValue();	

@@ -1,14 +1,11 @@
 cmake_minimum_required(VERSION 3.15)
 
-include(${CMAKE_SOURCE_DIR}/cmake/bootstrap_toolchain.cmake)
+# include(${CMAKE_SOURCE_DIR}/cmake/bootstrap_toolchain.cmake)
 #message(STATUS "ENV PATH = $ENV{PATH}")
 message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
 
 set(CMAKE_CXX_COMPILER_FORCED TRUE)
 project(barbershop LANGUAGES CXX)
-
-add_compile_options("-B${CMAKE_SOURCE_DIR}/toolchains/mingw64/bin/")
-add_link_options("-B${CMAKE_SOURCE_DIR}/toolchains/mingw64/bin/")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
