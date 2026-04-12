@@ -2,39 +2,37 @@
   "version": 8,
   "configurePresets": [
     {
-      "name": "mingw-debug",
-      "displayName": "MinGW (Debug)",
-      "description": "MinGW build for everyday debugging (no profiling)",
+      "name": "gcc-debug",
+      "displayName": "GCC (Debug)",
+      "description": "GNU C++ with debugging symbols (no profiling)",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
-        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
-        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
-        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+        "CMAKE_MAKE_PROGRAM": "ninja",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_RC_COMPILER": "windres",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "mingw-release",
-      "displayName": "MinGW (Release)",
-      "description": "MinGW build for releases (no debugging symbols)",
+      "name": "gcc-release",
+      "displayName": "GCC (Release)",
+      "description": "GNU C++ without debugging symbols",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
-        "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
-        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
-        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja",
+        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++",
+        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres",
         "CMAKE_BUILD_TYPE": "MinSizeRel"
       }
     },
 
     {
       "name": "msvc-profile",
-      "displayName": "MSVC Profile",
+      "displayName": "MSVC Profiling",
       "description": "MSVC build with symbols and optimisations for CPU profiling",
       "generator": "Visual Studio 18 2026",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
@@ -50,12 +48,12 @@
 
   "buildPresets": [
     {
-      "name": "mingw-debug",
-      "configurePreset": "mingw-debug"
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug"
     },
     {
-      "name": "mingw-release",
-      "configurePreset": "mingw-release"
+      "name": "gcc-release",
+      "configurePreset": "gcc-release"
     },
     {
       "name": "msvc-profile",
