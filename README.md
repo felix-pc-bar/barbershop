@@ -4,9 +4,15 @@ A simple game engine written in C++.
 ## Installation
 Prebuilt binaries are available in the relases page, or you can...
 ## Build from source
-This repository is set up such that only CMake is required to build. 
-CMake is configured to extract and use toolchain binaries from the mingw64 archive provided; simply clone the repo, CMake configure (this may take a while) and CMake build. Debug and release presets are available.
-These are windows executables, so changes to CMake configuration will be required for compilation on linux.
+This project is built with CMake.
+### Dependencies
+The following dependencies are required for to build this project:
+- CMake (version 3.15 or later)
+- Ninja
+- GNU coreutils, GCC, G++ etc
+    - On linux, these are available from all the package managers and are probably already installed. 
+    - On windows, it is easiest to install GCC (and the GNU coreutils) by getting the prebuilt binaries from the [mingw-w64 project](https://www.mingw-w64.org/). You might have to find a binary for Tee also. You will need to have all of these available in PATH when you build the project.
+
 
 ## Alpha
 ![buggy lmao](content/branding/bug.png)   
