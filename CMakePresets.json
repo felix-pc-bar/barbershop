@@ -23,9 +23,9 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja",
-        "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++",
-        "CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres",
+        "CMAKE_MAKE_PROGRAM": "ninja",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_RC_COMPILER": "windres",
         "CMAKE_BUILD_TYPE": "MinSizeRel"
       }
     },
