@@ -26,16 +26,10 @@ using dtclock = std::chrono::steady_clock;
 Game::Game()
 {
 	this->renderer = new cRenderer();
-	// this->renderer = nullptr;
 }
 
 void Game::run()
 {
-	StubbleParser* sp = new StubbleParser;
-	std::string fp = "content/stubble/test1.sttbl";
-	auto result = sp->import(fp);
-	if (!result) {std::cout << "Error when importing " << fp << std::endl; }
-
 	if (this->renderer == nullptr)
 	{
 		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
