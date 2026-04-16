@@ -6,6 +6,8 @@
 
 #include "material.h"
 
+std::string getDataToken(std::istream& stream);
+
 class StubbleParser
 {
 public:
@@ -19,8 +21,7 @@ public:
         Material*,
         Colour*
     >;
-    using extendedValue = std::variant<baseValue, objectPointer>;
-    using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
+    using extendedValue = std::variant<baseValue, objectPointer>; using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
 
     // This is just an class that stores the type explicitly (unimportant names)
     enum class TypeData
@@ -45,17 +46,27 @@ public:
         TokenType ttype;
         std::string data;
         unsigned int lineNumber; // Line number token was read on, 0 for none specced
-        
+
         Token() = default;
         Token(TokenType tt, unsigned int linenum = 0, std::string d = "");
 
         std::string unexpected();
     };
 
+	class TokenStream
+	{
+	public:
+		std::vector<Token> tokens;
+		int streamLocation;
+
+		TokenStream();
+		std::optional<Token*> consume(std::vector<TokenType> validTypes);
+		Token* peek();
+	};
 
     // AST branch object.
-    // if no children, this branch is a base type and data stores the string to be converted
-    // otherwise, data is an identifier for the class that needs to be constructed with the parameters stored in chidren
+    // if no children, this branch is a "leaf" and 'data' stores the string to be converted
+    // otherwise, 'data' is an identifier for the class that needs to be constructed with the parameters stored in chidren
     class SyntacticalBranch
     {
     public:
@@ -63,6 +74,8 @@ public:
         std::string data;
         std::vector<SyntacticalBranch> children;
     };
+	
+	std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
 
     // Stores function pointer alongside arg types it wants
     struct FunctionEntry

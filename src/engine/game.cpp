@@ -25,11 +25,15 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-	this->renderer = new cRenderer();
+	// this->renderer = new cRenderer();
+	this->renderer = nullptr;
 }
 
 void Game::run()
 {
+	StubbleParser sp;
+	sp.import("content/stubble/test1.stbbl");
+
 	if (this->renderer == nullptr)
 	{
 		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;

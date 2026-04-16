@@ -1,6 +1,7 @@
 #include <iostream>
-#include <sstream>
+//#include <sstream>
 #include <fstream>
+#include <optional>
 #include <ostream>
 #include <filesystem>
 #include <algorithm>
@@ -14,6 +15,25 @@
 // 	{"Colour", {colourBuilder, {StubbleParser::TypeData::Int, StubbleParser::TypeData::Int, StubbleParser::TypeData::Int}}}
 // };
 
+std::string getDataToken(std::istream& stream)
+{
+	std::string result;
+	char c;
+	bool inQuotes = false; // is current char inside quotes
+	while (true)
+	{
+		c = stream.get();
+		if (c == EOF) { break; }
+		if (c == '\"') { inQuotes = !inQuotes; }
+		if (std::string("(),").find_first_of(c) != std::string::npos && !inQuotes)
+		{
+			break;
+		}
+		result += static_cast<char>(c);
+	}
+	stream.unget();
+	return result;
+}
 
 StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): ttype(tt), lineNumber(linenum), data(d) 
 {
@@ -41,19 +61,80 @@ std::string StubbleParser::Token::unexpected()
 	return "Unexpected token \"" + data + "\" at line " + std::to_string(lineNumber);
 }
 
-StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
-{
- 	if (!std::filesystem::exists(filepath))
-	{
-	    std::cout << "Error: " << filepath << " does not exist." << std::endl; 
-	    return "";
-	}
+StubbleParser::TokenStream::TokenStream(): streamLocation(-1) {} // We init streamloc to -1 because we incr it before reading (trust bro)
 
-    std::ifstream stbstream(filepath); // read file into ifstream
-    std::ostringstream sstr;
-    sstr << stbstream.rdbuf();
-    std::string stbtext = stripws(sstr.str());
-	return this->parseFrag(stbtext);
+std::optional<StubbleParser::Token*> StubbleParser::TokenStream::consume(std::vector<StubbleParser::TokenType> validTypes)
+{
+	streamLocation++;
+	if (std::find(validTypes.begin(), validTypes.end(), tokens[streamLocation].ttype) != validTypes.end())
+	{
+		return &tokens[streamLocation];
+	}
+	else // Token is not of valid type
+	{
+		tokens[streamLocation].unexpected();
+		return std::nullopt; // Empty string signifies error reading
+	}
+}
+
+StubbleParser::Token* StubbleParser::TokenStream::peek()
+{
+	return &tokens[streamLocation + 1];
+}
+
+std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(StubbleParser::TokenStream& ts)
+{
+	StubbleParser::SyntacticalBranch result;
+	auto returnedToken = ts.consume({StubbleParser::TokenType::data});
+	if (!returnedToken.has_value()) { return std::nullopt; }
+	result.data = returnedToken.value()->data;
+
+	auto cc = ts.consume({StubbleParser::TokenType::brOpen, StubbleParser::TokenType::brClose, StubbleParser::TokenType::comma});
+	if (!cc.has_value()) { return std::nullopt; }
+
+	switch (cc.value()->ttype)
+	{
+		case TokenType::brOpen: { // Curly braces to declare a new scope for the int here
+			// std::cout << "Starting composite branch- " << result.data << std::endl;
+			int unmatchedBrackets = 1;
+			do 
+			{
+				std::optional<StubbleParser::SyntacticalBranch> returnedBranch = graftFrag(ts);
+				if (returnedBranch.has_value())
+				{
+					result.children.emplace_back(returnedBranch.value());
+				}
+				else
+				{
+					// std::cout << "Carrying error" << std::endl;
+				    return std::nullopt;
+				}
+
+	 			auto next = ts.peek();
+				if (next->ttype == TokenType::brOpen) { unmatchedBrackets++; }
+	 			if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
+			} while (unmatchedBrackets != 0);
+		// std::cout << "successfully done composite branch " << result.data << std::endl;
+		// we need to advance the pointer by 2,
+		// because after peeking the close bracket, the pointer is on the close bkt
+		// and we need to skip past that _and_ the following comma
+		ts.streamLocation += 2;
+		return result;
+		}
+
+		case TokenType::comma:
+			// std::cout << "Returning leaf branch of value " << result.data << std::endl;
+			return result;
+
+		case TokenType::brClose:
+			// std::cout << "Reached the end of a composite list, ungetting and returning leaf branch of value " << result.data << std::endl;
+			ts.streamLocation--;
+			return result;
+
+		default:
+		    std::cout << "Fatal error: invalid control character. Cannot continue parsing file." << std::endl;
+		    return std::nullopt;
+	}
 }
 
 std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
@@ -65,7 +146,7 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 	}
 
     std::ifstream stbstream(filepath); // read file into ifstream
-	std::vector<Token> tokens;
+	TokenStream ts;
 
 	auto isntWhitespace = [](char c) 
 	{
@@ -90,89 +171,56 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 		readUntil(stbstream, isntWhitespace); // Skip whitespace
 		if (stbstream.peek() == EOF) { break; }
 		if (stbstream.peek() == '\n') { currentline++; stbstream.get(); } //Skip newline but incr counter
-		currentData = readUntil(stbstream, isPunctuator);
+		// currentData = readUntil(stbstream, isPunctuator);
+		currentData = getDataToken(stbstream);
 		if (currentData.empty())
 		{
 			c = stbstream.get();	
 			switch (c)
 			{
 			case '(':
-				tokens.emplace_back(TokenType::brOpen, currentline);
+				ts.tokens.emplace_back(TokenType::brOpen, currentline);
 				break;
 			
 			case ')':
-				tokens.emplace_back(TokenType::brClose, currentline);
+				ts.tokens.emplace_back(TokenType::brClose, currentline);
 				break;
 			
 			case ',':
-				tokens.emplace_back(TokenType::comma, currentline);
+				ts.tokens.emplace_back(TokenType::comma, currentline);
 				break;
 			}
 		}
 		else
 		{
-			tokens.emplace_back(TokenType::data, currentline, currentData);
+			// Strip leading/trailing whitespace on individual token (this is the data path)
+			auto start = std::find_if_not(currentData.begin(), currentData.end(), [](unsigned char c) {
+				return std::isspace(c);
+		    });
+	
+		    auto end = std::find_if_not(currentData.rbegin(), currentData.rend(), [](unsigned char c) {
+				return std::isspace(c);
+		    }).base();
+		
+		    if (start >= end) { continue; } // This skips adding a token, because it would be an empty data
+		    else 
+			{
+				currentData = std::string(start, end);
+			}
+			ts.tokens.emplace_back(TokenType::data, currentline, currentData);
 		}
 	}
 
 	// ==== Build AST ====
 	// Next, we build a heirachical structure from the lexemes/tokens 
 	// This is where structural error checking is done
+	
+	// for (auto token : ts.tokens)
+	// {
+	// 	std::cout << token.data << std::endl;
+	// }
 
-	if (tokens.front().ttype != TokenType::data)
-	{
-		std::cout << tokens.front().unexpected() << std::endl;
-		return std::nullopt;
-	}
-	SyntacticalBranch result;
-	result.data = tokens.front().data;
+	std::optional<SyntacticalBranch> result = graftFrag(ts);
 
-	if (tokens[1].ttype != TokenType::brOpen)
-	{
-		std::cout << tokens[1].unexpected() << std::endl;
-		return std::nullopt;
-	}
-	for (size_t i = 2; i < tokens.size(); i++)
-	{
-		
-	}
-
-	return extendedValue();	
-}
-
-StubbleParser::extendedValue StubbleParser::parseFrag(std::string token)
-{
-    std::size_t openPrnthIndex = token.find_first_of("("); // Index of first open bracket (npos if N/A)
-
-    if (openPrnthIndex == std::string::npos) // No open bracket in string
-    {
-      // ====Base value translation====
-	    // std::cout << "Processing base type token: {" << token << "}\n";
-	    StubbleParser::baseValue result;
-    	if (token.back() == 'f') { result = std::stof(token.substr(0, token.length() - 1)); } // case float
-    	else if (std::all_of(token.begin(), token.end(), ::isdigit)) { result = std::stoi(token); } // check for all digits (https://stackoverflow.com/questions/8888748/)
-    	else { std::cout << "Error: The token \"" << token << "\" could not be matched to a known base type." << std::endl;}
-    	return result;
-    }
-    else
-    {
-    	std::string objectName = token.substr(0, openPrnthIndex);
-
-		// Clunky way of getting what's inside the brackets
-		// TODO: clean up
-    	std::string args = token.substr(openPrnthIndex, token.length());
-		args = stripws(args).substr(1, args.length() - 2);
-    	// std::cout << args << std::endl;
-
-		std::vector<std::string> substrings = splitRespectingBkts(args, ',');
-    	// std::cout << "Processing object of type " << objectName << std::endl;
-		std::vector<StubbleParser::extendedValue> results;
-		for (std::string& substr : substrings)
-		{
-			results.emplace_back(stripws(substr));
-		}
-
-
-    	return StubbleParser::baseValue();
-    }
+	return extendedValue();
 }
