@@ -58,7 +58,7 @@ StubbleParser::extendedValue StubbleParser::parse(std::string filepath)
 
 std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
 {
- 	if (!std::filesystem::exists(filepath))
+	if (!std::filesystem::exists(filepath))
 	{
 	    std::cout << "Error: file does not exist." << std::endl; 
 	    return std::nullopt;
