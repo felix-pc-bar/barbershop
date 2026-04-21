@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "general3d.h"
+#include "SDL.h"
 
 float globfpsTarget = 30.0f;
 float globFOVrads = pi / 1.5f;
@@ -11,6 +12,18 @@ Position3d globLightNormal = Position3d(3.0f, 5.0f, 1.0f).normalise();
 
 int globScreenheight = 1080;
 int globScreenwidth = 1920;
+
+// Source - https://stackoverflow.com/a/33393689
+// Posted by flogram_dev, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-04-21, License - CC BY-SA 3.0
+
+void setScreenDimensions()
+{
+	SDL_DisplayMode DM;
+	SDL_GetCurrentDisplayMode(0, &DM);
+	globScreenwidth = DM.w;
+	globScreenheight = DM.h;
+}
 
 /*
 1920x1080 /1

@@ -36,6 +36,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->window = NULL;
 	this->sdlRenderer = NULL;
 
+
 	int result;
 	result = SDL_Init(SDL_INIT_EVERYTHING);
 	if (result < 0) 
@@ -50,12 +51,19 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
-	this->width = renderwidth;
-	this->height = renderheight;
-
 	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
+
+	// We override the passed renderwidth, renderheight with those fetched from SDL
+	// TODO: find somewhere else to get the screen dimensions
+	setScreenDimensions();
+	renderwidth = globScreenwidth;
+	renderheight = globScreenheight;
+
+	this->width = renderwidth;
+	this->height = renderheight;
+
 	// Setup screenTexture and other GPU stuff
 	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
