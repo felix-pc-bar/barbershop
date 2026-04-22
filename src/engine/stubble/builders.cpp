@@ -17,3 +17,8 @@ Colour* _colRGBA(std::vector<extendedValue> args)
 			   std::get<float>(args[3])
 			   );
 }
+
+Material* _matColPtShd(std::vector<extendedValue> args)
+{
+	return new Material(*std::get<Colour*>(args[0]), std::get<int>(args[1]), std::get<bool>(args[2]));
+}

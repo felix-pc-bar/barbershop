@@ -6,7 +6,8 @@
 
 static std::unordered_map<std::string, FunctionEntry> builderLookup =
 {
-	{ "Colour", 
+{
+		"Colour", 
 		FunctionEntry{
 	{
 			{
@@ -16,6 +17,17 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 			{
 					{ TypeData::Float, TypeData::Float, TypeData::Float, TypeData::Float },
 					_colRGBA
+				}
+			}
+		}
+	},
+{
+		"Material", 
+		FunctionEntry{
+	{
+			{
+					{ TypeData::_Colour, TypeData::Int, TypeData::Bool},
+					_matColPtShd
 				}
 			}
 		}

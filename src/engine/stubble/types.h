@@ -47,7 +47,8 @@ enum class TypeData
 	Float,
 	Bool,
 	StdString,
-	_Colour
+	_Colour,
+	_Material
 };
 
 bool matchesType(const extendedValue& val, TypeData t);

@@ -33,10 +33,10 @@ void Game::run()
 {
 	StubbleParser sp;
 	auto imported = sp.import("content/stubble/test1.stbbl");
-	Colour *importedCol = new Colour();
+	Material *importedMat = new Material();
 	if (imported.has_value())
 	{
-		importedCol = std::get<Colour*>(imported.value());
+		importedMat = std::get<Material*>(imported.value());
 	}
 
 	if (this->renderer == nullptr)
@@ -96,7 +96,7 @@ void Game::run()
 		// if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
 		// if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
 		// if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
-		mainScene.objects[i].materials[0] = Material(*importedCol);
+		mainScene.objects[i].materials[0] = *importedMat;
 	}
 	// mainScene.addObject(importObj("content/obj/szfl.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
