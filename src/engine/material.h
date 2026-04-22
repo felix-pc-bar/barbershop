@@ -1,11 +1,9 @@
 #pragma once
 
 #include <string>
-#include <algorithm>
 #include <cstdint>
 #include <unordered_map>
 
-// #include "stubble.h"
 
 class Colour // Store colour as decimal fractions of RGB
 {
@@ -79,4 +77,3 @@ public:
 	uint16_t ditherValue; // set value offset for dithering (0-255, 128 by default)
 };
 
-// Colour* colourBuilder(std::vector<StubbleParser::extendedValue>);

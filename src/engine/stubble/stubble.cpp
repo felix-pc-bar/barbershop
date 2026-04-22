@@ -5,15 +5,20 @@
 #include <ostream>
 #include <filesystem>
 #include <algorithm>
+#include <stdexcept>
 
 #include "stubble.h"
 #include "../helpers/stringy.h"
+#include "types.h"
+#include "buildermap.h"
 // #include "material.h"
 
 // static std::unordered_map<std::string, StubbleParser::FunctionEntry> builderLookup = 
 // {
 // 	{"Colour", {colourBuilder, {StubbleParser::TypeData::Int, StubbleParser::TypeData::Int, StubbleParser::TypeData::Int}}}
 // };
+
+FunctionEntry::FunctionEntry(builderFunction bf, std::vector<TypeData> td) : func{bf}, argTypes(td) {}
 
 std::string getDataToken(std::istream& stream)
 {
@@ -137,7 +142,7 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 	}
 }
 
-std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string filepath)
+std::optional<extendedValue> StubbleParser::import(std::string filepath)
 {
  	if (!std::filesystem::exists(filepath))
 	{
@@ -223,4 +228,61 @@ std::optional<StubbleParser::extendedValue> StubbleParser::import(std::string fi
 	std::optional<SyntacticalBranch> result = graftFrag(ts);
 
 	return extendedValue();
+}
+
+std::optional<extendedValue> translateTree(StubbleParser::SyntacticalBranch& ast)
+{
+	if (ast.children.size() == 0) // leaf
+	{
+		if (ast.data == "true") { return true; }
+		if (ast.data == "false") { return false; }
+		if (isDigits(ast.data))
+		{
+			return stoi(ast.data);
+		}
+		auto fpResult = getFloatLiteral(ast.data);
+		if (fpResult.has_value())
+		{
+			return fpResult.value();
+		}
+		auto stResult = getStringLiteral(ast.data);
+		if (stResult.has_value())
+		{
+			return stResult.value();
+		}
+		// Couldn't match to any base type
+		std::cout << "Error: leaf branch \"" << ast.data << "\" couldn't be matched to a base type." << std::endl;
+		return std::nullopt;
+	}
+	else
+	{
+		std::vector<extendedValue> translatedChildren;
+		for (auto branch : ast.children)
+		{
+			auto br = translateTree(branch);
+			if (!br.has_value())
+			{
+				// Propograte error
+				return std::nullopt;
+			}
+			translatedChildren.emplace_back(br.value());
+		}
+	}
+}
+
+std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params)
+{
+	try
+	{
+		auto funcEntry = builderLookup.at(typeName);
+		if (params.size() != funcEntry.argTypes.size())
+		{
+			throw std::invalid_argument("param");
+		}
+	}
+	catch (std::out_of_range)
+	{
+		std::cout << "Error: type \"" << typeName << "\" is not supported." << std::endl;
+		return std::nullopt;
+	}
 }

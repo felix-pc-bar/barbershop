@@ -1,37 +1,17 @@
-#include <variant>
-#include <unordered_map>
+//#include <variant>
+//#include <unordered_map>
 #include <string>
-#include <functional>
+//#include <functional>
 #include <optional>
+#include <vector>
 
-#include "../material.h"
+#include "types.h"
 
 std::string getDataToken(std::istream& stream);
 
 class StubbleParser
 {
 public:
-    using baseValue = std::variant<
-        int,
-        float,
-        bool,
-        std::string
-    >;
-    using objectPointer = std::variant<
-        Material*,
-        Colour*
-    >;
-    using extendedValue = std::variant<baseValue, objectPointer>; using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
-
-    // This is just an class that stores the type explicitly (unimportant names)
-    enum class TypeData
-    {
-        Int,
-        Float,
-        Bool,
-        StdString
-    };
-
     enum class TokenType
     {
         data,
@@ -77,15 +57,11 @@ public:
 	
 	std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
 
-	
+	std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
+
+	std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params);
 
     // Stores function pointer alongside arg types it wants
-    struct FunctionEntry
-    {
-        builderFunction func;
-        std::vector<TypeData> argTypes;
-        FunctionEntry() = default;
-    };
 
     std::optional<extendedValue> import(std::string filepath);
 
