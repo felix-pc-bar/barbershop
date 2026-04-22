@@ -18,7 +18,7 @@
 #include "render/render.h"
 #include "material.h"
 #include "quaternion.h"
-#include "stubble.h"
+#include "stubble/stubble.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;

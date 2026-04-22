@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "stubble.h"
-#include "helpers/stringy.h"
+#include "../helpers/stringy.h"
 // #include "material.h"
 
 // static std::unordered_map<std::string, StubbleParser::FunctionEntry> builderLookup = 

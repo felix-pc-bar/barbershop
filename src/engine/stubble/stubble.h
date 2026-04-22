@@ -4,7 +4,7 @@
 #include <functional>
 #include <optional>
 
-#include "material.h"
+#include "../material.h"
 
 std::string getDataToken(std::istream& stream);
 
@@ -76,6 +76,8 @@ public:
     };
 	
 	std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
+
+	
 
     // Stores function pointer alongside arg types it wants
     struct FunctionEntry
