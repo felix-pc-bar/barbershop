@@ -1,8 +1,11 @@
 #pragma once
 
+#include <compare>
 #include <variant>
 #include <functional>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "../material.h"
 
@@ -51,9 +54,7 @@ bool matchesType(const extendedValue& val, TypeData t);
 
 struct FunctionEntry
 {
-	builderFunction func;
-	//std::vector<TypeData> argTypes;
-	uint numArgs;
-	// FunctionEntry(builderFunction bf, std::vector<TypeData> td);
-	FunctionEntry(builderFunction bf, uint numargs);
+	// Vector of arglist-function pairs
+	std::vector<std::pair<std::vector<TypeData>, builderFunction>> builders;
+	FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);
 };

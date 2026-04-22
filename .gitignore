@@ -1,6 +1,5 @@
-# Im SO DONE WITH THIS STUPhfdshjkabvsahiuov
 /build/
 /out/
 /.vs/
 /.vscode/
-/toolchains/mingw64/
+compile_commands.json

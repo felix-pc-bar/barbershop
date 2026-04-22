@@ -1,4 +1,5 @@
 #include "builders.h"
+#include "types.h"
 
 Colour* colourBuilder(std::vector<extendedValue> args)
 {

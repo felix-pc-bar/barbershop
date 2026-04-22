@@ -1,8 +1,20 @@
 #pragma once
 #include "builders.h"
 #include "types.h"
+#include <vector>
+
 
 static std::unordered_map<std::string, FunctionEntry> builderLookup =
 {
-	{"Colour", {colourBuilder, 4}}
+	{ "Colour", 
+		FunctionEntry{
+			{
+				{
+					{ TypeData::Float, TypeData::Float, TypeData::Float, TypeData::Float },
+					colourBuilder
+				}
+			}
+		}
+	}
 };
+// FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);

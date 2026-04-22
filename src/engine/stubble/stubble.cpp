@@ -34,7 +34,9 @@ bool matchesType(const extendedValue& val, TypeData t)
 
 // FunctionEntry::FunctionEntry(builderFunction bf, std::vector<TypeData> td) : func{bf}, argTypes(td) {}
 
-FunctionEntry::FunctionEntry(builderFunction bf, uint numargs) : func{bf}, numArgs(numargs) {}
+// FunctionEntry::FunctionEntry(builderFunction bf, uint numargs) : func{bf}, numArgs(numargs) {}
+
+FunctionEntry::FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
 
 std::string getDataToken(std::istream& stream)
 {
@@ -217,11 +219,44 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 	try
 	{
 		auto funcEntry = builderLookup.at(typeName);
-		if (params.size() != funcEntry.numArgs)
+		// if (params.size() != funcEntry.numArgs)
+		// {
+		// 	throw std::invalid_argument("param");
+		// }
+
+		// Match parameters to a builder function
+		builderFunction bf = nullptr;
+
+		for (size_t i = 0; i < funcEntry.builders.size(); i++)
 		{
-			throw std::invalid_argument("param");
+			// No point checking if individual params match if there's different numbers of them
+			if (params.size() == funcEntry.builders[i].first.size())
+			{
+				auto wantedParamTypeList = funcEntry.builders[i].first;
+				bool match = true;
+				for (size_t j= 0; j < wantedParamTypeList.size(); j++)
+				{
+					if (!matchesType(params[i], wantedParamTypeList[i]))
+					{
+						match = false;
+						break;
+					}
+				} // loop of each parameter
+				if (match == true)
+				{
+					bf = funcEntry.builders[i].second;	
+					break;
+				}
+			}
+		} // loop of potential builders
+
+		if (bf == nullptr)
+		{
+			std::cout << "Error: could not match parameters for construction of \"" << typeName << "\" to any builder" << std::endl;
+			return std::nullopt;
 		}
-		auto result = funcEntry.func(params);
+
+		auto result = bf(params);
 		return result;
 	}
 	catch (std::out_of_range)
