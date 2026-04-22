@@ -48,6 +48,13 @@ add_executable(barbershop
     src/engine/stubble/stubble.h
     src/engine/stubble/stubble.cpp
 
+    src/engine/stubble/builders.h
+    src/engine/stubble/builders.cpp
+
+    src/engine/stubble/types.h
+
+    src/engine/stubble/buildermap.h
+
     src/engine/helpers/stringy.h
     src/engine/helpers/stringy.cpp
 
@@ -67,8 +74,8 @@ target_link_directories(barbershop PRIVATE
 target_link_libraries(barbershop PRIVATE SDL2main SDL2)
 
 # Windows-specific linker handling
-if (WIN32)
-    if (MSVC)
+if(WIN32)
+    if(MSVC)
         target_link_options(barbershop PRIVATE /SUBSYSTEM:CONSOLE)
     else()
         # MinGW / g++

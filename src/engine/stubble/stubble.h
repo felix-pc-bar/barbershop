@@ -55,17 +55,17 @@ public:
         std::vector<SyntacticalBranch> children;
     };
 	
-	std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
+	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
 
-	std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
+	static std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
 
-	std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params);
+	static std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params);
 
     // Stores function pointer alongside arg types it wants
 
-    std::optional<extendedValue> import(std::string filepath);
+    static std::optional<extendedValue> import(std::string filepath);
 
-    extendedValue parse(std::string filepath);
+    static extendedValue parse(std::string filepath);
 private:
     extendedValue parseFrag(std::string token);
 };

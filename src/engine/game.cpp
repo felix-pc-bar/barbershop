@@ -25,14 +25,19 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-	// this->renderer = new cRenderer();
-	this->renderer = nullptr;
+	this->renderer = new cRenderer();
+	// this->renderer = nullptr;
 }
 
 void Game::run()
 {
 	StubbleParser sp;
-	sp.import("content/stubble/test1.stbbl");
+	auto imported = sp.import("content/stubble/test1.stbbl");
+	Colour *importedCol = new Colour();
+	if (imported.has_value())
+	{
+		importedCol = std::get<Colour*>(imported.value());
+	}
 
 	if (this->renderer == nullptr)
 	{
@@ -84,13 +89,14 @@ void Game::run()
 	for (int i = 1; i <= numMonkeys; i++)
 	{
 		mainScene.addObject(importObj("content/obj/ico.obj"));
-		if (i % 7 == 0) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
-		if (i % 7 == 1) { mainScene.objects[i].materials[0] = Material(Colour("green")); }
-		if (i % 7 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
-		if (i % 7 == 3) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
-		if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
-		if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
-		if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
+		// if (i % 7 == 0) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
+		// if (i % 7 == 1) { mainScene.objects[i].materials[0] = Material(Colour("green")); }
+		// if (i % 7 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
+		// if (i % 7 == 3) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
+		// if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
+		// if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
+		// if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
+		mainScene.objects[i].materials[0] = Material(*importedCol);
 	}
 	// mainScene.addObject(importObj("content/obj/szfl.obj"));
 	// mainScene.objects[1].materials[0] = Material(Colour("orange"));
