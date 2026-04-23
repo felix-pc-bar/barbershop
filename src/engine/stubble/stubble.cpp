@@ -28,13 +28,11 @@ bool matchesType(const extendedValue& val, TypeData t)
 		return std::holds_alternative<std::string>(val);
 	case TypeData::_Colour:
 		return std::holds_alternative<Colour*>(val);
+	case TypeData::_Material:
+		return std::holds_alternative<Material*>(val);
 	}
 	return false;
 }
-
-// FunctionEntry::FunctionEntry(builderFunction bf, std::vector<TypeData> td) : func{bf}, argTypes(td) {}
-
-// FunctionEntry::FunctionEntry(builderFunction bf, uint numargs) : func{bf}, numArgs(numargs) {}
 
 FunctionEntry::FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
 
@@ -133,9 +131,9 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				    return std::nullopt;
 				}
 
-	 			auto next = ts.peek();
+				auto next = ts.peek();
 				if (next->ttype == TokenType::brOpen) { unmatchedBrackets++; }
-	 			if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
+				if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
 			} while (unmatchedBrackets != 0);
 		// std::cout << "successfully done composite branch " << result.data << std::endl;
 		// we need to advance the pointer by 2,
@@ -274,7 +272,7 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 
 std::optional<extendedValue> StubbleParser::import(std::string filepath)
 {
- 	if (!std::filesystem::exists(filepath))
+	if (!std::filesystem::exists(filepath))
 	{
 	    std::cout << "Error: file does not exist." << std::endl; 
 	    return std::nullopt;
@@ -350,11 +348,6 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 	// Next, we build a heirachical structure from the lexemes/tokens 
 	// This is where structural error checking is done
 	
-	// for (auto token : ts.tokens)
-	// {
-	// 	std::cout << token.data << std::endl;
-	// }
-
 	std::optional<SyntacticalBranch> AST = graftFrag(ts);
 
 	if (!AST.has_value())
@@ -362,7 +355,5 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 		return std::nullopt;
 	}
 
-	auto resultantObject = translateTree(AST.value());
-
-	return resultantObject;
+	return translateTree(AST.value());
 }
