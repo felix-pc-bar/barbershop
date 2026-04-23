@@ -36,6 +36,7 @@ bool matchesType(const extendedValue& val, TypeData t)
 
 FunctionEntry::FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
 
+// TODO: add support for escaped quotes (we don't atm i think)
 std::string getDataToken(std::istream& stream)
 {
 	std::string result;
@@ -56,6 +57,8 @@ std::string getDataToken(std::istream& stream)
 	return result;
 }
 
+// We store data and token type- this is duplicitous for the punctuators, as the type always corresponds
+// to the same data, but this way we are futureproofed a bit for writing out a file.
 StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): ttype(tt), lineNumber(linenum), data(d) 
 {
 	switch (tt)
@@ -100,6 +103,7 @@ std::optional<StubbleParser::Token*> StubbleParser::TokenStream::consume(std::ve
 
 StubbleParser::Token* StubbleParser::TokenStream::peek()
 {
+	if (streamLocation == tokens.size()) { throw std::out_of_range("Pointer is at end of vector"); }
 	return &tokens[streamLocation + 1];
 }
 
@@ -109,6 +113,7 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 	auto returnedToken = ts.consume({StubbleParser::TokenType::data});
 	if (!returnedToken.has_value()) { return std::nullopt; }
 	result.data = returnedToken.value()->data;
+	result.lineNumber = returnedToken.value()->lineNumber;
 
 	auto cc = ts.consume({StubbleParser::TokenType::brOpen, StubbleParser::TokenType::brClose, StubbleParser::TokenType::comma});
 	if (!cc.has_value()) { return std::nullopt; }
@@ -131,15 +136,27 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				    return std::nullopt;
 				}
 
-				auto next = ts.peek();
-				if (next->ttype == TokenType::brOpen) { unmatchedBrackets++; }
-				if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
+				try
+				{
+					auto next = ts.peek();
+					if (next->ttype == TokenType::brOpen) { unmatchedBrackets++; }
+					if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
+				}
+				catch ( std::out_of_range )
+				{
+					std::cout << "Error: Hit EOF early while parsing. You may be missing trailing punctuators." << std::endl;
+					return std::nullopt;
+				}
 			} while (unmatchedBrackets != 0);
 		// std::cout << "successfully done composite branch " << result.data << std::endl;
 		// we need to advance the pointer by 2,
 		// because after peeking the close bracket, the pointer is on the close bkt
 		// and we need to skip past that _and_ the following comma
-		ts.streamLocation += 2;
+		ts.streamLocation++;
+		if (ts.consume({TokenType::brClose}).has_value())
+		{
+			// We need to end of the parent object, cus there's two commas :|
+		}
 		return result;
 		}
 
@@ -179,7 +196,7 @@ std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::Syntact
 			return stResult.value();
 		}
 		// Couldn't match to any base type
-		std::cout << "Error: leaf branch \"" << ast.data << "\" couldn't be matched to a base type." << std::endl;
+		std::cout << "Error: leaf branch \"" << ast.data << "\" at line " << ast.lineNumber << " couldn't be matched to a base type." << std::endl;
 		return std::nullopt;
 	}
 	else
@@ -199,6 +216,7 @@ std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::Syntact
 		if (!builtOb.has_value())
 		{
 			// Propogate error
+			std::cout << "Error: Couldn't build object \"" << ast.data << "\" at line " << ast.lineNumber << std::endl;
 			return std::nullopt;
 		}
 
@@ -216,13 +234,10 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 {
 	try
 	{
-		auto funcEntry = builderLookup.at(typeName);
-		// if (params.size() != funcEntry.numArgs)
-		// {
-		// 	throw std::invalid_argument("param");
-		// }
+		// ==== Match parameters to a builder function ====
 
-		// Match parameters to a builder function
+		auto funcEntry = builderLookup.at(typeName);
+
 		builderFunction bf = nullptr;
 
 		for (size_t i = 0; i < funcEntry.builders.size(); i++)
@@ -232,6 +247,7 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 			{
 				auto wantedParamTypeList = funcEntry.builders[i].first;
 				bool match = true;
+
 				for (size_t j= 0; j < wantedParamTypeList.size(); j++)
 				{
 					if (!matchesType(params[i], wantedParamTypeList[i]))
@@ -240,17 +256,20 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 						break;
 					}
 				} // loop of each parameter
+
 				if (match == true)
 				{
-					bf = funcEntry.builders[i].second;	
+					// Loop was completed with all params matching
+					// Break out of main loop with the function we found
+					bf = funcEntry.builders[i].second;
 					break;
 				}
 			}
-		} // loop of potential builders
+		} // </loop of potential builders>
 
-		if (bf == nullptr)
+		if (bf == nullptr) // None of the options got all the way thru without finding a false type
 		{
-			std::cout << "Error: could not match parameters for construction of \"" << typeName << "\" to any builder" << std::endl;
+			std::cout << "Error: Couldn't match parameters for construction of \"" << typeName << "\" to any builder" << std::endl;
 			return std::nullopt;
 		}
 
@@ -266,6 +285,11 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 	{
 		std::cout << "Error: passed invalid arguments in construction of \"" << typeName << "\"" << std::endl;
 		// TODO: Add reporting for wanted/given parameter types
+		return std::nullopt;
+	}
+	catch ( ... )
+	{
+		std::cout << "Error: could not import \"" << typeName << "\"" << std::endl;
 		return std::nullopt;
 	}
 }

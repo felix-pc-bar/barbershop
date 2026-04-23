@@ -53,6 +53,7 @@ public:
         SyntacticalBranch() = default;
         std::string data;
         std::vector<SyntacticalBranch> children;
+        unsigned int lineNumber; // Line number of data tag
     };
 	
 	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);

@@ -26,7 +26,7 @@ using dtclock = std::chrono::steady_clock;
 Game::Game()
 {
 	this->renderer = new cRenderer();
-	// this->renderer = nullptr;
+	this->renderer = nullptr;
 }
 
 void Game::run()
