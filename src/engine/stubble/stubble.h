@@ -30,7 +30,7 @@ public:
         Token() = default;
         Token(TokenType tt, unsigned int linenum = 0, std::string d = "");
 
-        std::string unexpected();
+        void unexpected();
     };
 
 	class TokenStream
@@ -56,7 +56,7 @@ public:
         unsigned int lineNumber; // Line number of data tag
     };
 	
-	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts);
+	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts, bool parent = true);
 
 	static std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
 

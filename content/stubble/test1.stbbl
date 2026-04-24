@@ -1,5 +1,5 @@
 Material(
 	Colour(0.2f, 1.0f, 0.2f),
 	3,
-	true(1)
+	Colour(0.2f, 1.0f, 0.2f)
 )

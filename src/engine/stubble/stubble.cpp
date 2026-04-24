@@ -80,9 +80,10 @@ StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): 
 	}
 }
 
-std::string StubbleParser::Token::unexpected()
+void StubbleParser::Token::unexpected()
 {
-	return "Unexpected token \"" + data + "\" at line " + std::to_string(lineNumber);
+	std::cout << "Unexpected token \"" + data + "\" at line " + std::to_string(lineNumber) << std::endl;
+	return;
 }
 
 StubbleParser::TokenStream::TokenStream(): streamLocation(-1) {} // We init streamloc to -1 because we incr it before reading (trust bro)
@@ -92,86 +93,105 @@ std::optional<StubbleParser::Token*> StubbleParser::TokenStream::consume(std::ve
 	streamLocation++;
 	if (std::find(validTypes.begin(), validTypes.end(), tokens[streamLocation].ttype) != validTypes.end())
 	{
-		return &tokens[streamLocation];
+		return &tokens.at(streamLocation); // throws std::out_of_range
 	}
 	else // Token is not of valid type
 	{
 		tokens[streamLocation].unexpected();
-		return std::nullopt; // Empty string signifies error reading
+		return std::nullopt;
 	}
 }
 
 StubbleParser::Token* StubbleParser::TokenStream::peek()
 {
 	if (streamLocation == tokens.size()) { throw std::out_of_range("Pointer is at end of vector"); }
-	return &tokens[streamLocation + 1];
+	return &tokens.at(streamLocation + 1);
 }
 
-std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(StubbleParser::TokenStream& ts)
+// This function takes a TokenStream.
+// It wants the first token in pops to be a data-
+// either because it's a leaf, and the data is... the data
+// or because it's the identifier for an object.
+// If the parse is successful (doesn't return std::nullopt), 
+// it will return leaving the next token to be popped being a comma, a close bkt, or EOF.
+// otherwise, no promises.
+std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(StubbleParser::TokenStream& ts, bool parent)
 {
 	StubbleParser::SyntacticalBranch result;
-	auto returnedToken = ts.consume({StubbleParser::TokenType::data});
+	auto returnedToken = ts.consume({StubbleParser::TokenType::data}); // Pop a data
 	if (!returnedToken.has_value()) { return std::nullopt; }
+
 	result.data = returnedToken.value()->data;
 	result.lineNumber = returnedToken.value()->lineNumber;
 
-	auto cc = ts.consume({StubbleParser::TokenType::brOpen, StubbleParser::TokenType::brClose, StubbleParser::TokenType::comma});
-	if (!cc.has_value()) { return std::nullopt; }
-
-	switch (cc.value()->ttype)
+	try 
 	{
-		case TokenType::brOpen: { // Curly braces to declare a new scope for the int here
-			// std::cout << "Starting composite branch- " << result.data << std::endl;
-			int unmatchedBrackets = 1;
-			do 
-			{
-				std::optional<StubbleParser::SyntacticalBranch> returnedBranch = graftFrag(ts);
-				if (returnedBranch.has_value())
-				{
-					result.children.emplace_back(returnedBranch.value());
-				}
-				else
-				{
-					// std::cout << "Carrying error" << std::endl;
-				    return std::nullopt;
-				}
+		auto cc = ts.peek();
 
-				try
-				{
-					auto next = ts.peek();
-					if (next->ttype == TokenType::brOpen) { unmatchedBrackets++; }
-					if (next->ttype == TokenType::brClose) { unmatchedBrackets--; }
-				}
-				catch ( std::out_of_range )
-				{
-					std::cout << "Error: Hit EOF early while parsing. You may be missing trailing punctuators." << std::endl;
-					return std::nullopt;
-				}
-			} while (unmatchedBrackets != 0);
-		// std::cout << "successfully done composite branch " << result.data << std::endl;
-		// we need to advance the pointer by 2,
-		// because after peeking the close bracket, the pointer is on the close bkt
-		// and we need to skip past that _and_ the following comma
-		ts.streamLocation++;
-		if (ts.consume({TokenType::brClose}).has_value())
+		switch (cc->ttype)
 		{
-			// We need to end of the parent object, cus there's two commas :|
+			case TokenType::data:
+			{
+				cc->unexpected();
+				return std::nullopt;
+			}
+
+			case TokenType::comma:
+				// Non-final leaf case
+				// We peeked the comma- return and let parent see/handle it
+				return result;
+
+			case TokenType::brClose:
+				// Final leaf case
+				// Likewise, let parent deal with close bkt
+				return result;
+
+			case TokenType::brOpen: { // Curly braces to declare a new scope for the int here
+				ts.streamLocation++; // We peeked the open bracket, consume it
+				for (;;) // Broken out of
+				{
+					// Since we skipped the peeked open bracket, we should have a data next up
+					std::optional<StubbleParser::SyntacticalBranch> returnedBranch = graftFrag(ts, false);
+					if (returnedBranch.has_value())
+					{
+						result.children.emplace_back(returnedBranch.value());
+					}
+					else
+					{
+						// Propogate
+					    return std::nullopt;
+					}
+
+					// Valid tokens after a child branch:
+					// Comma -> continue reading children
+					// Close bracket -> end of children list
+					// (Nominally we don't exit pointing to any other tokens)
+					auto next = ts.consume({ TokenType::comma, TokenType::brClose});
+					if (!next.has_value())
+					{
+						// Error: probably there was an error when parsing the last child branch
+						return std::nullopt;
+					}
+
+					// Break out of child-getting loop
+					if (next.value()->ttype == TokenType::brClose) { break; }
+					// Don't do anything for comma we just wanted to consume it
+				}
+				if (parent && ts.streamLocation + 1 != ts.tokens.size())
+				{
+					std::cout << "Warning: Trailing token(s) found after final closing bracket. Only one object may be imported at a time." << std::endl;
+				}
+				return result;
+			}
+
+			default:
+			    std::cout << "Fatal error: invalid control character. Cannot continue parsing file." << std::endl;
+			    return std::nullopt;
 		}
-		return result;
-		}
-
-		case TokenType::comma:
-			// std::cout << "Returning leaf branch of value " << result.data << std::endl;
-			return result;
-
-		case TokenType::brClose:
-			// std::cout << "Reached the end of a composite list, ungetting and returning leaf branch of value " << result.data << std::endl;
-			ts.streamLocation--;
-			return result;
-
-		default:
-		    std::cout << "Fatal error: invalid control character. Cannot continue parsing file." << std::endl;
-		    return std::nullopt;
+	// ts.peek() and ts.consume() throw exceptions if we read too far
+	} catch ( std::out_of_range ) {
+		std::cout << "Error: hit EOF early. You may be missing trailing punctuators." << std::endl;
+		return std::nullopt;
 	}
 }
 
@@ -250,7 +270,7 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 
 				for (size_t j= 0; j < wantedParamTypeList.size(); j++)
 				{
-					if (!matchesType(params[i], wantedParamTypeList[i]))
+					if (!matchesType(params[j], wantedParamTypeList[j]))
 					{
 						match = false;
 						break;
@@ -289,7 +309,7 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 	}
 	catch ( ... )
 	{
-		std::cout << "Error: could not import \"" << typeName << "\"" << std::endl;
+		std::cout << "Error: Could not import \"" << typeName << "\"" << std::endl;
 		return std::nullopt;
 	}
 }
@@ -372,12 +392,18 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 	// Next, we build a heirachical structure from the lexemes/tokens 
 	// This is where structural error checking is done
 	
-	std::optional<SyntacticalBranch> AST = graftFrag(ts);
+	auto AST = graftFrag(ts);
 
 	if (!AST.has_value())
 	{
+		std::cout << "Error when grafting \"" << filepath << "\"\n";
 		return std::nullopt;
 	}
 
-	return translateTree(AST.value());
+	auto result = translateTree(AST.value()) ;
+	if (!result.has_value())
+	{
+		std::cout << "Error when translating \"" << filepath << "\"\n";
+	}
+	return result;
 }
