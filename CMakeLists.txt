@@ -70,19 +70,6 @@ target_link_directories(barbershop PRIVATE
     "${SDL2_ROOT}/lib/x64"
 )
 
-if(WIN32)
-	add_custom_target(link_compile_commands ALL
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			${CMAKE_BINARY_DIR}/compile_commands.json
-			${CMAKE_SOURCE_DIR}/compile_commands.json
-	)
-else()
-	add_custom_target(link_compile_commands ALL
-		COMMAND ${CMAKE_COMMAND} -E create_symlink
-			${CMAKE_BINARY_DIR}/compile_commands.json
-			${CMAKE_SOURCE_DIR}/compile_commands.json
-	)
-endif()
 
 # TODO: we need to fix that issue on freshly cloning the repo
 target_link_libraries(barbershop PRIVATE SDL2main SDL2)
@@ -104,6 +91,20 @@ set_target_properties(barbershop PROPERTIES
 
 # Content copy
 set(MASTER_CONTENT_DIR "${CMAKE_SOURCE_DIR}/content")
+
+if(WIN32)
+	add_custom_target(link_compile_commands ALL
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			${CMAKE_BINARY_DIR}/compile_commands.json
+			${CMAKE_SOURCE_DIR}/compile_commands.json
+	)
+else()
+	add_custom_target(link_compile_commands ALL
+		COMMAND ${CMAKE_COMMAND} -E create_symlink
+			${CMAKE_BINARY_DIR}/compile_commands.json
+			${CMAKE_SOURCE_DIR}/compile_commands.json
+	)
+endif()
 
 add_custom_command(
     TARGET barbershop PRE_BUILD

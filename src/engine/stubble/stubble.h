@@ -17,6 +17,8 @@ public:
         data,
         brOpen,
         brClose,
+		sqBrOpen,
+		sqBrClose,
         comma
     };
 

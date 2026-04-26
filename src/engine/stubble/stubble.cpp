@@ -71,6 +71,14 @@ StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): 
 		data = ")";
 		break;
 	
+	case TokenType::sqBrOpen:
+		data = "[";
+		break;
+	
+	case TokenType::sqBrClose:
+		data = "]";
+		break;
+
 	case TokenType::comma:
 		data = ",";
 		break;
