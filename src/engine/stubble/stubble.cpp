@@ -132,7 +132,7 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 	result.data = returnedToken.value()->data;
 	result.lineNumber = returnedToken.value()->lineNumber;
 
-	try 
+	try
 	{
 		auto cc = ts.peek();
 
@@ -154,6 +154,7 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				// Likewise, let parent deal with close bkt
 				return result;
 
+			case TokenType::sqBrOpen: // falls thru to next block
 			case TokenType::brOpen: { // Curly braces to declare a new scope for the int here
 				ts.streamLocation++; // We peeked the open bracket, consume it
 				for (;;) // Broken out of
