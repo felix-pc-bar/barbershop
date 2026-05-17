@@ -37,6 +37,8 @@ void Game::run()
 	auto imported = sp.import("content/stubble/test1.stbbl");
 
 	Pyjama *importedOb = new Pyjama();
+
+	Pyjama *importedOb = new Pyjama();
 	if (imported.has_value())
 	{
 		importedOb = std::get<Pyjama*>(imported.value());
