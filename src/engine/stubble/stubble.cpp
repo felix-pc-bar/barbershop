@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <stdexcept>
+#include <vector>
 
 #include "stubble.h"
 #include "../helpers/stringy.h"
@@ -47,7 +48,7 @@ std::string getDataToken(std::istream& stream)
 		c = stream.get();
 		if (c == EOF) { break; }
 		if (c == '\"') { inQuotes = !inQuotes; }
-		if (std::string("(),").find_first_of(c) != std::string::npos && !inQuotes)
+		if (std::string("()[],").find_first_of(c) != std::string::npos && !inQuotes)
 		{
 			break;
 		}
@@ -96,12 +97,12 @@ void StubbleParser::Token::unexpected()
 
 StubbleParser::TokenStream::TokenStream(): streamLocation(-1) {} // We init streamloc to -1 because we incr it before reading (trust bro)
 
-std::optional<StubbleParser::Token*> StubbleParser::TokenStream::consume(std::vector<StubbleParser::TokenType> validTypes)
+std::optional<StubbleParser::Token> StubbleParser::TokenStream::consume(std::vector<StubbleParser::TokenType> validTypes)
 {
 	streamLocation++;
 	if (std::find(validTypes.begin(), validTypes.end(), tokens[streamLocation].ttype) != validTypes.end())
 	{
-		return &tokens.at(streamLocation); // throws std::out_of_range
+		return tokens.at(streamLocation); // throws std::out_of_range
 	}
 	else // Token is not of valid type
 	{
@@ -123,14 +124,22 @@ StubbleParser::Token* StubbleParser::TokenStream::peek()
 // If the parse is successful (doesn't return std::nullopt), 
 // it will return leaving the next token to be popped being a comma, a close bkt, or EOF.
 // otherwise, no promises.
-std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(StubbleParser::TokenStream& ts, bool parent)
+// If branchName is passed, we will try to return either a leaf, or a branch with the passed identifier
+std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(StubbleParser::TokenStream& ts, bool parent, std::optional<StubbleParser::Token> idt)
 {
+	std::optional<StubbleParser::Token> idToken = idt;
+	bool isVectorInner = true; // this branch is a direct child of a vector- treat differently
 	StubbleParser::SyntacticalBranch result;
-	auto returnedToken = ts.consume({StubbleParser::TokenType::data}); // Pop a data
-	if (!returnedToken.has_value()) { return std::nullopt; }
+	if (!idToken.has_value())
+	{
+		isVectorInner = false;
+		idToken = ts.consume({StubbleParser::TokenType::data}); // Pop a data
+		if (!idToken.has_value()) { return std::nullopt; }
+	}
 
-	result.data = returnedToken.value()->data;
-	result.lineNumber = returnedToken.value()->lineNumber;
+	result.data = idToken.value().data;
+	result.lineNumber = idToken.value().lineNumber;
+	result.isVector = false;
 
 	try
 	{
@@ -140,8 +149,18 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 		{
 			case TokenType::data:
 			{
-				cc->unexpected();
-				return std::nullopt;
+				if (isVectorInner)
+				{
+					// inner vector leaf
+					ts.streamLocation++; // we didn't consume the data
+					result.data = cc->data;
+					return result;
+				}
+				else
+				{
+					cc->unexpected();
+					return std::nullopt;
+				}
 			}
 
 			case TokenType::comma:
@@ -149,12 +168,12 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				// We peeked the comma- return and let parent see/handle it
 				return result;
 
+			case TokenType::sqBrClose:
 			case TokenType::brClose:
 				// Final leaf case
 				// Likewise, let parent deal with close bkt
 				return result;
 
-			case TokenType::sqBrOpen: // falls thru to next block
 			case TokenType::brOpen: { // Curly braces to declare a new scope for the int here
 				ts.streamLocation++; // We peeked the open bracket, consume it
 				for (;;) // Broken out of
@@ -183,8 +202,8 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 					}
 
 					// Break out of child-getting loop
-					if (next.value()->ttype == TokenType::brClose) { break; }
-					// Don't do anything for comma we just wanted to consume it
+					if (next.value().ttype == TokenType::brClose) { break; }
+					// Don't do anything for comma, we just wanted to consume it
 				}
 				if (parent && ts.streamLocation + 1 != ts.tokens.size())
 				{
@@ -193,6 +212,45 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				return result;
 			}
 
+			case TokenType::sqBrOpen: { // Curly braces to declare a new scope
+				ts.streamLocation++; // We peeked the open bracket, consume it
+				result.isVector = true;
+				for (;;) // Broken out of
+				{
+					// Since we have a vector, we should be straight into either leaf data or children lists
+					// We pass the ID token of this branch along
+					std::optional<StubbleParser::SyntacticalBranch> returnedBranch = graftFrag(ts, false, idToken);
+					if (returnedBranch.has_value())
+					{
+						result.children.emplace_back(returnedBranch.value());
+					}
+					else
+					{
+						// Propogate
+					    return std::nullopt;
+					}
+
+					// Valid tokens after a child branch:
+					// Comma -> continue reading children
+					// Close bracket -> end of children list
+					// (Nominally we don't exit pointing to any other tokens)
+					auto next = ts.consume({ TokenType::comma, TokenType::sqBrClose});
+					if (!next.has_value())
+					{
+						// Error: probably there was an error when parsing the last child branch
+						return std::nullopt;
+					}
+
+					// Break out of child-getting loop
+					if (next.value().ttype == TokenType::sqBrClose) { break; }
+					// Don't do anything for comma, we just wanted to consume it
+				}
+				if (parent && ts.streamLocation + 1 != ts.tokens.size())
+				{
+					std::cout << "Warning: Trailing token(s) found after final closing bracket. Only one object may be imported at a time." << std::endl;
+				}
+				return result;
+			}
 			default:
 			    std::cout << "Fatal error: invalid control character. Cannot continue parsing file." << std::endl;
 			    return std::nullopt;
@@ -206,6 +264,11 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 
 std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::SyntacticalBranch& ast)
 {
+	if (ast.isVector)
+	{
+		return translateVector(ast);
+	}
+
 	if (ast.children.size() == 0) // leaf
 	{
 		if (ast.data == "true") { return true; }
@@ -323,6 +386,75 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 	}
 }
 
+std::optional<Pyjama*> StubbleParser::translateVector(SyntacticalBranch& ast)
+{
+	std::vector<extendedValue> result;
+	if (ast.data == "int")
+	{
+		for (auto branch : ast.children)
+		{
+			if (!isDigits(branch.data) || branch.children.size() != 0)
+			{
+				std::cout << "Error: encountered non-int type when translating vector<int> on line " << ast.lineNumber << std::endl;
+				return std::nullopt;
+			}
+			result.emplace_back(stoi(branch.data));
+		}
+	}
+	else if (ast.data == "float")
+	{
+		for (auto branch : ast.children)
+		{
+			auto rf = getFloatLiteral(branch.data);
+			if (rf == std::nullopt || branch.children.size() != 0)
+			{
+				std::cout << "Error: encountered non-float type when translating vector<float> on line " << ast.lineNumber << std::endl;
+				return std::nullopt;
+			}
+			result.emplace_back(rf.value());
+		}
+	}
+	else if (ast.data == "bool")
+	{
+		for (auto branch : ast.children)
+		{
+			if ((branch.data != "true" && branch.data != "false") || branch.children.size() != 0)
+			{
+				std::cout << "Error: encountered non-bool type when translating vector<bool> on line " << ast.lineNumber << std::endl;
+				return std::nullopt;
+			}
+			result.emplace_back(branch.data == "true" ? true : false);
+		}
+	}
+	else if (ast.data == "string")
+	{
+		for (auto branch : ast.children)
+		{
+			if (branch.children.size() != 0)
+			{
+				std::cout << "Error: encountered non-string type when translating vector<string> on line " << ast.lineNumber << std::endl;
+				return std::nullopt;
+			}
+			result.emplace_back(branch.data);
+		}
+	}
+	else
+	{
+		for (auto branch : ast.children)
+		{
+			auto ro = translateTree(branch);
+			if (ro == std::nullopt)
+			{
+				return std::nullopt;
+			}
+			result.emplace_back(ro.value());
+		}
+	}
+	Pyjama* pj = new Pyjama();
+	pj->v = result;
+	return pj;
+}
+
 std::optional<extendedValue> StubbleParser::import(std::string filepath)
 {
 	if (!std::filesystem::exists(filepath))
@@ -372,6 +504,14 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 				ts.tokens.emplace_back(TokenType::brClose, currentline);
 				break;
 			
+			case '[':
+				ts.tokens.emplace_back(TokenType::sqBrOpen, currentline);
+				break;
+			
+			case ']':
+				ts.tokens.emplace_back(TokenType::sqBrClose, currentline);
+				break;
+
 			case ',':
 				ts.tokens.emplace_back(TokenType::comma, currentline);
 				break;
@@ -389,7 +529,7 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 		    }).base();
 		
 		    if (start >= end) { continue; } // This skips adding a token, because it would be an empty data
-		    else 
+		    else
 			{
 				currentData = std::string(start, end);
 			}

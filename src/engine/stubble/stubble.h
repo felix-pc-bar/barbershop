@@ -42,7 +42,7 @@ public:
 		int streamLocation;
 
 		TokenStream();
-		std::optional<Token*> consume(std::vector<TokenType> validTypes);
+		std::optional<Token> consume(std::vector<TokenType> validTypes);
 		Token* peek();
 	};
 
@@ -54,13 +54,17 @@ public:
     public:
         SyntacticalBranch() = default;
         std::string data;
+		bool isVector; // is this branch a vector (requires different translation rules)
         std::vector<SyntacticalBranch> children;
         unsigned int lineNumber; // Line number of data tag
     };
 	
-	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts, bool parent = true);
+	// If we're doing a vector, we want to pass a branch name and not be looking for one before the children list
+	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts, bool parent = true, std::optional<Token> idToken = std::nullopt);
 
 	static std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
+
+	static std::optional<Pyjama*> translateVector(SyntacticalBranch& ast);
 
 	static std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params);
 

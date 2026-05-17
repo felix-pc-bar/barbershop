@@ -20,16 +20,28 @@ using objectPointer = std::variant<
     Colour*
 >;
 
+class Pyjama;
+
 using extendedValue = std::variant<
 	int,
 	float,
 	bool,
 	std::string,
+	Pyjama*,
 	Material*,
 	Colour*
 >;
 
 using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
+
+// This class is simply a wrapper for vector. (gedit?)
+// We do this to allow for recursive vectors
+class Pyjama
+{
+public:
+	std::vector<extendedValue> v;
+	Pyjama() = default;
+};
 
 // This is just an class that stores the type explicitly (unimportant names)
 enum class baseTypeData
