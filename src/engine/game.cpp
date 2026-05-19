@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
-#include <cstdint>
+// #include <cstdint>
 #include <chrono>
 #include <cmath>
 
@@ -34,7 +34,7 @@ Game::Game()
 void Game::run()
 {
 	StubbleParser sp;
-	auto imported = sp.import("content/stubble/test1.stbbl");
+	auto imported = sp.import("content/stubble/vector.stbbl");
 
 	Pyjama *importedOb = new Pyjama();
 
@@ -221,7 +221,7 @@ void Game::run()
 	//SDL_Quit();
 
 	return;
-} 
+}
 
 Game::~Game()
 {

@@ -7,26 +7,28 @@
 static std::unordered_map<std::string, FunctionEntry> builderLookup =
 {
 {
-		"Colour", 
-		FunctionEntry{
-	{
+		"Colour",
+		FunctionEntry
+		{
 			{
-					{ TypeData::Float, TypeData::Float, TypeData::Float},
+				{
+					{ TypesEnum::Float, TypesEnum::Float, TypesEnum::Float},
 					_colRGB
 				},
-			{
-					{ TypeData::Float, TypeData::Float, TypeData::Float, TypeData::Float },
+				{
+					{ TypesEnum::Float, TypesEnum::Float, TypesEnum::Float, TypesEnum::Float },
 					_colRGBA
 				}
 			}
 		}
 	},
 {
-		"Material", 
-		FunctionEntry{
-	{
+		"Material",
+		FunctionEntry
+		{
 			{
-					{ TypeData::_Colour, TypeData::Int, TypeData::Bool},
+				{
+					{ TypesEnum::_Colour, TypesEnum::Int, TypesEnum::Bool},
 					_matColPtShd
 				}
 			}

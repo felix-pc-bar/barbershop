@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <stdexcept>
+#include <variant>
 #include <vector>
 
 #include "stubble.h"
@@ -14,28 +15,67 @@
 #include "buildermap.h"
 #include "../material.h"
 
+std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t)
+{
+	switch (t.type)
+	{
+	case TypesEnum::Int:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<int>(v);
+		};
+	case TypesEnum::Bool:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<bool>(v);
+		};
+	case TypesEnum::Float:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<float>(v);
+		};
+	case TypesEnum::StdString:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<std::string>(v);
+		};
+	case TypesEnum::_Colour:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Colour*>(v);
+		};
+	case TypesEnum::_Material:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Material*>(v);
+		};
+	}
+}
+
 // Bridge between runtime std::variant data and static enum class types
 bool matchesType(const extendedValue& val, TypeData t)
 {
-	switch (t)
+	auto matcher = getTypeMatcher(t);
+	if (!t.isVector)
 	{
-	case TypeData::Int:
-		return std::holds_alternative<int>(val);
-	case TypeData::Bool:
-		return std::holds_alternative<bool>(val);
-	case TypeData::Float:
-		return std::holds_alternative<float>(val);
-	case TypeData::StdString:
-		return std::holds_alternative<std::string>(val);
-	case TypeData::_Colour:
-		return std::holds_alternative<Colour*>(val);
-	case TypeData::_Material:
-		return std::holds_alternative<Material*>(val);
+		return matcher(val);
 	}
-	return false;
+	else
+	{
+		if (!std::holds_alternative<Pyjama*>(val)) { return false; } // not a vector as stipulated
+		auto pj = std::get<Pyjama*>(val);
+		for (auto x : pj->v)
+		{
+			if (!matcher(x)) { return false; } // an item doesn't match
+		}
+		// made it thru all items
+		return true;
+	}
 }
 
 FunctionEntry::FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
+
+TypeData::TypeData(TypesEnum t, bool isvec): type(t), isVector(isvec) {}
 
 // TODO: add support for escaped quotes (we don't atm i think)
 std::string getDataToken(std::istream& stream)
