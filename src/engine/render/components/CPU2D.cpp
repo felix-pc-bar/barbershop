@@ -14,6 +14,24 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	this->bufMain = screenbuffer;
 }
 
+void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy)
+{
+	for (int y = 0; y < this->height; y++)
+	{
+		for (int x = 0; x < this->width; x++)
+		{
+			if (x <= buf.width && (y * buf.width + x) < buf.values.size())
+			{
+				this->SetPixel(x, y, 0xFF00FF00);
+			}
+			else
+			{
+				this->SetPixel(x, y, 0xFFFF0000);
+			}
+		}
+	}
+}
+
 void Hairline::drawPoint(Point2d pt, int sizePx)
 {
 	int offset = std::floor(sizePx / 2.0f);

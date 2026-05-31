@@ -1,9 +1,7 @@
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 // #include <cstdint>
 #include <chrono>
-#include <cmath>
 
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
@@ -15,6 +13,8 @@
 #include "game.h"
 #include "render/render.h"
 #include "material.h"
+
+#include "../buffer.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -35,6 +35,7 @@ void Game::run()
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 
+	pixelBuffer pxbuf(100, 100, 2);
 
 	// ====
 	// TIME
@@ -106,8 +107,8 @@ void Game::run()
 			// etc
 		}
 
-		this->renderer->clear({0xFF00FF});
-		this->renderer->renderScene();
+		this->renderer->clear({0x000000});
+		this->renderer->renderScene(pxbuf);
 		frame++;
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);

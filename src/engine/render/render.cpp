@@ -17,7 +17,6 @@
 #include "render.h"
 #include "components/CPU2D.h"
 
-#include "../globals.h"
 
 using std::cout, std::endl;
 
@@ -94,9 +93,12 @@ cRenderer::~cRenderer() {
 	}
 }
 
-void cRenderer::renderScene() const
+void cRenderer::renderScene(pixelBuffer pbuf) const
 {
 	// do whatever in hairline here
+	this->hairline->transformPixelBuffer(pbuf);
+	// this->hairline->SetPixel(5, 5, Colour(255, 0, 255).raw());
+
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, screenTexture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);

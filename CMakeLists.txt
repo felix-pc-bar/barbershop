@@ -32,6 +32,9 @@ add_executable(barbershop
 
 	src/engine/globals.h
 	src/engine/globals.cpp
+
+	src/buffer.h
+	src/buffer.cpp
 )
 
 # SDL include + lib paths (scoped)
