@@ -1,0 +1,65 @@
+{
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "gcc-debug",
+      "displayName": "GCC (Debug)",
+      "description": "GNU C++ with debugging symbols (no profiling)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_MAKE_PROGRAM": "ninja",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_RC_COMPILER": "windres",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "GCC (Release)",
+      "description": "GNU C++ without debugging symbols",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_MAKE_PROGRAM": "ninja",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_RC_COMPILER": "windres",
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+
+    {
+      "name": "msvc-profile",
+      "displayName": "MSVC Profiling",
+      "description": "MSVC build with symbols and optimisations for CPU profiling",
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "architecture": "x64",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "ProgramDatabase",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "OFF"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug"
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release"
+    },
+    {
+      "name": "msvc-profile",
+      "configurePreset": "msvc-profile"
+    }
+  ]
+}
