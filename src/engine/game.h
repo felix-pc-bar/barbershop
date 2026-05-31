@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include "general3d.h"
 #include "render/render.h"
 
 class Game
@@ -13,7 +12,6 @@ public:
 	cRenderer* renderer;
 
 private:
-	std::vector<Scene> scenes;
 
 	// Pointers to our window and surface
 	//SDL_Surface* winSurface;
