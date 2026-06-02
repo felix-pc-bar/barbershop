@@ -35,7 +35,7 @@ void Game::run()
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 
-	pixelBuffer pxbuf(100, 100, 2);
+	pixelBuffer pxbuf(100, 100);
 
 	// ====
 	// TIME
@@ -48,9 +48,9 @@ void Game::run()
 	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
-	// ===========
-	// SCENE SETUP
-	// ===========
+	// buff stuff
+	int dx = 0;
+	int dy = 0;
 
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
@@ -102,13 +102,13 @@ void Game::run()
 		}
 
 		// Key hold events here
-		if (gk[SDL_SCANCODE_W])
-		{
-			// etc
-		}
+		if (gk[SDL_SCANCODE_LEFT]) { dx -= 10; }
+		if (gk[SDL_SCANCODE_RIGHT]) { dx += 10; }
+		if (gk[SDL_SCANCODE_DOWN]) { dy -= 10; }
+		if (gk[SDL_SCANCODE_UP]) { dy += 10; }
 
-		this->renderer->clear({0x000000});
-		this->renderer->renderScene(pxbuf);
+		this->renderer->clear({0xFF202020});
+		this->renderer->renderScene(pxbuf, dx, dy);
 		frame++;
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);

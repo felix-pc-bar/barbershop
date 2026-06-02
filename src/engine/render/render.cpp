@@ -93,10 +93,10 @@ cRenderer::~cRenderer() {
 	}
 }
 
-void cRenderer::renderScene(pixelBuffer pbuf) const
+void cRenderer::renderScene(pixelBuffer pbuf, int xoffset, int yoffset) const
 {
 	// do whatever in hairline here
-	this->hairline->transformPixelBuffer(pbuf);
+	this->hairline->transformPixelBuffer(pbuf, xoffset, yoffset);
 	// this->hairline->SetPixel(5, 5, Colour(255, 0, 255).raw());
 
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));

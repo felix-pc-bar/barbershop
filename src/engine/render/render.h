@@ -18,7 +18,7 @@ public:
 	void resize(int newWidth, int newHeight); // Broken lol
 	Hairline* hairline;
 
-	void renderScene(pixelBuffer pbuf) const;
+	void renderScene(pixelBuffer pbuf, int xoffset, int yoffset) const;
 	void clear(Colour col);
 	
 	int width;

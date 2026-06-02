@@ -16,17 +16,14 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 
 void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy)
 {
-	for (int y = 0; y < this->height; y++)
+	for (int y = -dy; y < this->height - dy; y++)
 	{
-		for (int x = 0; x < this->width; x++)
+		for (int x = -dx; x < this->width - dx; x++)
 		{
-			if (x <= buf.width && (y * buf.width + x) < buf.values.size())
+			if (x >= 0 && x <= buf.width && (y * buf.width + x) < buf.values.size())
 			{
-				this->SetPixel(x, y, 0xFF00FF00);
-			}
-			else
-			{
-				this->SetPixel(x, y, 0xFFFF0000);
+				uint32_t colour = (buf.values[y * buf.width + x])
+				this->SetPixel(x + dx, y + dy, 0xFF00FF00);
 			}
 		}
 	}

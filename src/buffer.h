@@ -8,5 +8,5 @@ public:
 	int width;
 	std::vector<short int> values;
 
-	pixelBuffer(int _width, int _height, short int fill);
+	pixelBuffer(int _width, int _height, short int fill = -1);
 };
