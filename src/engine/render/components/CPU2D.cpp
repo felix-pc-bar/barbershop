@@ -22,8 +22,8 @@ void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy)
 		{
 			if (x >= 0 && x <= buf.width && (y * buf.width + x) < buf.values.size())
 			{
-				uint32_t colour = (buf.values[y * buf.width + x])
-				this->SetPixel(x + dx, y + dy, 0xFF00FF00);
+				uint32_t colour = (buf.values[y * buf.width + x] == 1) ? 0xFF808080 : 0xFF000000;
+				this->SetPixel(x + dx, y + dy, colour);
 			}
 		}
 	}
