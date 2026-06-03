@@ -11,6 +11,7 @@
 #include <SDL_keycode.h>
 
 #include "game.h"
+#include "globals.h"
 #include "render/render.h"
 #include "material.h"
 
@@ -47,11 +48,15 @@ void Game::run()
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// buff stuff
-	pixelBuffer pxbuf(63, 63);
+	pixelBuffer pxbuf(63, 63, 0);
 	int dx = 0;
 	int dy = 0;
 	int scale = 1;
 
+	int bufrelX = 0;
+	int bufrelY = 0;
+
+	bool lmbdown = false;
 	bool mmbdown = false;
 
 	float fpsRunningTotal = 0;
@@ -88,6 +93,8 @@ void Game::run()
 			}
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
+			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) { lmbdown = true; }
+			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; }
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				// mouse
@@ -99,6 +106,13 @@ void Game::run()
 					dx += event.motion.xrel;
 					dy -= event.motion.yrel;
 				}
+
+				bufrelX = event.motion.x - dx;
+				bufrelY = (globScreenheight - event.motion.y) - dy;
+			}
+			if (lmbdown)
+			{
+				pxbuf.set(bufrelX / scale, bufrelY / scale, 1);
 			}
 			if (event.type == SDL_MOUSEWHEEL)
 			{
@@ -118,10 +132,12 @@ void Game::run()
 		}
 
 		// Key hold events here
-		if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
-		if (gk[SDL_SCANCODE_RIGHT]) { dx += 20 * dtFac; }
-		if (gk[SDL_SCANCODE_DOWN]) { dy -= 20 * dtFac; }
-		if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
+		// if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
+		// if (gk[SDL_SCANCODE_RIGHT]) { dx += 20 * dtFac; }
+		// if (gk[SDL_SCANCODE_DOWN]) { dy -= 20 * dtFac; }
+		// if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
+
+
 
 		this->renderer->clear({0xFF202020});
 		this->renderer->hairline->transformPixelBuffer(pxbuf, dx, dy, scale);

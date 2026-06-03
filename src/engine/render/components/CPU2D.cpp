@@ -16,11 +16,12 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 
 void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy, int scaling)
 {
+	// std::cout << buf.values.size() << std::endl;
 	for (int y = 0; ; y++)
 	{
 		for (int x = 0; x < buf.width; x++)
 		{
-			if (y * buf.width + static_cast<int>(x / scaling) >= buf.values.size()) { return; }
+			if (y * buf.width + static_cast<int>(x / scaling) + 1 >= buf.values.size()) { return; }
 			uint32_t col = (buf.values[y * buf.width + x] == 1) ? 0xFFFFFFFF : 0xFF000000;
 			this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, col);
 		}

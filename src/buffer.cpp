@@ -19,3 +19,9 @@ pixelBuffer::pixelBuffer(int _width, int _height, short int fill)
 	}
 	this->width = _width;
 }
+
+void pixelBuffer::set(int x, int y, short int value)
+{
+	if (y * this->width + x < this->values.size() && x < this->width && x >= 0) { this->values[y * this->width + x] = value; }
+	return;
+}
