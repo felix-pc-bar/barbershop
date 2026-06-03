@@ -35,8 +35,6 @@ void Game::run()
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
 
-	pixelBuffer pxbuf(100, 100);
-
 	// ====
 	// TIME
 	// ====
@@ -49,8 +47,10 @@ void Game::run()
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// buff stuff
+	pixelBuffer pxbuf(63, 63);
 	int dx = 0;
 	int dy = 0;
+	int scale = 1;
 
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
@@ -98,17 +98,19 @@ void Game::run()
 				{
 					// etc
 				}
+				if (event.key.keysym.sym == SDLK_z) { scale++; }
+				if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }
 			}
 		}
 
 		// Key hold events here
-		if (gk[SDL_SCANCODE_LEFT]) { dx -= 10; }
-		if (gk[SDL_SCANCODE_RIGHT]) { dx += 10; }
-		if (gk[SDL_SCANCODE_DOWN]) { dy -= 10; }
-		if (gk[SDL_SCANCODE_UP]) { dy += 10; }
+		if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
+		if (gk[SDL_SCANCODE_RIGHT]) { dx += 20 * dtFac; }
+		if (gk[SDL_SCANCODE_DOWN]) { dy -= 20 * dtFac; }
+		if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
 
 		this->renderer->clear({0xFF202020});
-		this->renderer->renderScene(pxbuf, dx, dy);
+		this->renderer->renderScene(pxbuf, dx, dy, scale);
 		frame++;
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);

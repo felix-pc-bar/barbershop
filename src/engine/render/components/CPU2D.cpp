@@ -14,19 +14,30 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	this->bufMain = screenbuffer;
 }
 
-void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy)
+void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy, int scaling)
 {
-	for (int y = -dy; y < this->height - dy; y++)
+	for (int y = 0; ; y++)
 	{
-		for (int x = -dx; x < this->width - dx; x++)
+		for (int x = 0; x < buf.width; x++)
 		{
-			if (x >= 0 && x <= buf.width && (y * buf.width + x) < buf.values.size())
-			{
-				uint32_t colour = (buf.values[y * buf.width + x] == 1) ? 0xFF808080 : 0xFF000000;
-				this->SetPixel(x + dx, y + dy, colour);
-			}
+			if (y * buf.width + static_cast<int>(x / scaling) >= buf.values.size()) { return; }
+			uint32_t col = (buf.values[y * buf.width + x] == 1) ? 0xFFFFFFFF : 0xFF000000;
+			this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, col);
 		}
 	}
+}
+
+void Hairline::SetBox(int xPos, int yPos, int size, uint32_t color)
+{
+	if (size == 1) { SetPixel(xPos, yPos, color); return; }
+	for (int y = 0; y < size; y++)
+	{
+		for (int x = 0; x < size; x++)
+		{
+			SetPixel(xPos + x, yPos + y, color);
+		}
+	}
+	return;
 }
 
 void Hairline::drawPoint(Point2d pt, int sizePx)
