@@ -10,4 +10,5 @@ public:
 
 	pixelBuffer(int _width, int _height, short int fill = -1);
 	void set(int x, int y, short int value);
+	int height();
 };

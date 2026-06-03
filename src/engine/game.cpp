@@ -48,13 +48,29 @@ void Game::run()
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// buff stuff
-	pixelBuffer pxbuf(63, 63, 0);
+	struct bufData
+	{
+		pixelBuffer pb;
+		int offsetx;
+		int offsety;
+	};
+	std::vector<bufData> pxbufs;
+	pxbufs.emplace_back(bufData{{63, 63, 0}, 0, 0});
+	pxbufs.emplace_back(bufData{{151, 163, 0}, 100, 300});
+
+	// these are the "camera" offset
 	int dx = 0;
 	int dy = 0;
+
+	// zoom
 	int scale = 1;
 
-	int bufrelX = 0;
-	int bufrelY = 0;
+	// in screen space,y-up
+	int mousex = 0;
+	int mousey = 0;
+
+	std::vector<Point2d> bufrels;
+	bufrels.emplace_back();
 
 	bool lmbdown = false;
 	bool mmbdown = false;
@@ -80,7 +96,7 @@ void Game::run()
 		fpsRunningTotal += fps;
 		if (frame % runningAvgPeriodFrames == 0)
 		{
-			cout << fpsRunningTotal / (float)runningAvgPeriodFrames << endl;
+			// cout << fpsRunningTotal / (float)runningAvgPeriodFrames << endl;
 			fpsRunningTotal = 0;
 		}
 
@@ -88,7 +104,8 @@ void Game::run()
 		gk = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
+			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) 
+			{
 				break;
 			}
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
@@ -107,13 +124,18 @@ void Game::run()
 					dy -= event.motion.yrel;
 				}
 
-				bufrelX = event.motion.x - dx;
-				bufrelY = (globScreenheight - event.motion.y) - dy;
+				mousex = event.motion.x;
+				mousey = globScreenheight - event.motion.y;
 			}
 			if (lmbdown)
 			{
-				pxbuf.set(bufrelX / scale, bufrelY / scale, 1);
-			}
+				for (auto& bd : pxbufs)
+				{
+					int mouserelx = mousex - (dx + (bd.offsetx * scale));
+					int mouserely = mousey - (dy + (bd.offsety * scale));
+					bd.pb.set( mouserelx / scale, mouserely / scale, 1);
+				}
+			}		
 			if (event.type == SDL_MOUSEWHEEL)
 			{
 				// wheel
@@ -140,7 +162,10 @@ void Game::run()
 
 
 		this->renderer->clear({0xFF202020});
-		this->renderer->hairline->transformPixelBuffer(pxbuf, dx, dy, scale);
+		for (auto bd : pxbufs)
+		{
+			this->renderer->hairline->transformPixelBuffer(bd.pb, dx + (bd.offsetx * scale), dy + (bd.offsety * scale), scale, scale > 10); //add borders at higher scale
+		}
 		this->renderer->renderScene();
 		frame++;
 	}
