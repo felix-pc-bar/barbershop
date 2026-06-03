@@ -29,6 +29,7 @@ void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy, int scaling
 
 void Hairline::SetBox(int xPos, int yPos, int size, uint32_t color)
 {
+	if (xPos < -size || xPos > this->width || yPos < -size || yPos > this->height) { return; }
 	if (size == 1) { SetPixel(xPos, yPos, color); return; }
 	for (int y = 0; y < size; y++)
 	{

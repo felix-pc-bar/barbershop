@@ -33,7 +33,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 
 	int result;
 	result = SDL_Init(SDL_INIT_EVERYTHING);
-	if (result < 0) 
+	if (result < 0)
 	{
 		cout << "Error initializing SDL: " << SDL_GetError() << endl;
 		system("pause");
@@ -48,9 +48,9 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->width = renderwidth;
 	this->height = renderheight;
 
-	SDL_SetWindowTitle(window, "Barbershop Engine");
-	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
-	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
+	SDL_SetWindowTitle(window, "font-ed");
+	// SDL_ShowCursor(SDL_DISABLE); // Hide cursor
+	// SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
 	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
@@ -93,10 +93,10 @@ cRenderer::~cRenderer() {
 	}
 }
 
-void cRenderer::renderScene(pixelBuffer pbuf, int xoffset, int yoffset, int scaling) const
+void cRenderer::renderScene() const
 {
 	// do whatever in hairline here
-	this->hairline->transformPixelBuffer(pbuf, xoffset, yoffset, scaling);
+	// this->hairline->transformPixelBuffer(pbuf, xoffset, yoffset, scaling);
 	// this->hairline->SetPixel(5, 5, Colour(255, 0, 255).raw());
 
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));

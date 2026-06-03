@@ -52,6 +52,8 @@ void Game::run()
 	int dy = 0;
 	int scale = 1;
 
+	bool mmbdown = false;
+
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
 	do
@@ -84,13 +86,25 @@ void Game::run()
 			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
 				break;
 			}
+			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
+			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				// mouse
+				// std::cout << "Mouse Motion Detected - "
+				// 	<< "x: " << event.motion.x
+				// 	<< ", y: " << event.motion.y << '\n';
+				if (mmbdown)
+				{
+					dx += event.motion.xrel;
+					dy -= event.motion.yrel;
+				}
 			}
 			if (event.type == SDL_MOUSEWHEEL)
 			{
 				// wheel
+				if (event.wheel.y > 0) { scale++; }
+				if (event.wheel.y < 0 && scale > 1) { scale--; }
 			}
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
@@ -98,8 +112,8 @@ void Game::run()
 				{
 					// etc
 				}
-				if (event.key.keysym.sym == SDLK_z) { scale++; }
-				if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }
+				// if (event.key.keysym.sym == SDLK_z) { scale++; }
+				// if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }
 			}
 		}
 
@@ -110,7 +124,8 @@ void Game::run()
 		if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
 
 		this->renderer->clear({0xFF202020});
-		this->renderer->renderScene(pxbuf, dx, dy, scale);
+		this->renderer->hairline->transformPixelBuffer(pxbuf, dx, dy, scale);
+		this->renderer->renderScene();
 		frame++;
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
