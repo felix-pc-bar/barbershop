@@ -135,12 +135,23 @@ void Game::run()
 					int mouserely = mousey - (dy + (bd.offsety * scale));
 					bd.pb.set( mouserelx / scale, mouserely / scale, 1);
 				}
-			}		
+			}
 			if (event.type == SDL_MOUSEWHEEL)
 			{
 				// wheel
-				if (event.wheel.y > 0) { scale++; }
-				if (event.wheel.y < 0 && scale > 1) { scale--; }
+				if (event.wheel.y > 0)
+				{
+					// try to zoom on centre of screen
+					dx += (dx - (this->renderer->width / 2)) / (2 * scale);
+					dy += (dy - (this->renderer->height / 2)) / (2 * scale);
+					scale++;
+				}
+				if (event.wheel.y < 0 && scale > 1)
+				{
+					dx -= (dx - (this->renderer->width / 2)) / (2 * scale);
+					dy -= (dy - (this->renderer->height / 2)) / (2 * scale);
+					scale--;
+				}
 			}
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{

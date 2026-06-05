@@ -28,3 +28,4 @@ bool operator==(const Point2d& p1, const Point2d& p2);
 
 int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& test);
 
+bool isTriangleOnScreen(const Point2d& p1, const Point2d& p2, const Point2d& p3, int screenWidth, int screenHeight);

@@ -4,6 +4,7 @@
 
 #include "general2d.h"
 #include "globals.h"
+#include "general3d.h"
 
 using std::vector, std::cout, std::endl;
 
@@ -42,6 +43,15 @@ int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& t
 	// Rotate (tx, ty) clockwise by 90 degrees: (ty, -tx)
 	// Dot product: rx*ty + ry*(-tx) = rx*ty - ry*tx
 	return static_cast<int>(rx * ty - ry * tx);
+}
+
+bool isTriangleOnScreen(const Point2d& p1, const Point2d& p2, const Point2d& p3, int screenWidth, int screenHeight)
+{
+	auto inBounds = [=](const Point2d& p) {
+		return p.x >= 0 && p.x < screenWidth * 1.5 && p.y >= 0 && p.y < screenHeight * 1.5;
+		};
+
+	return inBounds(p1) || inBounds(p2) || inBounds(p3);
 }
 
 
