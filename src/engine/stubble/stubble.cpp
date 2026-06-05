@@ -14,6 +14,7 @@
 #include "types.h"
 #include "buildermap.h"
 #include "../material.h"
+#include "../general3d.h"
 
 std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t)
 {
@@ -48,6 +49,36 @@ std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t)
 		return [](const extendedValue& v)
 		{
 			return std::holds_alternative<Material*>(v);
+		};
+	case TypesEnum::_Object3D:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Object3D*>(v);
+		};
+	case TypesEnum::_Position3D:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Position3d*>(v);
+		};
+	case TypesEnum::_Quaternion:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Quaternion*>(v);
+		};
+	case TypesEnum::_Camera:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Camera*>(v);
+		};
+	case TypesEnum::_Scene:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Scene*>(v);
+		};
+	default:
+		return [](const extendedValue& v)
+		{
+			return false; // Nothing matches an unknown type (best-effort, avoid abort)
 		};
 	}
 }

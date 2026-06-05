@@ -4,12 +4,12 @@
 
 class Position3d;
 
-class Quaternion // fml
+class Quaternion
 {
 public:
 	float w, x, y, z;
 	Quaternion(); // 0 rotation
-	Quaternion(float angle, const Position3d& axis);// Use position3d vector as axis
+	Quaternion(float angle, const Position3d& axis); // Use position3d vector as axis- if axis isn't normalised, scaling as well as rotation will occur.
 	Quaternion(float w_, float x_, float y_, float z_);
 
 	Quaternion operator*(const Quaternion& q) const;

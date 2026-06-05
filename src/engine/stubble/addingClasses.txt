@@ -1,5 +1,5 @@
-stubble.cpp:matchesType()
-types.h:objectPointer, extendedValue
+types.h:objectPointer, extendedValue, typeEnum
+stubble.cpp:getTypeMatcher()
 
 Builder(s) in builders.h/cpp
-matchesType in stubble.cpp
+Buildermap

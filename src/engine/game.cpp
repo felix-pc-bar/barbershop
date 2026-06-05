@@ -20,7 +20,7 @@
 #include "material.h"
 #include "quaternion.h"
 #include "stubble/stubble.h"
-#include "stubble/types.h"
+// #include "stubble/types.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -28,25 +28,15 @@ using dtclock = std::chrono::steady_clock;
 Game::Game()
 {
 	this->renderer = new cRenderer();
-	this->renderer = nullptr;
+	// this->renderer = nullptr;
 }
 
 void Game::run()
 {
 	StubbleParser sp;
-	auto imported = sp.import("content/stubble/vector.stbbl");
+	auto imported = sp.import("content/stubble/object.stbbl");
 
-	Pyjama *importedOb = new Pyjama();
-
-	if (imported.has_value())
-	{
-		importedOb = std::get<Pyjama*>(imported.value());
-		// It's not really canonical to import with a vector as root node; normally some object would contain a vector
-		for (auto val : importedOb->v)
-		{
-			std::cout << std::get<int>(val) << endl;
-		}
-	}
+	auto importedThing = std::get<Object3D*>(imported.value());
 
 	if (this->renderer == nullptr)
 	{
@@ -97,14 +87,15 @@ void Game::run()
 
 	for (int i = 1; i <= numMonkeys; i++)
 	{
-		mainScene.addObject(importObj("content/obj/ico.obj"));
-		if (i % 7 == 0) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
-		if (i % 7 == 1) { mainScene.objects[i].materials[0] = Material(Colour("green")); }
-		if (i % 7 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
-		if (i % 7 == 3) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
-		if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
-		if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
-		if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
+		// mainScene.addObject(importObj("content/obj/ico.obj"));
+		mainScene.addObject(*importedThing);
+		// if (i % 7 == 0) { mainScene.objects[i].materials[0] = Material(Colour("red")); }
+		// if (i % 7 == 1) { mainScene.objects[i].materials[0] = Material(Colour("green")); }
+		// if (i % 7 == 2) { mainScene.objects[i].materials[0] = Material(Colour("yellow")); }
+		// if (i % 7 == 3) { mainScene.objects[i].materials[0] = Material(Colour("blue")); }
+		// if (i % 7 == 4) { mainScene.objects[i].materials[0] = Material(Colour("purple")); }
+		// if (i % 7 == 5) { mainScene.objects[i].materials[0] = Material(Colour("aqua")); }
+		// if (i % 7 == 6) { mainScene.objects[i].materials[0] = Material(Colour("orange")); }
 		// mainScene.objects[i].materials[0] = *importedMat;
 	}
 	// mainScene.addObject(importObj("content/obj/szfl.obj"));
@@ -145,10 +136,10 @@ void Game::run()
 
 		// Handle inputs
 		mainScene.cams[0].calcCamData();
-		gk = SDL_GetKeyboardState(NULL); 
+		gk = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)){
 			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
-				break;  
+				break;
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{

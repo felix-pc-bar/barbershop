@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../material.h"
+#include "../general3d.h"
 
 using baseValue = std::variant<
     int,
@@ -17,7 +18,9 @@ using baseValue = std::variant<
 
 using objectPointer = std::variant<
     Material*,
-    Colour*
+    Colour*,
+	Object3D*,
+	Scene*
 >;
 
 class Pyjama;
@@ -28,8 +31,13 @@ using extendedValue = std::variant<
 	bool,
 	std::string,
 	Pyjama*,
+	Colour*,
 	Material*,
-	Colour*
+	Object3D*,
+	Position3d*,
+	Quaternion*,
+	Camera*,
+	Scene*
 >;
 
 using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
@@ -43,15 +51,6 @@ public:
 	Pyjama() = default;
 };
 
-// This is just an class that stores the type explicitly (unimportant names)
-// enum class baseTypeData
-// {
-// 	Int,
-// 	Float,
-// 	Bool,
-// 	StdString
-// };
-
 enum class TypesEnum
 {
 	Int,
@@ -59,7 +58,12 @@ enum class TypesEnum
 	Bool,
 	StdString,
 	_Colour,
-	_Material
+	_Material,
+	_Object3D,
+	_Position3D,
+	_Quaternion,
+	_Camera,
+	_Scene
 };
 
 struct TypeData

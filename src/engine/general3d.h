@@ -3,8 +3,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <cstdint>
-#include <unordered_map>
+// #include <cstdint>
+// #include <unordered_map>
 
 #include "general2d.h"
 #include "quaternion.h"
@@ -17,6 +17,7 @@ class Quaternion;
 class Camera;
 class cRenderer;
 
+// FIXME: should be 'Position3D' surely
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
 private:
@@ -59,8 +60,8 @@ public:
 	Camera();
 	Position3d pos;
 	Quaternion quatIdentity; // Stores the "identity" of the cam orientation, for base vecs
-	Quaternion camRotInv; //Used for cameraspace calcs
-	float invTanHalfFov; //NEEDS TO BE RECALCULATED WITH FOV CHANGE
+	Quaternion camRotInv; // Used for cameraspace calcs
+	float invTanHalfFov; // NEEDS TO BE RECALCULATED WITH FOV CHANGE
 	float fov; // Don't set manually!
 	float aspect; //Ratio of screen
 
@@ -77,7 +78,7 @@ class Vertex3d
 {
 public:
 	Vertex3d(Position3d pos);
-	Position3d position; 
+	Position3d position;
 	void offsetPosition(Position3d offset);
 };
 
@@ -149,6 +150,7 @@ public:
 	Camera* currentCam = nullptr;
 	vector<Object3D> objects;
 	vector<Camera> cams;
+
 	void addObject(Object3D ob); // Add an object to the scene
 	string getName(string candidate) const; // Get a name for a object
 	Object3D* objectByName(std::string name);

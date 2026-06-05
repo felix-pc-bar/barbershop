@@ -6,7 +6,7 @@
 
 static std::unordered_map<std::string, FunctionEntry> builderLookup =
 {
-{
+	{
 		"Colour",
 		FunctionEntry
 		{
@@ -22,7 +22,7 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 			}
 		}
 	},
-{
+	{
 		"Material",
 		FunctionEntry
 		{
@@ -30,6 +30,18 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 				{
 					{ TypesEnum::_Colour, TypesEnum::Int, TypesEnum::Bool},
 					_matColPtShd
+				}
+			}
+		}
+	},
+	{
+		"Object3D",
+		FunctionEntry
+		{
+			{
+				{
+					{ TypesEnum::StdString, TypesEnum::_Material},
+					_objPathpp
 				}
 			}
 		}

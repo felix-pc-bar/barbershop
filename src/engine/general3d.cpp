@@ -1,6 +1,6 @@
 #include <cmath>
 #include <algorithm>
-#include <cstdint>
+// #include <cstdint>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -8,12 +8,12 @@
 #include <cmath>
 
 #include "general3d.h"
-#include "material.h"
+// #include "material.h"
 #include "globals.h"
 #include "quaternion.h"
 #include "render/render.h"
 
-using std::vector, std::cout, std::endl, std::sin, std::cos;
+using std::vector, std::cout, std::endl;
 
 Scene* currentScene = nullptr;
 
@@ -29,9 +29,9 @@ Position3d operator-(const Position3d& p1, const Position3d& p2) { return Positi
 Position3d operator*(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
 Position3d operator*(const Position3d& p1, const float mpcand) { return Position3d(p1.x * mpcand, p1.y * mpcand, p1.z * mpcand); }
 Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.y / div, p1.z / div); }
-bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z) ? true : false; }
-bool operator<(const Position3d& p1, const Position3d& p2) { return (p1.x < p2.x && p1.y < p2.y && p1.z < p2.z) ? true : false; }
-bool operator>(const Position3d& p1, const Position3d& p2) { return (p1.x > p2.x && p1.y > p2.y && p1.z > p2.z) ? true : false; }
+bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z); }
+bool operator<(const Position3d& p1, const Position3d& p2) { return (p1.x < p2.x && p1.y < p2.y && p1.z < p2.z); }
+bool operator>(const Position3d& p1, const Position3d& p2) { return (p1.x > p2.x && p1.y > p2.y && p1.z > p2.z); }
 
 Position3d& Position3d::operator+=(const Position3d& other) {
 	x += other.x;
@@ -47,7 +47,7 @@ Position3d& Position3d::operator-=(const Position3d& other) {
 	return *this;
 }
 
-void Vertex3d::offsetPosition(Position3d offset) 
+void Vertex3d::offsetPosition(Position3d offset)
 {
 	this->position = this->position + offset;
 }
@@ -66,7 +66,7 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 	this->z = zPos;
 }
 
-inline void Position3d::rotateQuat(const Quaternion& q) 
+inline void Position3d::rotateQuat(const Quaternion& q)
 {
 	// q assumed normalized
 	const float ux = q.x;
@@ -323,9 +323,9 @@ bool bb3d::containsMesh(Mesh m) const
 		(p.z >= minZ && p.z <= maxZ);
 }
 
-Camera::Camera() 
+Camera::Camera()
 {
-	this->aspect = (float)globScreenwidth / (float)globScreenheight; //Fix this later? not priority
+	this->aspect = (float)globScreenwidth / (float)globScreenheight; // FIXME: shouldn't use globals
 	this->setFov(globFOVrads);
 }
 
@@ -343,7 +343,7 @@ void Camera::rotateCam(float angle, const Position3d& axis) // Axis is in global
 	this->quatIdentity.normalise();
 }
 
-void Camera::calcCamData() 
+void Camera::calcCamData()
 {
 	this->forward = { 0,0,1 }; // World forward
 	this->forward.rotateQuat(this->quatIdentity);

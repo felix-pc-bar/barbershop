@@ -1,0 +1,8 @@
+Object3D(
+	"content/obj/cube.obj",
+	Material(
+		Colour(1.0f, 1.0f, 0.0f),
+		0,
+		true
+	)
+)

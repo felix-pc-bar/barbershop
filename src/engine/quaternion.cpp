@@ -25,7 +25,11 @@ Quaternion Quaternion::conjugate() const // Equivalent to inverse for unit-lengt
 void Quaternion::normalise()
 {
 	float mag = sqrt(w * w + x * x + y * y + z * z);
-	if (mag == 0.0f) return; // Avoid division by zero
+	if (mag == 0.0f) // Avoid division by zero
+	{
+		std::cout << "Error: couldn't normalise quaternion with zero magnitude." << std::endl;
+		return;
+	}
 
 	w /= mag;
 	x /= mag;
