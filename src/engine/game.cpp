@@ -15,7 +15,7 @@
 #include "render/render.h"
 #include "material.h"
 
-#include "../buffer.h"
+#include "buffer.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -48,12 +48,6 @@ void Game::run()
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// buff stuff
-	struct bufData
-	{
-		pixelBuffer pb;
-		int offsetx;
-		int offsety;
-	};
 	std::vector<bufData> pxbufs;
 	pxbufs.emplace_back(bufData{{63, 63, 0}, 0, 0});
 	pxbufs.emplace_back(bufData{{151, 163, 0}, 100, 300});

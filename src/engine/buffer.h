@@ -12,3 +12,4 @@ public:
 	void set(int x, int y, short int value);
 	int height();
 };
+

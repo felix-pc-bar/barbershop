@@ -5,7 +5,7 @@
 #include <SDL_render.h>
 
 #include "../../general2d.h"
-#include "../../../buffer.h"
+#include "../../buffer.h"
 
 class Hairline{
 public:
@@ -20,4 +20,11 @@ public:
 	std::vector<uint32_t>* bufMain; // Shaded pixel buffer
 	int width;
 	int height;
+};
+
+struct bufData // stores data about a buffer being displayed
+{
+	pixelBuffer pb;
+	int offsetx;
+	int offsety;
 };

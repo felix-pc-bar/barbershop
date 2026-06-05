@@ -41,7 +41,7 @@ add_executable(barbershop
 
     src/engine/helpers/stringy.cpp
 
-    src/buffer.cpp
+    src/engine/buffer.cpp
 
     src/app_icon.rc
 )
