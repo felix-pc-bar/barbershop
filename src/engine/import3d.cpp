@@ -27,8 +27,7 @@ Object3D importObj(string filepath) // Objects should be exported as Forward = +
 	if (objfile.is_open())
 	{
 		std::filesystem::path p(filepath);
-		result.name = p.stem().string();
-		while (getline(objfile, line))
+		result.name = p.stem().string(); while (getline(objfile, line))
 		{
 			if (!line.compare(0, 2, "v "))
 			{

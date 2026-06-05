@@ -21,10 +21,3 @@ public:
 	int width;
 	int height;
 };
-
-struct bufData // stores data about a buffer being displayed
-{
-	pixelBuffer pb;
-	int offsetx;
-	int offsety;
-};

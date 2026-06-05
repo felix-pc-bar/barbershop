@@ -78,17 +78,17 @@ set_target_properties(barbershop PROPERTIES
 set(MASTER_CONTENT_DIR "${CMAKE_SOURCE_DIR}/content")
 
 if(WIN32)
-	add_custom_target(link_compile_commands ALL
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			${CMAKE_BINARY_DIR}/compile_commands.json
-			${CMAKE_SOURCE_DIR}/compile_commands.json
-	)
+    add_custom_target(link_compile_commands ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_BINARY_DIR}/compile_commands.json
+            ${CMAKE_SOURCE_DIR}/compile_commands.json
+    )
 else()
-	add_custom_target(link_compile_commands ALL
-		COMMAND ${CMAKE_COMMAND} -E create_symlink
-			${CMAKE_BINARY_DIR}/compile_commands.json
-			${CMAKE_SOURCE_DIR}/compile_commands.json
-	)
+    add_custom_target(link_compile_commands ALL
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+            ${CMAKE_BINARY_DIR}/compile_commands.json
+            ${CMAKE_SOURCE_DIR}/compile_commands.json
+    )
 endif()
 
 add_custom_command(

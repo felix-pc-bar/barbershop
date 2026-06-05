@@ -17,7 +17,6 @@
 
 #include "buffer.h"
 
-using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
 
 Game::Game()
@@ -48,9 +47,9 @@ void Game::run()
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	// buff stuff
-	std::vector<bufData> pxbufs;
-	pxbufs.emplace_back(bufData{{63, 63, 0}, 0, 0});
-	pxbufs.emplace_back(bufData{{151, 163, 0}, 100, 300});
+	std::vector<pixelBuffer> pxbufs;
+	pxbufs.emplace_back(pixelBuffer(64, 64, 0, 0, 0));
+	// pxbufs.emplace_back(pixelBuffer(151, 163,  100, 300, 0));
 
 	// these are the "camera" offset
 	int dx = 0;
@@ -123,11 +122,11 @@ void Game::run()
 			}
 			if (lmbdown)
 			{
-				for (auto& bd : pxbufs)
+				for (auto& pb : pxbufs)
 				{
-					int mouserelx = mousex - (dx + (bd.offsetx * scale));
-					int mouserely = mousey - (dy + (bd.offsety * scale));
-					bd.pb.set( mouserelx / scale, mouserely / scale, 1);
+					int mouserelx = mousex - (dx + (pb.displayDX * scale));
+					int mouserely = mousey - (dy + (pb.displayDY * scale));
+					pb.set( mouserelx / scale, mouserely / scale, true);
 				}
 			}
 			if (event.type == SDL_MOUSEWHEEL)
@@ -135,7 +134,7 @@ void Game::run()
 				// wheel
 				if (event.wheel.y > 0)
 				{
-					// try to zoom on centre of screen
+					// try to zoom on centre of screen  FIXME: it's broken :/
 					dx += (dx - (this->renderer->width / 2)) / (2 * scale);
 					dy += (dy - (this->renderer->height / 2)) / (2 * scale);
 					scale++;
@@ -149,9 +148,16 @@ void Game::run()
 			}
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
-				if (event.key.keysym.sym == SDLK_z)
+				if (event.key.keysym.sym == SDLK_s)
 				{
-					// etc
+					std::cout << pxbufs[0].bufB64() << std::endl;
+				}
+				if (event.key.keysym.sym == SDLK_l)
+				{
+					std::string data;
+					std::cin >> data;
+					pixelBuffer returned(pxbufs[0].width, data);
+					pxbufs[0] = returned;
 				}
 				// if (event.key.keysym.sym == SDLK_z) { scale++; }
 				// if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }
@@ -167,9 +173,9 @@ void Game::run()
 
 
 		this->renderer->clear({0xFF202020});
-		for (auto bd : pxbufs)
+		for (auto pb : pxbufs)
 		{
-			this->renderer->hairline->transformPixelBuffer(bd.pb, dx + (bd.offsetx * scale), dy + (bd.offsety * scale), scale, scale > 10); //add borders at higher scale
+			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb.displayDX * scale), dy + (pb.displayDY * scale), scale, scale > 10); //add borders at higher scale
 		}
 		this->renderer->renderScene();
 		frame++;
