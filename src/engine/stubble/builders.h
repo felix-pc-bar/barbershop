@@ -2,6 +2,7 @@
 #include "types.h"
 
 #include "../material.h"
+#include "../buffer.h"
 #include <vector>
 
 Colour* _colRGB(std::vector<extendedValue> args); // R,G,B (float)
@@ -18,3 +19,5 @@ Quaternion* _quatAngleAxis(std::vector<extendedValue> args); // Quaternion from 
 Camera* _camPosQuatFov(std::vector<extendedValue> args); // Camera from Position3d, Quaternion, FoV (float)
 
 Scene* _scnFull(std::vector<extendedValue> args); // Scene from vector of Cameras, of Objects
+
+pixelBuffer* _pxbufWidthData(std::vector<extendedValue> args); // pixelBuffer from width (int), b64 raw bitmap data (std::string)

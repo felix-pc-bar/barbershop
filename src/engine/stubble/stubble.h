@@ -1,3 +1,4 @@
+#pragma once
 //#include <variant>
 //#include <unordered_map>
 #include <string>
@@ -8,6 +9,7 @@
 #include "types.h"
 
 std::string getDataToken(std::istream& stream);
+
 
 class StubbleParser
 {
@@ -53,17 +55,20 @@ public:
     {
     public:
         SyntacticalBranch() = default;
+		SyntacticalBranch(std::string d); // construct a leaf
+
+		std::string serialise(); // convert self to string rep
+
         std::string data;
 		bool isVector; // is this branch a vector (requires different translation rules)
         std::vector<SyntacticalBranch> children;
         unsigned int lineNumber; // Line number of data tag
     };
-	
+
 	// If we're doing a vector, we want to pass a branch name and not be looking for one before the children list
 	static std::optional<SyntacticalBranch> graftFrag(TokenStream& ts, bool parent = true, std::optional<Token> idToken = std::nullopt);
 
 	static std::optional<extendedValue> translateTree(SyntacticalBranch& ast);
-
 	static std::optional<Pyjama*> translateVector(SyntacticalBranch& ast);
 
 	static std::optional<objectPointer> getBuiltObject(std::string typeName, std::vector<extendedValue> params);
@@ -71,6 +76,9 @@ public:
     // Stores function pointer alongside arg types it wants
 
     static std::optional<extendedValue> import(std::string filepath);
+
+	// Write object to stubble file
+	static void stbExport(extendedValue ob, std::string filepath);
 
     static extendedValue parse(std::string filepath);
 private:
@@ -80,3 +88,4 @@ private:
 // using translatorFunc = std::function<baseValue(std::string)>;
 
 // std::unordered_map<std::string, translatorFunc> translatorMap;
+using writerFunction = std::function<void(extendedValue, StubbleParser::SyntacticalBranch*)>;

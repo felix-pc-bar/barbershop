@@ -39,3 +39,9 @@ Quaternion* _quatAngleAxis(std::vector<extendedValue> args);
 Camera* _camPosQuatFov(std::vector<extendedValue> args);
 
 Scene* _scnFull(std::vector<extendedValue> args);
+
+pixelBuffer* _pxbufWidthData(std::vector<extendedValue> args)
+{
+	pixelBuffer* result = new pixelBuffer(std::get<int>(args[0]), std::get<std::string>(args[1]));
+	return result;
+}

@@ -8,6 +8,7 @@
 
 #include "../material.h"
 #include "../general3d.h"
+#include "../buffer.h"
 
 using baseValue = std::variant<
     int,
@@ -20,7 +21,8 @@ using objectPointer = std::variant<
     Material*,
     Colour*,
 	Object3D*,
-	Scene*
+	Scene*,
+	pixelBuffer*
 >;
 
 class Pyjama;
@@ -37,8 +39,26 @@ using extendedValue = std::variant<
 	Position3d*,
 	Quaternion*,
 	Camera*,
-	Scene*
+	Scene*,
+	pixelBuffer*
 >;
+
+enum class TypesEnum
+{
+	Int,
+	Float,
+	Bool,
+	StdString,
+	_Pyjama,
+	_Colour,
+	_Material,
+	_Object3D,
+	_Position3D,
+	_Quaternion,
+	_Camera,
+	_Scene,
+	_pixelBuffer
+};
 
 using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;
 
@@ -49,21 +69,6 @@ class Pyjama
 public:
 	std::vector<extendedValue> v;
 	Pyjama() = default;
-};
-
-enum class TypesEnum
-{
-	Int,
-	Float,
-	Bool,
-	StdString,
-	_Colour,
-	_Material,
-	_Object3D,
-	_Position3D,
-	_Quaternion,
-	_Camera,
-	_Scene
 };
 
 struct TypeData
@@ -77,9 +82,11 @@ std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t);
 
 bool matchesType(const extendedValue& val, TypesEnum t);
 
-struct FunctionEntry
+std::string_view getTypeName(const extendedValue& ob);
+
+struct builderFunctionEntry
 {
 	// Vector of arglist-function pairs
 	std::vector<std::pair<std::vector<TypeData>, builderFunction>> builders;
-	FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);
+	builderFunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);
 };

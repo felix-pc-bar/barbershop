@@ -4,11 +4,11 @@
 #include <vector>
 
 
-static std::unordered_map<std::string, FunctionEntry> builderLookup =
+static std::unordered_map<std::string, builderFunctionEntry> builderLookup =
 {
 	{
 		"Colour",
-		FunctionEntry
+		builderFunctionEntry
 		{
 			{
 				{
@@ -24,7 +24,7 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 	},
 	{
 		"Material",
-		FunctionEntry
+		builderFunctionEntry
 		{
 			{
 				{
@@ -36,7 +36,7 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 	},
 	{
 		"Object3D",
-		FunctionEntry
+		builderFunctionEntry
 		{
 			{
 				{
@@ -45,6 +45,18 @@ static std::unordered_map<std::string, FunctionEntry> builderLookup =
 				}
 			}
 		}
+	},
+	{
+		"pixelBuffer",
+		builderFunctionEntry
+		{
+			{
+				{
+					{ TypesEnum::Int, TypesEnum::StdString },
+					_pxbufWidthData
+				}
+			}
+		}
 	}
 };
-// FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);
+// builderFunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);

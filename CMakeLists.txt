@@ -39,11 +39,15 @@ add_executable(barbershop
 
     src/engine/stubble/builders.cpp
 
+    src/engine/stubble/writers.cpp
+
     src/engine/helpers/stringy.cpp
 
     src/engine/buffer.cpp
 
     src/app_icon.rc
+
+    external/tinyfiledialogs/tinyfiledialogs.c
 )
 
 # SDL include + lib paths (scoped)

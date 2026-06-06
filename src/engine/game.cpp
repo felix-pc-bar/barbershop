@@ -10,10 +10,14 @@
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
 
+#include "../../external/tinyfiledialogs/tinyfiledialogs.c"
+
 #include "game.h"
+#include "general3d.h"
 #include "globals.h"
 #include "render/render.h"
 #include "material.h"
+#include "stubble/stubble.h"
 
 #include "buffer.h"
 
@@ -45,6 +49,8 @@ void Game::run()
 	float fpsLimTick = 1.0f / fpsLimit;
 	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
+
+	StubbleParser sp;
 
 	// buff stuff
 	std::vector<pixelBuffer> pxbufs;
@@ -150,14 +156,35 @@ void Game::run()
 			{
 				if (event.key.keysym.sym == SDLK_s)
 				{
-					std::cout << pxbufs[0].bufB64() << std::endl;
+					const char* fp = tinyfd_saveFileDialog(
+						"Save font stubble file...",
+						"font.stbbl",
+						0,
+						NULL,
+						NULL
+					);
+					sp.stbExport(&pxbufs[0], fp);
 				}
 				if (event.key.keysym.sym == SDLK_l)
 				{
-					std::string data;
-					std::cin >> data;
-					pixelBuffer returned(pxbufs[0].width, data);
-					pxbufs[0] = returned;
+					const char* filters[] = { "*.stbbl" };
+					
+					const char* file = tinyfd_openFileDialog(
+						"Open font",
+						"",
+						1,
+						filters,
+						"Stubble files",
+						0
+					);
+					if (file != NULL)
+					{
+						auto returned = sp.import(file);
+						if (returned.has_value())
+						{
+							pxbufs[0] = *std::get<pixelBuffer*>(returned.value());
+						}
+					}
 				}
 				// if (event.key.keysym.sym == SDLK_z) { scale++; }
 				// if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }

@@ -6,13 +6,17 @@
 #include <filesystem>
 #include <algorithm>
 #include <stdexcept>
+#include <string>
 #include <variant>
 #include <vector>
 
 #include "stubble.h"
+#include "typemap.h"
 #include "../helpers/stringy.h"
 #include "types.h"
 #include "buildermap.h"
+#include "writermap.h"
+#include "writers.h"
 #include "../material.h"
 #include "../general3d.h"
 
@@ -104,9 +108,39 @@ bool matchesType(const extendedValue& val, TypeData t)
 	}
 }
 
-FunctionEntry::FunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
+std::string_view getTypeName(const extendedValue& ob)
+{
+	return std::visit([]<typename T>(const T&)
+	{
+		return TypeInfo<T>::name;
+	}, ob);
+}
+
+builderFunctionEntry::builderFunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs): builders(bldLs) {}
 
 TypeData::TypeData(TypesEnum t, bool isvec): type(t), isVector(isvec) {}
+
+StubbleParser::SyntacticalBranch::SyntacticalBranch(std::string d): data(d) { }
+
+std::string StubbleParser::SyntacticalBranch::serialise()
+{
+	std::string result;
+	result.append(this->data);
+	if (this->children.size() != 0)
+	{
+		result.append("(");
+		for (auto child : this->children)
+		{
+			result.append(child.serialise());
+			result.append(", ");
+		}
+		result.resize(result.size() - 2); // remove the last comma+space
+	
+		result.append(")");
+	}
+
+	return result;
+}
 
 // TODO: add support for escaped quotes (we don't atm i think)
 std::string getDataToken(std::istream& stream)
@@ -131,7 +165,7 @@ std::string getDataToken(std::istream& stream)
 
 // We store data and token type- this is duplicitous for the punctuators, as the type always corresponds
 // to the same data, but this way we are futureproofed a bit for writing out a file.
-StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): ttype(tt), lineNumber(linenum), data(d) 
+StubbleParser::Token::Token(TokenType tt, unsigned int linenum, std::string d): ttype(tt), lineNumber(linenum), data(d)
 {
 	switch (tt)
 	{
@@ -192,7 +226,7 @@ StubbleParser::Token* StubbleParser::TokenStream::peek()
 // It wants the first token in pops to be a data-
 // either because it's a leaf, and the data is... the data
 // or because it's the identifier for an object.
-// If the parse is successful (doesn't return std::nullopt), 
+// If the parse is successful (doesn't return std::nullopt),
 // it will return leaving the next token to be popped being a comma, a close bkt, or EOF.
 // otherwise, no promises.
 // If branchName is passed, we will try to return either a leaf, or a branch with the passed identifier
@@ -422,7 +456,7 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 
 				if (match == true)
 				{
-					// Loop was completed with all params matching
+					// Loop ws completed with all params matching
 					// Break out of main loop with the function we found
 					bf = funcEntry.builders[i].second;
 					break;
@@ -433,6 +467,13 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 		if (bf == nullptr) // None of the options got all the way thru without finding a false type
 		{
 			std::cout << "Error: Couldn't match parameters for construction of \"" << typeName << "\" to any builder" << std::endl;
+			std::string paramerr = "Parameters seen: ";
+			for (auto param : params)
+			{
+				paramerr += std::string(getTypeName(param)) + std::string(", ");
+			}
+			paramerr.resize(paramerr.size() - 1); // remove trailing comma
+			std::cout << paramerr << std::endl;
 			return std::nullopt;
 		}
 
@@ -560,7 +601,6 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 		readUntil(stbstream, isntWhitespace); // Skip whitespace
 		if (stbstream.peek() == EOF) { break; }
 		if (stbstream.peek() == '\n') { currentline++; stbstream.get(); } //Skip newline but incr counter
-		// currentData = readUntil(stbstream, isPunctuator);
 		currentData = getDataToken(stbstream);
 		if (currentData.empty())
 		{
@@ -620,10 +660,24 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 		return std::nullopt;
 	}
 
-	auto result = translateTree(AST.value()) ;
+	auto result = translateTree(AST.value());
 	if (!result.has_value())
 	{
 		std::cout << "Error when translating \"" << filepath << "\"\n";
 	}
 	return result;
+}
+
+void StubbleParser::stbExport(extendedValue ob, std::string filepath)
+{
+	SyntacticalBranch AST{}; // most vexing parse !1!!
+	// AST.data = getTypeName(ob);
+	// writerFunction wf = writerLookup.at(std::string(getTypeName(ob)));
+	// wf(ob, &AST);
+	writeObToAST(ob, &AST);
+	std::ofstream savedFile(filepath);
+
+	savedFile << AST.serialise();
+
+	savedFile.close();
 }
