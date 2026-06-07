@@ -8,11 +8,11 @@ public:
 	Game();
 	~Game();
 	void run();
+	void quit();
 	//CPU3DRenderer* cpu3d;
 	cRenderer* renderer;
 
 private:
-
 	// Pointers to our window and surface
 	//SDL_Surface* winSurface;
 	//SDL_Window* window;

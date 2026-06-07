@@ -1,8 +1,10 @@
 #include "stringy.h"
 #include <iostream>
 #include <charconv>
+#include <algorithm>
 
-std::vector<std::string> splitRespectingBkts(const std::string& s, char delim) {
+
+std::vector<std::string> helpers::splitRespectingBkts(const std::string& s, char delim) {
     std::vector<std::string> out;
     size_t start = 0;
     int depth = 0;
@@ -28,7 +30,7 @@ std::vector<std::string> splitRespectingBkts(const std::string& s, char delim) {
 }
 
 // (C) Rob Cusimano (MIT)
-std::string stripws(const std::string& s, bool includeBrackets) {
+std::string helpers::stripws(const std::string& s, bool includeBrackets) {
 	// Whitespace is one of: space, tab, carriage return,
 	// line feed, form feed, or vertical tab.
 	// Additionally strip brackets.
@@ -49,14 +51,21 @@ std::string stripws(const std::string& s, bool includeBrackets) {
 	return std::string{s.substr(begin, end - begin + 1)};
 }
 
-inline bool isValidDescriptorChar(char c) {
+inline bool helpers::isValidDescriptorChar(char c) {
     return (c >= 'A' && c <= 'Z') ||
            (c >= 'a' && c <= 'z') ||
            (c >= '0' && c <= '9') ||
            c == '-' || c == '_';
 }
 
-std::string readUntil(std::istream& in, std::function<bool(char)> stopCondition)
+std::string helpers::toLower(std::string in)
+{
+	std::string result = in;
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+	return result;
+}
+
+std::string helpers::readUntil(std::istream& in, std::function<bool(char)> stopCondition)
 {
     std::string result;
 
@@ -76,12 +85,12 @@ std::string readUntil(std::istream& in, std::function<bool(char)> stopCondition)
 // Source - https://stackoverflow.com/a/8889045
 // Posted by Blastfurnace
 // Retrieved 2026-04-22, License - CC BY-SA 3.0
-bool isDigits(const std::string &str)
+bool helpers::isDigits(const std::string &str)
 {
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-std::optional<float> getFloatLiteral(std::string_view s)
+std::optional<float> helpers::getFloatLiteral(std::string_view s)
 {
 	if (s.empty()) return false;
 
@@ -109,7 +118,7 @@ std::optional<float> getFloatLiteral(std::string_view s)
 	else { return std::nullopt; }
 }
 
-std::optional<std::string> getStringLiteral(std::string_view s)
+std::optional<std::string> helpers::getStringLiteral(std::string_view s)
 {
 	if (s.size() < 2) return std::nullopt;
 	if (s.front() != '"' || s.back() != '"') return std::nullopt;

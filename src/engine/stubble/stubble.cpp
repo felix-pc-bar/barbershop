@@ -378,16 +378,16 @@ std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::Syntact
 	{
 		if (ast.data == "true") { return true; }
 		if (ast.data == "false") { return false; }
-		if (isDigits(ast.data))
+		if (helpers::isDigits(ast.data))
 		{
 			return stoi(ast.data);
 		}
-		auto fpResult = getFloatLiteral(ast.data);
+		auto fpResult = helpers::getFloatLiteral(ast.data);
 		if (fpResult.has_value())
 		{
 			return fpResult.value();
 		}
-		auto stResult = getStringLiteral(ast.data);
+		auto stResult = helpers::getStringLiteral(ast.data);
 		if (stResult.has_value())
 		{
 			return stResult.value();
@@ -505,7 +505,7 @@ std::optional<Pyjama*> StubbleParser::translateVector(SyntacticalBranch& ast)
 	{
 		for (auto branch : ast.children)
 		{
-			if (!isDigits(branch.data) || branch.children.size() != 0)
+			if (!helpers::isDigits(branch.data) || branch.children.size() != 0)
 			{
 				std::cout << "Error: encountered non-int type when translating vector<int> on line " << ast.lineNumber << std::endl;
 				return std::nullopt;
@@ -517,7 +517,7 @@ std::optional<Pyjama*> StubbleParser::translateVector(SyntacticalBranch& ast)
 	{
 		for (auto branch : ast.children)
 		{
-			auto rf = getFloatLiteral(branch.data);
+			auto rf = helpers::getFloatLiteral(branch.data);
 			if (rf == std::nullopt || branch.children.size() != 0)
 			{
 				std::cout << "Error: encountered non-float type when translating vector<float> on line " << ast.lineNumber << std::endl;
@@ -598,7 +598,7 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 
 	for (;;)
 	{
-		readUntil(stbstream, isntWhitespace); // Skip whitespace
+		helpers::readUntil(stbstream, isntWhitespace); // Skip whitespace
 		if (stbstream.peek() == EOF) { break; }
 		if (stbstream.peek() == '\n') { currentline++; stbstream.get(); } //Skip newline but incr counter
 		currentData = getDataToken(stbstream);

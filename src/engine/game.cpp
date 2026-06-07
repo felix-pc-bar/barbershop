@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <cstdlib>
 // #include <cstdint>
@@ -13,11 +15,13 @@
 #include "../../external/tinyfiledialogs/tinyfiledialogs.c"
 
 #include "game.h"
+#include "SDL.h"
 #include "general3d.h"
 #include "globals.h"
 #include "render/render.h"
 #include "material.h"
 #include "stubble/stubble.h"
+#include "helpers/stringy.h"
 
 #include "buffer.h"
 
@@ -74,9 +78,16 @@ void Game::run()
 	bool lmbdown = false;
 	bool mmbdown = false;
 
+	enum class state
+	{
+		normal
+	};
+	state currentState = state::normal;
+	bool unsavedWork = false;
+
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
-	do
+	for (;;)
 	{
 		auto currentTime = dtclock::now();
 		std::chrono::duration<float> elapsed = currentTime - lastTime;
@@ -103,9 +114,16 @@ void Game::run()
 		gk = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) 
+			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE])
 			{
-				break;
+				if (unsavedWork)
+				{
+					std::string response;
+					std::cout << "You have unsaved work. Really quit? (y/N)\n";
+					std::cin >> response;
+					if (helpers::toLower(response) == "y") { return; }
+				}
+				else { return; }
 			}
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
@@ -114,9 +132,6 @@ void Game::run()
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				// mouse
-				// std::cout << "Mouse Motion Detected - "
-				// 	<< "x: " << event.motion.x
-				// 	<< ", y: " << event.motion.y << '\n';
 				if (mmbdown)
 				{
 					dx += event.motion.xrel;
@@ -126,78 +141,88 @@ void Game::run()
 				mousex = event.motion.x;
 				mousey = globScreenheight - event.motion.y;
 			}
-			if (lmbdown)
+
+			if (currentState == state::normal)
 			{
-				for (auto& pb : pxbufs)
+				if (lmbdown)
 				{
-					int mouserelx = mousex - (dx + (pb.displayDX * scale));
-					int mouserely = mousey - (dy + (pb.displayDY * scale));
-					pb.set( mouserelx / scale, mouserely / scale, true);
-				}
-			}
-			if (event.type == SDL_MOUSEWHEEL)
-			{
-				// wheel
-				if (event.wheel.y > 0)
-				{
-					// try to zoom on centre of screen  FIXME: it's broken :/
-					dx += (dx - (this->renderer->width / 2)) / (2 * scale);
-					dy += (dy - (this->renderer->height / 2)) / (2 * scale);
-					scale++;
-				}
-				if (event.wheel.y < 0 && scale > 1)
-				{
-					dx -= (dx - (this->renderer->width / 2)) / (2 * scale);
-					dy -= (dy - (this->renderer->height / 2)) / (2 * scale);
-					scale--;
-				}
-			}
-			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
-			{
-				if (event.key.keysym.sym == SDLK_s)
-				{
-					const char* fp = tinyfd_saveFileDialog(
-						"Save font stubble file...",
-						"font.stbbl",
-						0,
-						NULL,
-						NULL
-					);
-					sp.stbExport(&pxbufs[0], fp);
-				}
-				if (event.key.keysym.sym == SDLK_l)
-				{
-					const char* filters[] = { "*.stbbl" };
-					
-					const char* file = tinyfd_openFileDialog(
-						"Open font",
-						"",
-						1,
-						filters,
-						"Stubble files",
-						0
-					);
-					if (file != NULL)
+					for (auto& pb : pxbufs)
 					{
-						auto returned = sp.import(file);
-						if (returned.has_value())
+						int mouserelx = mousex - (dx + (pb.displayDX * scale));
+						int mouserely = mousey - (dy + (pb.displayDY * scale));
+						pb.set( mouserelx / scale, mouserely / scale, true);
+					}
+				}
+				if (event.type == SDL_MOUSEWHEEL)
+				{
+					// wheel
+					if (event.wheel.y > 0)
+					{
+						// TODO: zoom on centre of screen
+						scale = std::round(scale * 1.75);
+					}
+					if (event.wheel.y < 0 && scale > 1)
+					{
+						scale = std::max(static_cast<int>(std::round(scale / 1.75)), 1);
+					}
+				}
+
+				// Key hold events here
+
+				// if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
+				// if (gk[SDL_SCANCODE_RIGHT]) { dx += 20 * dtFac; }
+				// if (gk[SDL_SCANCODE_DOWN]) { dy -= 20 * dtFac; }
+				// if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
+
+				if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+				{
+					if (event.key.keysym.sym == SDLK_s)
+					{
+						const char* fp = tinyfd_saveFileDialog(
+							"Save font",
+							"font.stbbl",
+							0,
+							NULL,
+							NULL
+						);
+						sp.stbExport(&pxbufs[0], fp);
+					}
+					if (event.key.keysym.sym == SDLK_l)
+					{
+						const char* filters[] = { "*.stbbl" };
+						
+						const char* file = tinyfd_openFileDialog(
+							"Open font",
+							"",
+							1,
+							filters,
+							"Stubble files",
+							0
+						);
+						if (file != NULL)
 						{
-							pxbufs[0] = *std::get<pixelBuffer*>(returned.value());
+							auto returned = sp.import(file);
+							if (returned.has_value())
+							{
+								pxbufs[0] = *std::get<pixelBuffer*>(returned.value());
+							}
 						}
 					}
 				}
-				// if (event.key.keysym.sym == SDLK_z) { scale++; }
-				// if (event.key.keysym.sym == SDLK_x && scale > 1) { scale--; }
-			}
-		}
+			} // normal state
 
-		// Key hold events here
-		// if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
-		// if (gk[SDL_SCANCODE_RIGHT]) { dx += 20 * dtFac; }
-		// if (gk[SDL_SCANCODE_DOWN]) { dy -= 20 * dtFac; }
-		// if (gk[SDL_SCANCODE_UP]) { dy += 20 * dtFac; }
-
-
+			// if (currentState == blah)
+			// {
+			// 	if (event.type == SDL_MOUSEWHEEL)
+			// 	{}
+			// 	if (gk[SDL_SCANCODE_A]) { dowhatever(); }
+			// 	if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+			// 	{
+			// 		if (event.key.keysym.sym == SDLK_s)
+			// 		{}
+			// 	}
+			// }
+		} // event loop
 
 		this->renderer->clear({0xFF202020});
 		for (auto pb : pxbufs)
@@ -207,14 +232,12 @@ void Game::run()
 		this->renderer->renderScene();
 		frame++;
 	}
-	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);
-
 	return;
-	// lol, lmao even
-	system("pause");
+}
 
-	//SDL_Quit();
-
+void Game::quit()
+{
+	SDL_Quit();
 	return;
 }
 
