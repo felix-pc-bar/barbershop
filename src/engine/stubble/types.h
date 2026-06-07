@@ -9,6 +9,7 @@
 #include "../material.h"
 #include "../general3d.h"
 #include "../buffer.h"
+#include "../render/components/bmpfont.h"
 
 using baseValue = std::variant<
     int,
@@ -22,7 +23,9 @@ using objectPointer = std::variant<
     Colour*,
 	Object3D*,
 	Scene*,
-	pixelBuffer*
+	pixelBuffer*,
+	bmpGlyph*,
+	bmpFont*
 >;
 
 class Pyjama;
@@ -40,7 +43,9 @@ using extendedValue = std::variant<
 	Quaternion*,
 	Camera*,
 	Scene*,
-	pixelBuffer*
+	pixelBuffer*,
+	bmpGlyph*,
+	bmpFont*
 >;
 
 enum class TypesEnum
@@ -57,7 +62,9 @@ enum class TypesEnum
 	_Quaternion,
 	_Camera,
 	_Scene,
-	_pixelBuffer
+	_pixelBuffer,
+	_bmpGlyph,
+	_bmpFont
 };
 
 using builderFunction = std::function<objectPointer(std::vector<extendedValue>)>;

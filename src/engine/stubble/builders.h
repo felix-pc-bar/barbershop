@@ -3,6 +3,8 @@
 
 #include "../material.h"
 #include "../buffer.h"
+#include "../render/components/bmpfont.h"
+
 #include <vector>
 
 Colour* _colRGB(std::vector<extendedValue> args); // R,G,B (float)
@@ -21,3 +23,7 @@ Camera* _camPosQuatFov(std::vector<extendedValue> args); // Camera from Position
 Scene* _scnFull(std::vector<extendedValue> args); // Scene from vector of Cameras, of Objects
 
 pixelBuffer* _pxbufWidthData(std::vector<extendedValue> args); // pixelBuffer from width (int), b64 raw bitmap data (std::string)
+
+bmpGlyph* _bmpglyphBufXY(std::vector<extendedValue> args); // bmpGlyph from pixelBuffer, x placement, y placement (ints)
+
+bmpFont* _bmpfontNameSizePJGlyph(std::vector<extendedValue> args); // bmpFont from name (std::string), size in px (int), and a pyjama of bmpGlyph*

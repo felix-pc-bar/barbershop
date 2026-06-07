@@ -5,13 +5,16 @@
 
 class bmpGlyph
 {
+public:
+	bmpGlyph();
+
 	pixelBuffer bitmap;
 	// offsets for kerning etc
 	int placementX;
 	int placementY;
 };
 
-class bmpfont
+class bmpFont
 {
 public:
 	// these are used for selection
