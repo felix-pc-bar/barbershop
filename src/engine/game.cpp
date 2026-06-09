@@ -18,6 +18,7 @@
 #include "SDL.h"
 #include "general3d.h"
 #include "globals.h"
+#include "render/components/bmpfont.h"
 #include "render/render.h"
 #include "material.h"
 #include "stubble/stubble.h"
@@ -29,13 +30,17 @@ using dtclock = std::chrono::steady_clock;
 
 Game::Game()
 {
-	this->renderer = new cRenderer();
+	if (!globDeferGFXcreation)
+	{
+		this->renderer = new cRenderer();
+	}
+	this->stubbleparser = new StubbleParser();
 	// this->renderer = nullptr;
 }
 
 void Game::run()
 {
-	if (this->renderer == nullptr)
+	if (this->renderer == nullptr && !globDeferGFXcreation)
 	{
 		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
 		return;
@@ -54,16 +59,34 @@ void Game::run()
 	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
 	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
-	StubbleParser sp;
-
 	// buff stuff
-	std::vector<pixelBuffer> pxbufs;
-	pxbufs.emplace_back(pixelBuffer(64, 64, 0, 0, 0));
-	// pxbufs.emplace_back(pixelBuffer(151, 163,  100, 300, 0));
+	std::vector<pixelBuffer*> pxbufs;
+
+	// pixelBuffer testBuffer(64, 64, 0, 0, 0);
+	// pxbufs.emplace_back(&testBuffer);
+
+	bmpFont testFont = *new bmpFont();
+
+	int defaultWidth;
+	int defaultHeight;
+	std::cout << "Enter default width for new font: ";
+	std::cin >> defaultWidth;
+	std::cout << "\nEnter default height for new font: ";
+	std::cin >> defaultHeight;
+	std::cout << std::endl;
+
+	for (int i = 0; i < testFont.glyphs.size(); i++)
+	{
+		testFont.glyphs[i] = new bmpGlyph();
+		bmpGlyph* currentGlyph = testFont.glyphs[i];
+		currentGlyph->bitmap = new pixelBuffer(defaultWidth, defaultHeight);
+		currentGlyph->bitmap->displayDX = i * (defaultWidth + 5);
+		pxbufs.emplace_back(currentGlyph->bitmap);
+	}
 
 	// these are the "camera" offset
-	int dx = 0;
-	int dy = 0;
+	int dx = globScreenwidth / 2;
+	int dy = globScreenheight / 2;
 
 	// zoom
 	int scale = 1;
@@ -71,6 +94,10 @@ void Game::run()
 	// in screen space,y-up
 	int mousex = 0;
 	int mousey = 0;
+
+	// 0,0 when origin is at centre of screen; origin @ bottom left of screen -> (-ve,-ve)
+	int originDX = 0;
+	int originDY = 0;
 
 	std::vector<Point2d> bufrels;
 	bufrels.emplace_back();
@@ -80,13 +107,33 @@ void Game::run()
 
 	enum class state
 	{
-		normal
+		roughing_normal,
+		tweaking_normal
 	};
-	state currentState = state::normal;
+
+	enum class tool
+	{
+		pen,
+		line,
+		circle
+	};
+
+	state currentState = state::roughing_normal;
+	tool currentTool = tool::pen;
 	bool unsavedWork = false;
 
 	float fpsRunningTotal = 0;
 	int runningAvgPeriodFrames = 30;
+
+	if (globDeferGFXcreation)
+	{
+		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
+	}
+	if (this->renderer == nullptr)
+	{
+		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
+		return;
+	}
 	for (;;)
 	{
 		auto currentTime = dtclock::now();
@@ -136,35 +183,42 @@ void Game::run()
 				{
 					dx += event.motion.xrel;
 					dy -= event.motion.yrel;
+					originDX = dx - (globScreenwidth / 2);
+					originDY = dy - (globScreenheight / 2);
 				}
 
 				mousex = event.motion.x;
 				mousey = globScreenheight - event.motion.y;
 			}
 
-			if (currentState == state::normal)
+			if (currentState == state::roughing_normal)
 			{
 				if (lmbdown)
 				{
 					for (auto& pb : pxbufs)
 					{
-						int mouserelx = mousex - (dx + (pb.displayDX * scale));
-						int mouserely = mousey - (dy + (pb.displayDY * scale));
-						pb.set( mouserelx / scale, mouserely / scale, true);
+						int mouserelx = mousex - (dx + (pb->displayDX * scale));
+						int mouserely = mousey - (dy + (pb->displayDY * scale));
+						pb->set( mouserelx / scale, mouserely / scale, true);
 					}
 				}
 				if (event.type == SDL_MOUSEWHEEL)
 				{
 					// wheel
+					int mouseDX = static_cast<int>(dx * 1) - static_cast<int>(mousex / scale);
+					int mouseDY = static_cast<int>(dy * 1) - static_cast<int>(mousey / scale);
+					int deltaScale = 0;
 					if (event.wheel.y > 0)
 					{
-						// TODO: zoom on centre of screen
-						scale = std::round(scale * 1.75);
+						deltaScale = std::round(scale * 1.75 - scale);
 					}
 					if (event.wheel.y < 0 && scale > 1)
 					{
-						scale = std::max(static_cast<int>(std::round(scale / 1.75)), 1);
+						deltaScale = std::round(scale / 1.75 - scale);
 					}
+					scale += deltaScale;
+					dx += mouseDX * deltaScale;
+					dy += mouseDY * deltaScale;
 				}
 
 				// Key hold events here
@@ -185,26 +239,37 @@ void Game::run()
 							NULL,
 							NULL
 						);
-						sp.stbExport(&pxbufs[0], fp);
+						this->stubbleparser->stbExport(pxbufs[0], fp);
 					}
 					if (event.key.keysym.sym == SDLK_l)
 					{
-						const char* filters[] = { "*.stbbl" };
-						
-						const char* file = tinyfd_openFileDialog(
-							"Open font",
-							"",
-							1,
-							filters,
-							"Stubble files",
-							0
-						);
-						if (file != NULL)
+						bool pass = true;
+						if (unsavedWork)
 						{
-							auto returned = sp.import(file);
-							if (returned.has_value())
+							std::cout << "You currently have unsaved work. Really load a new font? You will lose work done on current font since last save (y/N)\n";
+							std::string response;
+							std::cin >> response;
+							if (helpers::toLower(response) != "y") { pass = true; }
+						}
+						if (pass)
+						{
+							const char* filters[] = { "*.stbbl" };
+							
+							const char* file = tinyfd_openFileDialog(
+								"Open font",
+								"",
+								1,
+								filters,
+								"Stubble files",
+								0
+							);
+							if (file != NULL)
 							{
-								pxbufs[0] = *std::get<pixelBuffer*>(returned.value());
+								auto returned = this->stubbleparser->import(file);
+								if (returned.has_value())
+								{
+									pxbufs[0] = std::get<pixelBuffer*>(returned.value());
+								}
 							}
 						}
 					}
@@ -227,7 +292,7 @@ void Game::run()
 		this->renderer->clear({0xFF202020});
 		for (auto pb : pxbufs)
 		{
-			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb.displayDX * scale), dy + (pb.displayDY * scale), scale, scale > 10); //add borders at higher scale
+			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10); //add borders at higher scale
 		}
 		this->renderer->renderScene();
 		frame++;

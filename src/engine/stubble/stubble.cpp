@@ -15,7 +15,6 @@
 #include "../helpers/stringy.h"
 #include "types.h"
 #include "buildermap.h"
-#include "writermap.h"
 #include "writers.h"
 #include "../material.h"
 #include "../general3d.h"

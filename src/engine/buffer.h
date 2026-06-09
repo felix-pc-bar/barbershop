@@ -15,6 +15,7 @@ public:
 	int displayDX;
 	int displayDY;
 
+	pixelBuffer() = default;
 	pixelBuffer(int _width, int _height, int dDX = 0, int dDY = 0, bool fill = false);
 	pixelBuffer(int _width, std::string b64data);
 

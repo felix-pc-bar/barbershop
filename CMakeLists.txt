@@ -21,6 +21,8 @@ add_executable(barbershop
     src/engine/render/components/CPU3D.cpp
     src/engine/render/components/CPU2D.cpp
 
+    src/engine/render/components/bmpfont.cpp
+
     src/engine/general3d.cpp
 
     src/engine/general2d.cpp

@@ -15,15 +15,15 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	this->bufMain = screenbuffer;
 }
 
-void Hairline::transformPixelBuffer(pixelBuffer buf, int dx, int dy, int scaling, bool pixelBorders)
+void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders)
 {
 	// std::cout << buf.values.size() << std::endl;
 	for (int y = 0; ; y++)
 	{
-		for (int x = 0; x < buf.width; x++)
+		for (int x = 0; x < buf->width; x++)
 		{
-			if (y * buf.width + static_cast<int>(x / scaling) + 1 >= buf.values.size()) { goto doneBuf; }
-			uint32_t col = (buf.values[y * buf.width + x] == 1) ? 0xFFFFFFFF : 0xFF000000;
+			if (y * buf->width + static_cast<int>(x / scaling) >= buf->values.size()) { goto doneBuf; }
+			uint32_t col = (buf->values[y * buf->width + x] == 1) ? 0xFFFFFFFF : 0xFF000000;
 			this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, col);
 		}
 	}
@@ -31,14 +31,14 @@ doneBuf:
 	if (pixelBorders)
 	{
 		// vert borders
-		for (int x = dx; x <= dx + (buf.width * scaling); x += scaling)
+		for (int x = dx; x <= dx + (buf->width * scaling); x += scaling)
 		{
-			this->drawLine({x, dy}, {x, dy + (buf.height() * scaling)}, 0xFF808080, 1);
+			this->drawLine({x, dy}, {x, dy + (buf->height() * scaling)}, 0xFF808080, 1);
 		}
 		// horizontal
-		for (int y = dy; y <= dy + (buf.height() * scaling); y += scaling)
+		for (int y = dy; y <= dy + (buf->height() * scaling); y += scaling)
 		{
-			this->drawLine({dx, y}, {dx + (buf.width * scaling), y}, 0xFF808080, 1);
+			this->drawLine({dx, y}, {dx + (buf->width * scaling), y}, 0xFF808080, 1);
 		}
 	}
 	return;

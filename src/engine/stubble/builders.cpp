@@ -2,6 +2,7 @@
 #include "types.h"
 
 #include "../import3d.h"
+#include "../render/components/bmpfont.h"
 
 Colour* _colRGB(std::vector<extendedValue> args)
 {
@@ -50,7 +51,7 @@ pixelBuffer* _pxbufWidthData(std::vector<extendedValue> args)
 bmpGlyph* _bmpglyphBufXY(std::vector<extendedValue> args)
 {
 	bmpGlyph* result = new bmpGlyph();
-	result->bitmap = *std::get<pixelBuffer*>(args[0]);
+	result->bitmap = std::get<pixelBuffer*>(args[0]);
 	result->placementX = std::get<int>(args[1]);
 	result->placementY = std::get<int>(args[2]);
 	return result;
@@ -61,11 +62,12 @@ bmpFont* _bmpfontNameSizePJGlyph(std::vector<extendedValue> args)
 {
 	bmpFont* result = new bmpFont();
 	result->name = std::get<std::string>(args[0]);
-	result->sizepx = static_cast<uint>(std::get<int>(args[1]));
+	result->sizepx = std::get<int>(args[1]);
 	Pyjama* glpyhpj = std::get<Pyjama*>(args[2]);
 	for (int i = 0; i < std::max(128, static_cast<int>(glpyhpj->v.size())); i++)
 	{
 		bmpGlyph* ptr = std::get<bmpGlyph*>(glpyhpj->v[i]);
 		result->glyphs[i] = ptr;
 	}
+	return result;
 }

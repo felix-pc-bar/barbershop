@@ -93,3 +93,17 @@ struct TypeInfo<pixelBuffer*>
 	static constexpr TypesEnum id = TypesEnum::_pixelBuffer;
 	static constexpr std::string_view name = "pixelBuffer";
 };
+
+template<>
+struct TypeInfo<bmpGlyph*>
+{
+	static constexpr TypesEnum id = TypesEnum::_pixelBuffer;
+	static constexpr std::string_view name = "pixelBuffer";
+};
+
+template<>
+struct TypeInfo<bmpFont*>
+{
+	static constexpr TypesEnum id = TypesEnum::_pixelBuffer;
+	static constexpr std::string_view name = "pixelBuffer";
+};

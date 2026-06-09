@@ -6,9 +6,9 @@
 class bmpGlyph
 {
 public:
-	bmpGlyph();
+	bmpGlyph() = default;
 
-	pixelBuffer bitmap;
+	pixelBuffer* bitmap;
 	// offsets for kerning etc
 	int placementX;
 	int placementY;
@@ -17,9 +17,10 @@ public:
 class bmpFont
 {
 public:
+	bmpFont();
 	// these are used for selection
 	std::string name;
-	uint sizepx;
+	int sizepx;
 
 	std::array<bmpGlyph*, 128> glyphs; // we only store the ascii set (for now)
 };

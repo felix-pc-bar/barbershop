@@ -6,6 +6,8 @@ float globFOVrads = pi / 1.5f;
 bool globDrawPoints = false; //whether to draw the (ground plane?) points
 bool globWireframe = false; // Toggle between shaded and wireframe
 
+bool globDeferGFXcreation = true;
+
 Position3d globLightNormal = Position3d(3.0f, 5.0f, 1.0f).normalise();
 
 

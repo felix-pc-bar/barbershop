@@ -1,4 +1,5 @@
 #pragma once
+#include "stubble/stubble.h"
 #include "render/render.h"
 
 class Game
@@ -9,4 +10,5 @@ public:
 	void run();
 	void quit();
 	cRenderer* renderer;
+	StubbleParser* stubbleparser;
 };
