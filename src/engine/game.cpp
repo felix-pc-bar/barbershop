@@ -172,9 +172,15 @@ void Game::run()
 				}
 				else { return; }
 			}
+			if (gk[SDL_SCANCODE_G])
+			{
+				mmbdown = true;
+			} else { mmbdown = false; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) { lmbdown = true; }
+
+
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; }
 			if (event.type == SDL_MOUSEMOTION)
 			{
@@ -205,8 +211,8 @@ void Game::run()
 				if (event.type == SDL_MOUSEWHEEL)
 				{
 					// wheel
-					int mouseDX = static_cast<int>(dx * 1) - static_cast<int>(mousex / scale);
-					int mouseDY = static_cast<int>(dy * 1) - static_cast<int>(mousey / scale);
+					int mouseDX = static_cast<int>(dx * 1) - static_cast<int>(mousex / 1);
+					int mouseDY = static_cast<int>(dy * 1) - static_cast<int>(mousey / 1);
 					int deltaScale = 0;
 					if (event.wheel.y > 0)
 					{
@@ -216,9 +222,14 @@ void Game::run()
 					{
 						deltaScale = std::round(scale / 1.75 - scale);
 					}
+					float scaleMultiplicand = (static_cast<float>(scale + deltaScale) / static_cast<float>(scale)) - 1.0f;
+					if (scaleMultiplicand != 0)
+					{
+						std::cout << scaleMultiplicand << std::endl;
+					}
 					scale += deltaScale;
-					dx += mouseDX * deltaScale;
-					dy += mouseDY * deltaScale;
+					dx += mouseDX * scaleMultiplicand;
+					dy += mouseDY * scaleMultiplicand;
 				}
 
 				// Key hold events here
