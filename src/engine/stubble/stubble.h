@@ -57,7 +57,7 @@ public:
         SyntacticalBranch() = default;
 		SyntacticalBranch(std::string d); // construct a leaf
 
-		std::string serialise(); // convert self to string rep
+		std::string serialise(); // convert self to string form
 
         std::string data;
 		bool isVector; // is this branch a vector (requires different translation rules)

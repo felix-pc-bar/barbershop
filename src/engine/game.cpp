@@ -120,11 +120,7 @@ void Game::run()
 
 	state currentState = state::roughing_normal;
 	tool currentTool = tool::pen;
-	bool unsavedWork = false;
-
-	float fpsRunningTotal = 0;
-	int runningAvgPeriodFrames = 30;
-
+	bool unsavedWork = false; float fpsRunningTotal = 0; int runningAvgPeriodFrames = 30;
 	if (globDeferGFXcreation)
 	{
 		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
@@ -237,7 +233,6 @@ void Game::run()
 					{
 						dx = globScreenwidth / 2;
 						dy = globScreenheight / 2;
-						scale = 1;
 					}
 					if (event.key.keysym.sym == SDLK_s)
 					{
