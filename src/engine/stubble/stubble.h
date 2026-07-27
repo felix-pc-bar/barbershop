@@ -57,7 +57,8 @@ public:
         SyntacticalBranch() = default;
 		SyntacticalBranch(std::string d); // construct a leaf
 
-		std::string serialise(); // convert self to string form
+		std::string serialise(int currentIndentation = 0, bool includeTypeID = true); // convert self to string form
+		bool isCompoundObject(); // returns true if this is an object with one or more object children, otherwise false
 
         std::string data;
 		bool isVector; // is this branch a vector (requires different translation rules)

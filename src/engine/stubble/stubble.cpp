@@ -78,6 +78,26 @@ std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t)
 		{
 			return std::holds_alternative<Scene*>(v);
 		};
+	case TypesEnum::_Pyjama:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<Pyjama*>(v);
+		};
+	case TypesEnum::_pixelBuffer:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<pixelBuffer*>(v);
+		};
+	case TypesEnum::_bmpGlyph:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<bmpGlyph*>(v);
+		};
+	case TypesEnum::_bmpFont:
+		return [](const extendedValue& v)
+		{
+			return std::holds_alternative<bmpFont*>(v);
+		};
 	default:
 		return [](const extendedValue& v)
 		{
@@ -121,21 +141,55 @@ TypeData::TypeData(TypesEnum t, bool isvec): type(t), isVector(isvec) {}
 
 StubbleParser::SyntacticalBranch::SyntacticalBranch(std::string d): data(d) { }
 
-std::string StubbleParser::SyntacticalBranch::serialise()
+bool StubbleParser::SyntacticalBranch::isCompoundObject()
+{
+	if (this->children.size() == 0) { return false; } // This is a leaf
+	// Otherwise, we're a branch
+	for (auto child : this->children)
+	{
+		if (child.children.size() != 0) { return true; } // Found a child that isn't a leaf
+	}
+	// All chilren are leafs
+	return false;
+}
+
+std::string StubbleParser::SyntacticalBranch::serialise(int currentIndentation, bool includeTypeID)
 {
 	std::string result;
-	result.append(this->data);
+	bool addIndent = this->isCompoundObject();
+	if (includeTypeID)
+	{
+		result.append(this->data);
+	}
 	if (this->children.size() != 0)
 	{
-		result.append("(");
+		if (addIndent) { result.append("\n"); }
+		if (addIndent) { result.append(std::string(currentIndentation, '\t')); }
+		result.append(this->isVector ? "[" : "(");
+		if (addIndent) { result.append("\n"); }
+		currentIndentation++;
 		for (auto child : this->children)
 		{
-			result.append(child.serialise());
-			result.append(", ");
+			if (addIndent) { result.append(std::string(currentIndentation, '\t')); }
+			result.append(child.serialise(currentIndentation, !this->isVector));
+			result.append(",");
+			if (addIndent) { result.append("\n"); } else { result.append(" "); }
 		}
-		result.resize(result.size() - 2); // remove the last comma+space
+		result.resize(result.size() - (addIndent ? 1 : 2)); // remove the last comma+space (leave newline; put close bracket on new line)
+		currentIndentation--;
+		if (currentIndentation < 0) { std::cout << "Error: couldn't indent branch " << this->data << std::endl; return result; } // best-effort
+		if (addIndent)
+		{
+			result.append("\n");
+			result.append(std::string(currentIndentation, '\t'));
+		}
 	
-		result.append(")");
+		result.append(this->isVector ? "]" : ")");
+	}
+	else if (this->isVector)
+	{
+		// Just to signal that this isn't a leaf node
+		result.append("[]");
 	}
 
 	return result;
@@ -245,6 +299,20 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 	result.lineNumber = idToken.value().lineNumber;
 	result.isVector = false;
 
+	// Hello!
+	// If you're trying to wrap your head around how on earth vectors work, here's what i've got
+	// If we see a '[', then it dispatches the recursive call to graftFrag() passing the type name (idt)
+	// e.g., int[1,2,3]
+	// in the child graftFrag() call, we have result.data = int, and skip popping a first token for idt
+	// we're pointing at '1'; this falls through the data case isVectorInner check below
+	// for non-base types:
+	// in normal operation, we initally pop a token for the result.data;
+	// then the big ol' switch looks for things after an identifier/leaf data
+	// in the case of an object: it's an open bracket
+	// since we skipped popping the ID token, we're straight off to the bracket
+	// which allows Colour[(1.0f, 0.0f, 0.5f), (1.0f, 0.0f, 1.0f), <...>]
+	// *I think...
+
 	try
 	{
 		auto cc = ts.peek();
@@ -316,6 +384,13 @@ std::optional<StubbleParser::SyntacticalBranch> StubbleParser::graftFrag(Stubble
 				return result;
 			}
 
+			// NOTE: Currently, we don't support directly nested vectors.
+			// i.e., `foo[[1,2,3],[4,5,6]]`
+			// Here's what happens:
+			// > the parent (outer) vector gets back child branches where `isVector = true`.
+			// > translateVector() will see this later and panic (undefined behaviour).
+			// Currently we can do supported objects, or base types.
+			// Workaround: use a container object if it's really necessary like this
 			case TokenType::sqBrOpen: { // Curly braces to declare a new scope
 				ts.streamLocation++; // We peeked the open bracket, consume it
 				result.isVector = true;
@@ -679,4 +754,5 @@ void StubbleParser::stbExport(extendedValue ob, std::string filepath)
 	savedFile << AST.serialise();
 
 	savedFile.close();
+	return;
 }

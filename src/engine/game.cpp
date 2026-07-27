@@ -65,7 +65,8 @@ void Game::run()
 	// pixelBuffer testBuffer(64, 64, 0, 0, 0);
 	// pxbufs.emplace_back(&testBuffer);
 
-	bmpFont testFont = *new bmpFont();
+	bmpFont* testFont = new bmpFont();
+	testFont->name = "Test font";
 
 	int defaultWidth;
 	int defaultHeight;
@@ -75,10 +76,12 @@ void Game::run()
 	std::cin >> defaultHeight;
 	std::cout << std::endl;
 
-	for (int i = 0; i < testFont.glyphs.size(); i++)
+	testFont->sizepx = defaultHeight;
+
+	for (int i = 0; i < testFont->glyphs.size(); i++)
 	{
-		testFont.glyphs[i] = new bmpGlyph();
-		bmpGlyph* currentGlyph = testFont.glyphs[i];
+		testFont->glyphs[i] = new bmpGlyph();
+		bmpGlyph* currentGlyph = testFont->glyphs[i];
 		currentGlyph->bitmap = new pixelBuffer(defaultWidth, defaultHeight);
 		currentGlyph->bitmap->displayDX = i * (defaultWidth + 5);
 		pxbufs.emplace_back(currentGlyph->bitmap);
@@ -243,7 +246,8 @@ void Game::run()
 							NULL,
 							NULL
 						);
-						this->stubbleparser->stbExport(pxbufs[0], fp);
+						// this->stubbleparser->stbExport(pxbufs[0], fp);
+						this->stubbleparser->stbExport(testFont, fp);
 					}
 					if (event.key.keysym.sym == SDLK_l)
 					{
@@ -272,7 +276,13 @@ void Game::run()
 								auto returned = this->stubbleparser->import(file);
 								if (returned.has_value())
 								{
-									pxbufs[0] = std::get<pixelBuffer*>(returned.value());
+									testFont = std::get<bmpFont*>(returned.value());
+									pxbufs.clear();
+									for (int i = 0; i < testFont->glyphs.size(); i++)
+									{
+										testFont->glyphs[i]->bitmap->displayDX = i * (defaultWidth + 5);
+										pxbufs.emplace_back(testFont->glyphs[i]->bitmap);
+									}
 								}
 							}
 						}

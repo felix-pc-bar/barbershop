@@ -57,6 +57,30 @@ static std::unordered_map<std::string, builderFunctionEntry> builderLookup =
 				}
 			}
 		}
+	},
+	{
+		"bmpGlyph",
+		builderFunctionEntry
+		{
+			{
+				{
+					{ TypesEnum::_pixelBuffer, TypesEnum::Int, TypesEnum::Int },
+					_bmpglyphBufXY
+				}
+			}
+		}
+	},
+	{
+		"bmpFont",
+		builderFunctionEntry
+		{
+			{
+				{
+					{ TypesEnum::StdString, TypesEnum::Int, TypesEnum::_Pyjama },
+					_bmpfontNameSizePJGlyph
+				}
+			}
+		}
 	}
 };
 // builderFunctionEntry(std::vector<std::pair<std::vector<TypeData>, builderFunction>> bldLs);

@@ -20,7 +20,7 @@ public:
 	bmpFont();
 	// these are used for selection
 	std::string name;
-	int sizepx;
+	int sizepx; // This is just used to categorise and find fonts; "get me a 10px size font for this draw" etc
 
 	std::array<bmpGlyph*, 128> glyphs; // we only store the ascii set (for now)
 };

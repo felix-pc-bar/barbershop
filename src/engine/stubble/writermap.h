@@ -8,6 +8,18 @@ static std::unordered_map<std::string, writerFunction> writerLookup =
 	{
 		"pixelBuffer",
 		_buffer
+	},
+	{
+		"Pyjama",
+		_Pyjama
+	},
+	{
+		"bmpGlyph",
+		_bmpGlyph
+	},
+	{
+		"bmpFont",
+		_bmpFont
 	}
 };
 

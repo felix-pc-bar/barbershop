@@ -31,6 +31,8 @@ pixelBuffer::pixelBuffer(int _width, int _height, int dDX, int dDY, bool fill)
 
 pixelBuffer::pixelBuffer(int _width, std::string b64data)
 {
+	this->displayDX = 0;
+	this->displayDY = 0;
 	this->width = _width;
 	auto returned = unpack(b64Decode(b64data));
 	if (!returned.has_value())
