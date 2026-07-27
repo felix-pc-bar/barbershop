@@ -5,7 +5,7 @@
 #include "buffer.h"
 
 static constexpr char kB64Chars[] =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
 
 pixelBuffer::pixelBuffer(int _width, int _height, int dDX, int dDY, bool fill)
 {

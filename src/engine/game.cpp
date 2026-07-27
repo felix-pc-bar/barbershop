@@ -36,40 +36,20 @@ Game::Game()
 	}
 	this->stubbleparser = new StubbleParser();
 	// this->renderer = nullptr;
-}
 
-void Game::run()
-{
-	if (this->renderer == nullptr && !globDeferGFXcreation)
-	{
-		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
-		return;
-	}
-	const Uint8* gk; // Used to read off inputs
-	SDL_Event event; // SDL event buffer
+	frame = 0;
+	lastTime = dtclock::now();
+	fpsLimit = 0;
+	fpsLimTick = 1.0f / fpsLimit;
+	gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
+	dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
-	// ====
-	// TIME
-	// ====
+	previewRuleHeight = 0;
+	previewingRule = false; // For the rule being previewed before it is placed
 
-	int frame = 0;
-	auto lastTime = dtclock::now();
-	int fpsLimit = 0;
-	float fpsLimTick = 1.0f / fpsLimit;
-	float gameTime = 0.0f; //Time since game start, use for framerate independent motion eg trig anim
-	float dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
-
-	// buff stuff
-	std::vector<pixelBuffer*> pxbufs;
-
-	// pixelBuffer testBuffer(64, 64, 0, 0, 0);
-	// pxbufs.emplace_back(&testBuffer);
-
-	bmpFont* testFont = new bmpFont();
+	testFont = new bmpFont();
 	testFont->name = "Test font";
 
-	int defaultWidth;
-	int defaultHeight;
 	std::cout << "Enter default width for new font: ";
 	std::cin >> defaultWidth;
 	std::cout << "\nEnter default height for new font: ";
@@ -88,51 +68,50 @@ void Game::run()
 	}
 
 	// these are the "camera" offset
-	int dx = globScreenwidth / 2;
-	int dy = globScreenheight / 2;
+	dx = globScreenwidth / 2;
+	dy = globScreenheight / 2;
 
 	// zoom
-	int scale = 1;
+	scale = 1;
 
 	// in screen space,y-up
-	int mousex = 0;
-	int mousey = 0;
+	mousex = 0;
+	mousey = 0;
 
 	// 0,0 when origin is at centre of screen; origin @ bottom left of screen -> (-ve,-ve)
-	int originDX = 0;
-	int originDY = 0;
+	originDX = 0;
+	originDY = 0;
 
-	std::vector<Point2d> bufrels;
 	bufrels.emplace_back();
 
-	bool lmbdown = false;
-	bool mmbdown = false;
+	lmbdown = false;
+	mmbdown = false;
 
-	enum class state
+	currentState = state::roughing_normal;
+	currentTool = tool::pen;
+	unsavedWork = false;
+	fpsRunningTotal = 0;
+	runningAvgPeriodFrames = 30;
+}
+
+void Game::run()
+{
+	if (this->renderer == nullptr && !globDeferGFXcreation)
 	{
-		roughing_normal,
-		tweaking_normal
-	};
-
-	enum class tool
-	{
-		pen,
-		line,
-		circle
-	};
-
-	state currentState = state::roughing_normal;
-	tool currentTool = tool::pen;
-	bool unsavedWork = false; float fpsRunningTotal = 0; int runningAvgPeriodFrames = 30;
-	if (globDeferGFXcreation)
+		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
+		return;
+	}
+	else
 	{
 		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
 	}
+
 	if (this->renderer == nullptr)
 	{
 		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
 		return;
 	}
+
 	for (;;)
 	{
 		auto currentTime = dtclock::now();
@@ -198,13 +177,27 @@ void Game::run()
 
 			if (currentState == state::roughing_normal)
 			{
-				if (lmbdown)
+				if (currentTool == tool::pen)
 				{
-					for (auto& pb : pxbufs)
+					if (lmbdown)
 					{
-						int mouserelx = mousex - (dx + (pb->displayDX * scale));
-						int mouserely = mousey - (dy + (pb->displayDY * scale));
-						pb->set( mouserelx / scale, mouserely / scale, true);
+						for (auto& pb : pxbufs)
+						{
+							int mouserelx = mousex - (dx + (pb->displayDX * scale));
+							int mouserely = mousey - (dy + (pb->displayDY * scale));
+							pb->set( mouserelx / scale, mouserely / scale, true);
+						}
+					}
+				}
+				if (currentTool == tool::placing_ruler)
+				{
+					previewingRule = true;
+					previewRuleHeight = std::round((mousey - dy) / scale);
+					if (lmbdown)
+					{
+						rulers.emplace_back(previewRuleHeight);
+						previewingRule = false;
+						currentTool = tool::pen;
 					}
 				}
 				if (event.type == SDL_MOUSEWHEEL)
@@ -236,6 +229,11 @@ void Game::run()
 					{
 						dx = globScreenwidth / 2;
 						dy = globScreenheight / 2;
+					}
+					if (event.key.keysym.sym == SDLK_r)
+					{
+						if (currentTool != tool::placing_ruler) { currentTool = tool::placing_ruler; }
+						else { currentTool == tool::pen; }
 					}
 					if (event.key.keysym.sym == SDLK_s)
 					{
@@ -280,7 +278,7 @@ void Game::run()
 									pxbufs.clear();
 									for (int i = 0; i < testFont->glyphs.size(); i++)
 									{
-										testFont->glyphs[i]->bitmap->displayDX = i * (defaultWidth + 5);
+										testFont->glyphs[i]->bitmap->displayDX = i * (testFont->sizepx + 5);
 										pxbufs.emplace_back(testFont->glyphs[i]->bitmap);
 									}
 								}
@@ -307,6 +305,14 @@ void Game::run()
 		for (auto pb : pxbufs)
 		{
 			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10); //add borders at higher scale
+		}
+		for (int height : rulers)
+		{
+			this->renderer->hairline->drawLine({0,(height * scale) - dy}, {this->renderer->width,(height * scale) - dy}, 0xFF202020, 1);
+		}
+		if (previewingRule)
+		{
+			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) - dy}, {this->renderer->width,(previewRuleHeight * scale) - dy}, 0xFF208020, 1);
 		}
 		this->renderer->renderScene();
 		frame++;

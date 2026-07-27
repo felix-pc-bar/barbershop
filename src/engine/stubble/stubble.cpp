@@ -175,7 +175,8 @@ std::string StubbleParser::SyntacticalBranch::serialise(int currentIndentation, 
 			result.append(",");
 			if (addIndent) { result.append("\n"); } else { result.append(" "); }
 		}
-		result.resize(result.size() - (addIndent ? 1 : 2)); // remove the last comma+space (leave newline; put close bracket on new line)
+		// result.resize(result.size() - (addIndent ? 1 : 2)); // remove the last comma+space (leave newline; put close bracket on new line)
+		result.resize(result.size() - 2);
 		currentIndentation--;
 		if (currentIndentation < 0) { std::cout << "Error: couldn't indent branch " << this->data << std::endl; return result; } // best-effort
 		if (addIndent)
