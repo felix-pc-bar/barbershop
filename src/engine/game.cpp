@@ -46,25 +46,17 @@ Game::Game()
 
 	previewRuleHeight = 0;
 
-	testFont = new bmpFont();
-	testFont->name = "Test font";
-
 	std::cout << "Enter default width for new font: ";
 	std::cin >> defaultWidth;
 	std::cout << "\nEnter default height for new font: ";
 	std::cin >> defaultHeight;
 	std::cout << std::endl;
 
+	testFont = new bmpFont(defaultWidth, defaultHeight);
+	testFont->name = "Test font";
 	testFont->sizepx = defaultHeight;
 
-	for (int i = 0; i < testFont->glyphs.size(); i++)
-	{
-		testFont->glyphs[i] = new bmpGlyph();
-		bmpGlyph* currentGlyph = testFont->glyphs[i];
-		currentGlyph->bitmap = new pixelBuffer(defaultWidth, defaultHeight);
-		currentGlyph->bitmap->displayDX = i * (defaultWidth + 5);
-		pxbufs.emplace_back(currentGlyph->bitmap);
-	}
+	this->dealFontBuffers(testFont);
 
 	// these are the "camera" offset
 	dx = globScreenwidth / 2;
@@ -91,6 +83,17 @@ Game::Game()
 	unsavedWork = false;
 	fpsRunningTotal = 0;
 	runningAvgPeriodFrames = 30;
+}
+
+void Game::dealFontBuffers(bmpFont* font)
+{
+	this->pxbufs.clear();
+	for (int i = 0; i < font->glyphs.size(); i++)
+	{
+		font->glyphs[i]->bitmap->displayDX = i * (font->sizepx + 5);
+		pxbufs.emplace_back(font->glyphs[i]->bitmap);
+	}
+	return;
 }
 
 void Game::run()
