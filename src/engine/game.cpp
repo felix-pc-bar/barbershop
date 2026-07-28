@@ -45,7 +45,6 @@ Game::Game()
 	dtFac = 1.0f; // dt as ratio; shouldn't change anything if you multiply with it and you're running at 60fps
 
 	previewRuleHeight = 0;
-	previewingRule = false; // For the rule being previewed before it is placed
 
 	testFont = new bmpFont();
 	testFont->name = "Test font";
@@ -191,12 +190,10 @@ void Game::run()
 				}
 				if (currentTool == tool::placing_ruler)
 				{
-					previewingRule = true;
-					previewRuleHeight = std::round((mousey - dy) / scale);
+					previewRuleHeight = std::round(((mousey - dy) / scale) + 0.5f);
 					if (lmbdown)
 					{
 						rulers.emplace_back(previewRuleHeight);
-						previewingRule = false;
 						currentTool = tool::pen;
 					}
 				}
@@ -231,9 +228,13 @@ void Game::run()
 						dy = globScreenheight / 2;
 					}
 					if (event.key.keysym.sym == SDLK_r)
-					{
+				{
 						if (currentTool != tool::placing_ruler) { currentTool = tool::placing_ruler; }
-						else { currentTool == tool::pen; }
+						else { currentTool = tool::pen; }
+					}
+					if (event.key.keysym.sym == SDLK_c)
+					{
+						rulers.clear();
 					}
 					if (event.key.keysym.sym == SDLK_s)
 					{
@@ -308,11 +309,11 @@ void Game::run()
 		}
 		for (int height : rulers)
 		{
-			this->renderer->hairline->drawLine({0,(height * scale) - dy}, {this->renderer->width,(height * scale) - dy}, 0xFF202020, 1);
+			this->renderer->hairline->drawLine({0,(height * scale) + dy}, {this->renderer->width,(height * scale) + dy}, 0xFFFFFFFF, 1);
 		}
-		if (previewingRule)
+		if (currentTool == tool::placing_ruler)
 		{
-			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) - dy}, {this->renderer->width,(previewRuleHeight * scale) - dy}, 0xFF208020, 1);
+			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
 		}
 		this->renderer->renderScene();
 		frame++;

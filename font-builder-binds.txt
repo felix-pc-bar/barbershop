@@ -1,0 +1,12 @@
+GLOBAL BINDS
+	HOME- reset pan
+	MMB or G- hold to pan with mouse
+	S- save font file
+	L- load font file
+	C- clear rulers
+	R- enter/cancel ruler placing tool
+MODE/TOOL-SPECIFIC BINDS
+	PEN TOOL
+		LMB- draw on the buffers
+	RULER TOOL
+		LMB- place a ruler

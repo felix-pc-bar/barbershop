@@ -1,4 +1,5 @@
 #pragma once
+#include "render/components/bmpfont.h"
 #include "stubble/stubble.h"
 #include "render/render.h"
 
@@ -79,4 +80,7 @@ private:
 	state currentState;
 	tool currentTool;
 	bool unsavedWork;
+
+	// == Functions ==
+	void dealFontBuffers(bmpFont* font); // Copies the buffers of a font into the pxbufs vector to be displayed, for inspection and editing
 };
