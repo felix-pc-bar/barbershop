@@ -1,4 +1,5 @@
 #pragma once
+#include "SDL_keycode.h"
 #include "render/components/bmpfont.h"
 #include "stubble/stubble.h"
 #include "render/render.h"
@@ -19,6 +20,7 @@ private:
 
 	const Uint8* gk; // Used to read off inputs
 	SDL_Event event; // SDL event buffer
+	SDL_Keymod mods;
 
 	// ====
 	// TIME
@@ -83,4 +85,5 @@ private:
 
 	// == Functions ==
 	void dealFontBuffers(bmpFont* font); // Copies the buffers of a font into the pxbufs vector to be displayed, for inspection and editing
+	void createUndoState();
 };

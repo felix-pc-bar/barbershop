@@ -87,7 +87,7 @@ struct TypeData
 
 std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t);
 
-bool matchesType(const extendedValue& val, TypesEnum t);
+bool matchesType(const extendedValue& val, TypeData t);
 
 std::string_view getTypeName(const extendedValue& ob);
 

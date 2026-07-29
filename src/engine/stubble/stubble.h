@@ -5,6 +5,7 @@
 //#include <functional>
 #include <optional>
 #include <vector>
+#include <filesystem>
 
 #include "types.h"
 
@@ -76,10 +77,10 @@ public:
 
     // Stores function pointer alongside arg types it wants
 
-    static std::optional<extendedValue> import(std::string filepath);
+    static std::optional<extendedValue> import(std::string filepath, std::optional<TypesEnum> typeToGet = std::nullopt);
 
 	// Write object to stubble file
-	static void stbExport(extendedValue ob, std::string filepath);
+	static void stbExport(extendedValue ob, std::filesystem::path filepath);
 
     static extendedValue parse(std::string filepath);
 private:

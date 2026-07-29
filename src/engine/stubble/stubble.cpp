@@ -3,7 +3,6 @@
 #include <fstream>
 #include <optional>
 #include <ostream>
-#include <filesystem>
 #include <algorithm>
 #include <stdexcept>
 #include <string>
@@ -642,7 +641,7 @@ std::optional<Pyjama*> StubbleParser::translateVector(SyntacticalBranch& ast)
 	return pj;
 }
 
-std::optional<extendedValue> StubbleParser::import(std::string filepath)
+std::optional<extendedValue> StubbleParser::import(std::string filepath, std::optional<TypesEnum> typeToGet)
 {
 	if (!std::filesystem::exists(filepath))
 	{
@@ -735,21 +734,28 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath)
 		return std::nullopt;
 	}
 
-	auto result = translateTree(AST.value());
+	std::optional<extendedValue> result = translateTree(AST.value());
 	if (!result.has_value())
 	{
 		std::cout << "Error when translating \"" << filepath << "\"\n";
 	}
+	if (typeToGet.has_value())
+	{
+		if (!matchesType(result.value(), TypeData(typeToGet.value(), false)))
+		{
+			std::cout << "Error: imported object of incorrect type (got \"" << getTypeName(result.value()) << "\"\n";
+			return std::nullopt;
+		}
+	}
 	return result;
 }
 
-void StubbleParser::stbExport(extendedValue ob, std::string filepath)
+void StubbleParser::stbExport(extendedValue ob, std::filesystem::path filepath)
 {
 	SyntacticalBranch AST{}; // most vexing parse !1!!
-	// AST.data = getTypeName(ob);
-	// writerFunction wf = writerLookup.at(std::string(getTypeName(ob)));
-	// wf(ob, &AST);
 	writeObToAST(ob, &AST);
+	// ensure the ofstream creation doesn't fail due to the parent directory not existing
+	std::filesystem::create_directories(filepath.parent_path());
 	std::ofstream savedFile(filepath);
 
 	savedFile << AST.serialise();

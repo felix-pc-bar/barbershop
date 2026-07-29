@@ -1,8 +1,7 @@
-#include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <iostream>
 #include <cstdlib>
-// #include <cstdint>
 #include <chrono>
 
 #include <SDL_events.h>
@@ -11,6 +10,7 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
+#include <variant>
 
 #include "../../external/tinyfiledialogs/tinyfiledialogs.c"
 
@@ -25,6 +25,7 @@
 #include "helpers/stringy.h"
 
 #include "buffer.h"
+#include "stubble/types.h"
 
 using dtclock = std::chrono::steady_clock;
 
@@ -83,6 +84,11 @@ Game::Game()
 	unsavedWork = false;
 	fpsRunningTotal = 0;
 	runningAvgPeriodFrames = 30;
+
+	if (globAppdatalocation == "")
+	{
+		std::cout << "Error: could not assign appdata location. Proceed with caution; the program may be unstable." << std::endl;
+	}
 }
 
 void Game::dealFontBuffers(bmpFont* font)
@@ -93,6 +99,18 @@ void Game::dealFontBuffers(bmpFont* font)
 		font->glyphs[i]->bitmap->displayDX = i * (font->sizepx + 5);
 		pxbufs.emplace_back(font->glyphs[i]->bitmap);
 	}
+	return;
+}
+
+void Game::createUndoState()
+{
+	try
+	{
+		std::filesystem::rename(globAppdatalocation / "font-ed" / "autosav.stbbl", globAppdatalocation / "font-ed" / "undostate.stbbl");
+		this->stubbleparser->stbExport(this->testFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
+	}
+	catch (std::filesystem::filesystem_error)
+	{ std::cout << "Error whilst creating autosave...\n"; }
 	return;
 }
 
@@ -131,7 +149,7 @@ void Game::run()
 		float fps = 1.0f / dt;
 		dtFac = dt * 60.0f;
 		fpsRunningTotal += fps;
-		if (frame % runningAvgPeriodFrames == 0)
+		if (frame % runningAvgPeriodFrames == 0 && globPrintFPS)
 		{
 			// cout << fpsRunningTotal / (float)runningAvgPeriodFrames << endl;
 			fpsRunningTotal = 0;
@@ -161,7 +179,7 @@ void Game::run()
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) { lmbdown = true; }
 
 
-			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; }
+			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; this->createUndoState(); }
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				// mouse
@@ -193,7 +211,7 @@ void Game::run()
 				}
 				if (currentTool == tool::placing_ruler)
 				{
-					previewRuleHeight = std::round(((mousey - dy) / scale) + 0.5f);
+					previewRuleHeight = std::round(((mousey - dy) / static_cast<float>(scale)) + 0.5f);
 					if (lmbdown)
 					{
 						rulers.emplace_back(previewRuleHeight);
@@ -223,15 +241,26 @@ void Game::run()
 				// Key hold events here
 				// if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
 
+				mods = SDL_GetModState();
 				if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 				{
+					if ((mods & KMOD_CTRL) && event.key.keysym.sym == SDLK_z)
+					{
+						auto import = this->stubbleparser->import(globAppdatalocation / "font-ed" / "undostate.stbbl", TypesEnum::_bmpFont);
+						if (import.has_value())
+						{
+							this->testFont = std::get<bmpFont*>(import.value());
+							this->dealFontBuffers(testFont);
+						}
+						this->createUndoState();
+					}
 					if (event.key.keysym.sym == SDLK_HOME)
 					{
 						dx = globScreenwidth / 2;
 						dy = globScreenheight / 2;
 					}
 					if (event.key.keysym.sym == SDLK_r)
-				{
+					{
 						if (currentTool != tool::placing_ruler) { currentTool = tool::placing_ruler; }
 						else { currentTool = tool::pen; }
 					}
@@ -275,16 +304,11 @@ void Game::run()
 							);
 							if (file != NULL)
 							{
-								auto returned = this->stubbleparser->import(file);
+								auto returned = this->stubbleparser->import(file, TypesEnum::_bmpFont);
 								if (returned.has_value())
 								{
 									testFont = std::get<bmpFont*>(returned.value());
-									pxbufs.clear();
-									for (int i = 0; i < testFont->glyphs.size(); i++)
-									{
-										testFont->glyphs[i]->bitmap->displayDX = i * (testFont->sizepx + 5);
-										pxbufs.emplace_back(testFont->glyphs[i]->bitmap);
-									}
+									this->dealFontBuffers(testFont);
 								}
 							}
 						}
