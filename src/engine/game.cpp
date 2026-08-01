@@ -89,6 +89,7 @@ Game::Game()
 	{
 		std::cout << "Error: could not assign appdata location. Proceed with caution; the program may be unstable." << std::endl;
 	}
+	this->stubbleparser->stbExport(this->testFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
 }
 
 void Game::dealFontBuffers(bmpFont* font)
@@ -170,16 +171,15 @@ void Game::run()
 				}
 				else { return; }
 			}
-			if (gk[SDL_SCANCODE_G])
-			{
-				mmbdown = true;
-			} else { mmbdown = false; }
+
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
+			if (event.key.keysym.sym == SDLK_g && event.type == SDL_KEYDOWN) { mmbdown = true; }
+			if (event.key.keysym.sym == SDLK_g && event.type == SDL_KEYUP) { mmbdown = false; }
+
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) { lmbdown = true; }
-
-
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; this->createUndoState(); }
+
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				// mouse
@@ -254,21 +254,7 @@ void Game::run()
 						}
 						this->createUndoState();
 					}
-					if (event.key.keysym.sym == SDLK_HOME)
-					{
-						dx = globScreenwidth / 2;
-						dy = globScreenheight / 2;
-					}
-					if (event.key.keysym.sym == SDLK_r)
-					{
-						if (currentTool != tool::placing_ruler) { currentTool = tool::placing_ruler; }
-						else { currentTool = tool::pen; }
-					}
-					if (event.key.keysym.sym == SDLK_c)
-					{
-						rulers.clear();
-					}
-					if (event.key.keysym.sym == SDLK_s)
+					if ((mods & KMOD_CTRL) && event.key.keysym.sym == SDLK_s)
 					{
 						const char* fp = tinyfd_saveFileDialog(
 							"Save font",
@@ -280,7 +266,7 @@ void Game::run()
 						// this->stubbleparser->stbExport(pxbufs[0], fp);
 						this->stubbleparser->stbExport(testFont, fp);
 					}
-					if (event.key.keysym.sym == SDLK_l)
+					if ((mods & KMOD_CTRL) && event.key.keysym.sym == SDLK_o)
 					{
 						bool pass = true;
 						if (unsavedWork)
@@ -312,6 +298,20 @@ void Game::run()
 								}
 							}
 						}
+					}
+					if (event.key.keysym.sym == SDLK_HOME)
+					{
+						dx = globScreenwidth / 2;
+						dy = globScreenheight / 2;
+					}
+					if (event.key.keysym.sym == SDLK_r)
+					{
+						if (currentTool != tool::placing_ruler) { currentTool = tool::placing_ruler; }
+						else { currentTool = tool::pen; }
+					}
+					if (event.key.keysym.sym == SDLK_c)
+					{
+						rulers.clear();
 					}
 				}
 			} // normal state
