@@ -78,6 +78,7 @@ public:
     // Stores function pointer alongside arg types it wants
 
     static std::optional<extendedValue> import(std::string filepath, std::optional<TypesEnum> typeToGet = std::nullopt);
+	static std::optional<extendedValue> importGUI(std::optional<TypesEnum> typeToGet = std::nullopt);
 
 	// Write object to stubble file
 	static void stbExport(extendedValue ob, std::filesystem::path filepath);

@@ -45,7 +45,7 @@ pixelBuffer::pixelBuffer(int _width, std::string b64data)
 
 void pixelBuffer::set(int x, int y, bool value)
 {
-	if (y * this->width + x < this->values.size() && x < this->width && x >= 0) 
+	if (y * this->width + x < this->values.size() && x < this->width && x >= 0)
 	{
 		this->values[y * this->width + x] = value;
 	}

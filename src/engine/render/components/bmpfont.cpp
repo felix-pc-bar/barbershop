@@ -3,6 +3,7 @@
 bmpGlyph::bmpGlyph(int width, int height)
 {
 	this->bitmap = new pixelBuffer(width, height);
+	this->isPrintable = false;
 }
 
 bmpFont::bmpFont()
@@ -11,6 +12,7 @@ bmpFont::bmpFont()
 	{
 		ptr = new bmpGlyph(1, 1);
 	}
+	this->defaultKerning = 2;
 }
 
 bmpFont::bmpFont(int width, int height)
@@ -19,4 +21,14 @@ bmpFont::bmpFont(int width, int height)
 	{
 		this->glyphs[i] = new bmpGlyph(width, height);
 	}
+	this->defaultKerning = 2;
+}
+
+bmpGlyph* bmpFont::getChar(char c)
+{
+	if (this->glyphs[c]->bitmap != nullptr && this->glyphs[c]->isPrintable)
+	{
+		return this->glyphs[c];
+	}
+	return this->glyphs[0]; // ASCII `0` is NULL. We use it to store the fallback glyph
 }

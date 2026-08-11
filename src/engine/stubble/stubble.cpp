@@ -18,6 +18,8 @@
 #include "../material.h"
 #include "../general3d.h"
 
+#include "../../../external/tinyfiledialogs/tinyfiledialogs.h"
+
 std::function<bool(const extendedValue&)> getTypeMatcher(TypeData t)
 {
 	switch (t.type)
@@ -748,6 +750,30 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath, std::op
 		}
 	}
 	return result;
+}
+
+std::optional<extendedValue> StubbleParser::importGUI(std::optional<TypesEnum> typeToGet)
+{
+	const char* filters[] = { "*.stbbl" };
+	
+	const char* file = tinyfd_openFileDialog(
+		"Import stubble file",
+		"",
+		1,
+		filters,
+		"Stubble files",
+		0
+	);
+	if (file != NULL)
+	{
+		auto returned = import(file, TypesEnum::_bmpFont);
+		if (returned.has_value())
+		{
+			return std::get<bmpFont*>(returned.value());
+		}
+		return returned;
+	}
+	return std::nullopt;
 }
 
 void StubbleParser::stbExport(extendedValue ob, std::filesystem::path filepath)

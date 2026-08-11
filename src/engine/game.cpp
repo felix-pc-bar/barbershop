@@ -10,9 +10,8 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
-#include <variant>
 
-#include "../../external/tinyfiledialogs/tinyfiledialogs.c"
+#include "../../external/tinyfiledialogs/tinyfiledialogs.h"
 
 #include "game.h"
 #include "SDL.h"
@@ -133,6 +132,11 @@ void Game::run()
 		return;
 	}
 
+	// auto returnedFont = this->stubbleparser->importGUI(TypesEnum::_bmpFont);
+	// if (returnedFont.has_value()) { this->renderer->hairline->backupFont = std::get<bmpFont*>(returnedFont.value()); }
+
+	this->renderer->hairline->backupFont = testFont;
+
 	for (;;)
 	{
 		auto currentTime = dtclock::now();
@@ -172,6 +176,7 @@ void Game::run()
 				else { return; }
 			}
 
+			
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONDOWN) { mmbdown = true; }
 			if (event.button.button == SDL_BUTTON_MIDDLE && event.type == SDL_MOUSEBUTTONUP) { mmbdown = false; }
 			if (event.key.keysym.sym == SDLK_g && event.type == SDL_KEYDOWN) { mmbdown = true; }
@@ -205,6 +210,7 @@ void Game::run()
 						{
 							int mouserelx = mousex - (dx + (pb->displayDX * scale));
 							int mouserely = mousey - (dy + (pb->displayDY * scale));
+							// if (((mouserelx / scale) < pb->width) && (mouserelx > 0) && (((mouserely / scale) < pb->height()) && (mouserely > 0)))
 							pb->set( mouserelx / scale, mouserely / scale, true);
 						}
 					}
@@ -330,6 +336,9 @@ void Game::run()
 		} // event loop
 
 		this->renderer->clear({0xFF202020});
+
+		this->renderer->hairline->drawText({20, 20}, "abcdefg");
+
 		for (auto pb : pxbufs)
 		{
 			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10); //add borders at higher scale

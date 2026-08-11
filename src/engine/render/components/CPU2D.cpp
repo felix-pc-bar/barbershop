@@ -3,16 +3,21 @@
 #include <algorithm>
 #include <cmath>
 #include <SDL_render.h>
-#include <iostream>
 
 #include "CPU2D.h"
 #include "../../general2d.h"
+#include "../../stubble/stubble.h"
+#include "../../stubble/types.h"
+#include "bmpfont.h"
 
 Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
 	this->width = width;
 	this->height = height;
 	this->bufMain = screenbuffer;
+	StubbleParser* tempParser = new StubbleParser();
+	auto result = tempParser->import("content/defaultfont.stbbl", TypesEnum::_bmpFont);
+	if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
 }
 
 void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders)
@@ -107,6 +112,18 @@ void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 		}
 	}
 	return;
+}
+
+void Hairline::drawText(Point2d position, std::string text)
+{
+	bmpFont* font = this->backupFont;
+	int xoffset = 0;
+	for (int i = 0; i < text.size(); i++)
+	{
+		bmpGlyph* currentGlyph = font->getChar(text.at(i));
+		transformPixelBuffer(currentGlyph->bitmap, position.x + xoffset + font->defaultKerning + currentGlyph->placementX, position.y + currentGlyph->placementY);
+		xoffset += currentGlyph->bitmap->width + font->defaultKerning + currentGlyph->placementX;
+	}
 }
 
 inline void Hairline::SetPixel(int x, int y, uint32_t color)
