@@ -26,6 +26,10 @@ bmpFont::bmpFont(int width, int height)
 
 bmpGlyph* bmpFont::getChar(char c)
 {
+	if (c < 0 || c > 127)
+	{
+		return this->glyphs[0];
+	}
 	if (this->glyphs[c]->bitmap != nullptr && this->glyphs[c]->isPrintable)
 	{
 		return this->glyphs[c];

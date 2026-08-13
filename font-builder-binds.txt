@@ -16,6 +16,8 @@ GLOBAL BINDS
 	COMMA- decrement default kerning
 	FULL STOP- increment default kerning
 	ALT+{W/A/S/D}- adjust positioning/kerning for focused glyph
+
+	ALT+T- prompt terminal for sample text
 MODE/TOOL-SPECIFIC BINDS
 	PEN TOOL
 		LMB- draw on the buffers

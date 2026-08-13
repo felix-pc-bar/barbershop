@@ -67,6 +67,8 @@ private:
 	bool mmbdown;
 	bool rmbdown;
 
+	std::string testString;
+
 	enum class state
 	{
 		roughing_normal,
@@ -85,7 +87,7 @@ private:
 	tool currentTool;
 	bool unsavedWork;
 	const char* asciiDescriptions[128] = {
-		"Null character",                                      // 0
+		"Null character- used as placeholder",                                      // 0
 		"Start of heading",                                    // 1
 		"Start of text",                                      // 2
 		"End of text",                                        // 3

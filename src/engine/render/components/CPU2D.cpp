@@ -165,15 +165,30 @@ void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 	return;
 }
 
-void Hairline::drawText(Point2d position, std::string text, bmpFont* font, int scaling, uint32_t colour)
+void Hairline::drawText(Point2d position, std::string text, bmpFont* font, int scaling, uint32_t colour, short int anchor)
 {
 	if (font == nullptr) { font = this->backupFont; }
 	int xoffset = 0;
+	int yoffset = 0;
+	int linespacing = 2;
+	if (anchor == 1)
+	{
+		int numlines = std::count(text.begin(), text.end(), '\n') + 1;
+		yoffset = scaling * numlines * (font->sizepx + linespacing);
+	}
 	for (int i = 0; i < text.size(); i++)
 	{
-		bmpGlyph* currentGlyph = font->getChar(text.at(i));
-		transformPixelBuffer(currentGlyph->bitmap, position.x + xoffset + ((font->defaultKerning + currentGlyph->placementX) * scaling), position.y + (currentGlyph->placementY * scaling), scaling, false, 0x00000000, colour, 0x00000000);
-		xoffset += (currentGlyph->bitmap->width + font->defaultKerning + currentGlyph->placementX) * scaling;
+		if (text.at(i) == '\n')
+		{
+			xoffset = 0;
+			yoffset -= (font->sizepx * scaling) + linespacing; // Down = -y
+		}
+		else
+		{
+			bmpGlyph* currentGlyph = font->getChar(text.at(i));
+			transformPixelBuffer(currentGlyph->bitmap, position.x + xoffset + ((font->defaultKerning + currentGlyph->placementX) * scaling), position.y + yoffset + (currentGlyph->placementY * scaling), scaling, false, 0x00000000, colour, 0x00000000);
+			xoffset += (currentGlyph->bitmap->width + font->defaultKerning + currentGlyph->placementX) * scaling;
+		}
 	}
 }
 

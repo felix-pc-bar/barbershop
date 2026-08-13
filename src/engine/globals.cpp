@@ -7,7 +7,7 @@ float globFOVrads = pi / 1.5f;
 bool globDrawPoints = false; //whether to draw the (ground plane?) points
 bool globWireframe = false; // Toggle between shaded and wireframe
 
-bool globPrintFPS = false;
+bool globPrintFPS = true;
 bool globDeferGFXcreation = true;
 
 std::filesystem::path globAppdatalocation = SDL_GetPrefPath("flux", "barbershop");

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <chrono>
+#include <cstring>
 
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
@@ -58,6 +59,18 @@ Game::Game()
 	testFont = new bmpFont(defaultWidth, defaultHeight);
 	testFont->name = "Test font";
 	testFont->sizepx = defaultHeight;
+
+	testString =
+	"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+	"Sed do eiusmod tempor incididunt ut labore et dolore magna.\n"
+	"Ut enim ad minim veniam, quis nostrud exercitation ullamco.\n"
+	"Laboris nisi ut aliquip ex ea commodo consequat.\n"
+	"Duis aute irure dolor in reprehenderit in voluptate velit.\n"
+	"Esse cillum dolore eu fugiat nulla pariatur.\n"
+	"Excepteur sint occaecat cupidatat non proident.\n"
+	"Sunt in culpa qui officia deserunt mollit anim id est.\n"
+	"Curabitur pretium tincidunt lacus, vitae suscipit nulla.\n"
+	"Praesent blandit, risus eget feugiat fermentum, nunc.";
 
 	auto imported = this->stubbleparser->import("/home/felix/Downloads/Tx.stbbl", TypesEnum::_bmpFont);
 	if (imported.has_value()) { this->stopgapFont = std::get<bmpFont*>(imported.value()); }
@@ -165,7 +178,7 @@ void Game::run()
 		fpsRunningTotal += fps;
 		if (frame % runningAvgPeriodFrames == 0 && globPrintFPS)
 		{
-			// cout << fpsRunningTotal / (float)runningAvgPeriodFrames << endl;
+			std::cout << fpsRunningTotal / (float)runningAvgPeriodFrames << std::endl;
 			fpsRunningTotal = 0;
 		}
 
@@ -344,9 +357,15 @@ void Game::run()
 						if (event.key.keysym.sym == SDLK_a) { testFont->glyphs[focusedGlyphIndex]->placementX--; }
 						if (event.key.keysym.sym == SDLK_s) { testFont->glyphs[focusedGlyphIndex]->placementY--; }
 						if (event.key.keysym.sym == SDLK_d) { testFont->glyphs[focusedGlyphIndex]->placementX++; }
-						if (event.type == SDL_MOUSEWHEEL)
+						if (event.key.keysym.sym == SDLK_t)
 						{
-							// wheel
+							std::string line;
+							testString.clear();
+							while (std::getline(std::cin, line))
+							{
+								if (line == ".") { break; }
+								testString += line + '\n';
+							}
 						}
 					}
 				}
@@ -367,11 +386,6 @@ void Game::run()
 
 		this->renderer->clear({0xFF202020});
 
-		this->renderer->hairline->drawText({16, 75}, "The Quick Brown Fox Jumped Over The Lazy Dog", testFont, 4);
-		this->renderer->hairline->drawText({16, 50}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont, 3);
-		this->renderer->hairline->drawText({16, 30}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont, 2);
-		this->renderer->hairline->drawText({16, 20}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont);
-
 		for (int i = 0; i < 128; i++)
 		{
 			auto pb = pxbufs[i];
@@ -390,6 +404,11 @@ void Game::run()
 		{
 			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
 		}
+
+		this->renderer->hairline->drawText({16, 70}, testString, testFont, 1, 0xFFFFFFFF, 1);
+		this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", testFont, 3);
+		this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", testFont, 2);
+		this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", testFont);
 
 		this->renderer->hairline->drawText({16, 1050}, "Editing " + testFont->name, nullptr, 2);
 		this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
