@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdint>
 #include <filesystem>
 #include <iostream>
 #include <cstdlib>
@@ -10,11 +11,13 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
+#include <string>
 
 #include "../../external/tinyfiledialogs/tinyfiledialogs.h"
 
 #include "game.h"
 #include "SDL.h"
+#include "general2d.h"
 #include "general3d.h"
 #include "globals.h"
 #include "render/components/bmpfont.h"
@@ -56,6 +59,9 @@ Game::Game()
 	testFont->name = "Test font";
 	testFont->sizepx = defaultHeight;
 
+	auto imported = this->stubbleparser->import("/home/felix/Downloads/Tx.stbbl", TypesEnum::_bmpFont);
+	if (imported.has_value()) { this->stopgapFont = std::get<bmpFont*>(imported.value()); }
+
 	this->dealFontBuffers(testFont);
 
 	// these are the "camera" offset
@@ -77,6 +83,7 @@ Game::Game()
 
 	lmbdown = false;
 	mmbdown = false;
+	rmbdown = false;
 
 	currentState = state::roughing_normal;
 	currentTool = tool::pen;
@@ -132,10 +139,12 @@ void Game::run()
 		return;
 	}
 
+	int focusedGlyphIndex = 0;
+
 	// auto returnedFont = this->stubbleparser->importGUI(TypesEnum::_bmpFont);
 	// if (returnedFont.has_value()) { this->renderer->hairline->backupFont = std::get<bmpFont*>(returnedFont.value()); }
 
-	this->renderer->hairline->backupFont = testFont;
+	this->renderer->hairline->backupFont = stopgapFont;
 
 	for (;;)
 	{
@@ -183,7 +192,9 @@ void Game::run()
 			if (event.key.keysym.sym == SDLK_g && event.type == SDL_KEYUP) { mmbdown = false; }
 
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) { lmbdown = true; }
+			if (event.button.button == SDL_BUTTON_RIGHT && event.type == SDL_MOUSEBUTTONDOWN) { rmbdown = true; }
 			if (event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) { lmbdown = false; this->createUndoState(); }
+			if (event.button.button == SDL_BUTTON_RIGHT && event.type == SDL_MOUSEBUTTONUP) { rmbdown = false; this->createUndoState(); }
 
 			if (event.type == SDL_MOUSEMOTION)
 			{
@@ -204,14 +215,14 @@ void Game::run()
 			{
 				if (currentTool == tool::pen)
 				{
-					if (lmbdown)
+					if (lmbdown || rmbdown)
 					{
 						for (auto& pb : pxbufs)
 						{
 							int mouserelx = mousex - (dx + (pb->displayDX * scale));
 							int mouserely = mousey - (dy + (pb->displayDY * scale));
 							// if (((mouserelx / scale) < pb->width) && (mouserelx > 0) && (((mouserely / scale) < pb->height()) && (mouserely > 0)))
-							pb->set( mouserelx / scale, mouserely / scale, true);
+							pb->set( mouserelx / scale, mouserely / scale, lmbdown);
 						}
 					}
 				}
@@ -224,30 +235,38 @@ void Game::run()
 						currentTool = tool::pen;
 					}
 				}
+				mods = SDL_GetModState();
 				if (event.type == SDL_MOUSEWHEEL)
 				{
-					// wheel
-					int mouseDX = dx - mousex;
-					int mouseDY = dy - mousey;
-					int deltaScale = 0;
-					if (event.wheel.y > 0 && scale < 64)
+					if (mods & KMOD_ALT)
 					{
-						deltaScale = std::round(scale * 1.75 - scale);
+						if (event.wheel.y < 0 && focusedGlyphIndex < 127) { focusedGlyphIndex++; }
+						if (event.wheel.y > 0 && focusedGlyphIndex > 0) { focusedGlyphIndex--; }
 					}
-					if (event.wheel.y < 0 && scale > 1)
+					else
 					{
-						deltaScale = std::round(scale / 1.75 - scale);
+						// wheel
+						int mouseDX = dx - mousex;
+						int mouseDY = dy - mousey;
+						int deltaScale = 0;
+						if (event.wheel.y > 0 && scale < 64)
+						{
+							deltaScale = std::round(scale * 1.75 - scale);
+						}
+						if (event.wheel.y < 0 && scale > 1)
+						{
+							deltaScale = std::round(scale / 1.75 - scale);
+						}
+						float scaleMultiplicand = (static_cast<float>(scale + deltaScale) / static_cast<float>(scale)) - 1.0f;
+						scale += deltaScale;
+						dx += mouseDX * scaleMultiplicand;
+						dy += mouseDY * scaleMultiplicand;
 					}
-					float scaleMultiplicand = (static_cast<float>(scale + deltaScale) / static_cast<float>(scale)) - 1.0f;
-					scale += deltaScale;
-					dx += mouseDX * scaleMultiplicand;
-					dy += mouseDY * scaleMultiplicand;
 				}
 
 				// Key hold events here
 				// if (gk[SDL_SCANCODE_LEFT]) { dx -= 20 * dtFac; }
 
-				mods = SDL_GetModState();
 				if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 				{
 					if ((mods & KMOD_CTRL) && event.key.keysym.sym == SDLK_z)
@@ -284,24 +303,12 @@ void Game::run()
 						}
 						if (pass)
 						{
-							const char* filters[] = { "*.stbbl" };
-							
-							const char* file = tinyfd_openFileDialog(
-								"Open font",
-								"",
-								1,
-								filters,
-								"Stubble files",
-								0
-							);
-							if (file != NULL)
+							auto returned = this->stubbleparser->importGUI(TypesEnum::_bmpFont);
+							if (returned.has_value())
 							{
-								auto returned = this->stubbleparser->import(file, TypesEnum::_bmpFont);
-								if (returned.has_value())
-								{
-									testFont = std::get<bmpFont*>(returned.value());
-									this->dealFontBuffers(testFont);
-								}
+								testFont = std::get<bmpFont*>(returned.value());
+								this->renderer->hairline->backupFont = testFont;
+								this->dealFontBuffers(testFont);
 							}
 						}
 					}
@@ -318,6 +325,29 @@ void Game::run()
 					if (event.key.keysym.sym == SDLK_c)
 					{
 						rulers.clear();
+					}
+					if (event.key.keysym.sym == SDLK_q)
+					{
+						std::cin >> focusedGlyphIndex;
+					}
+					if (event.key.keysym.sym == SDLK_p)
+					{
+						testFont->glyphs[focusedGlyphIndex]->isPrintable = !testFont->glyphs[focusedGlyphIndex]->isPrintable;
+					}
+					if (event.key.keysym.sym == SDLK_MINUS) { focusedGlyphIndex--; }
+					if (event.key.keysym.sym == SDLK_EQUALS) { focusedGlyphIndex++; }
+					if (event.key.keysym.sym == SDLK_COMMA) { testFont->defaultKerning--; }
+					if (event.key.keysym.sym == SDLK_PERIOD) { testFont->defaultKerning++; }
+					if ((mods & KMOD_ALT))
+					{
+						if (event.key.keysym.sym == SDLK_w) { testFont->glyphs[focusedGlyphIndex]->placementY++; }
+						if (event.key.keysym.sym == SDLK_a) { testFont->glyphs[focusedGlyphIndex]->placementX--; }
+						if (event.key.keysym.sym == SDLK_s) { testFont->glyphs[focusedGlyphIndex]->placementY--; }
+						if (event.key.keysym.sym == SDLK_d) { testFont->glyphs[focusedGlyphIndex]->placementX++; }
+						if (event.type == SDL_MOUSEWHEEL)
+						{
+							// wheel
+						}
 					}
 				}
 			} // normal state
@@ -337,11 +367,20 @@ void Game::run()
 
 		this->renderer->clear({0xFF202020});
 
-		this->renderer->hairline->drawText({20, 20}, "abcdefg");
+		this->renderer->hairline->drawText({16, 75}, "The Quick Brown Fox Jumped Over The Lazy Dog", testFont, 4);
+		this->renderer->hairline->drawText({16, 50}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont, 3);
+		this->renderer->hairline->drawText({16, 30}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont, 2);
+		this->renderer->hairline->drawText({16, 20}, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", testFont);
 
-		for (auto pb : pxbufs)
+		for (int i = 0; i < 128; i++)
 		{
-			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10); //add borders at higher scale
+			auto pb = pxbufs[i];
+			uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : (testFont->glyphs[i]->isPrintable ? 0xFF004000 : 0x00000000);
+			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
+			if (scale > 3)
+			{
+				this->renderer->hairline->drawText(Point2d{dx + (pb->displayDX * scale), dy + (pb->displayDY * scale) - 8}, std::to_string(i));
+			}
 		}
 		for (int height : rulers)
 		{
@@ -351,6 +390,12 @@ void Game::run()
 		{
 			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
 		}
+
+		this->renderer->hairline->drawText({16, 1050}, "Editing " + testFont->name, nullptr, 2);
+		this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
+		this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
+		this->renderer->hairline->drawText({16, 990}, testFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
+
 		this->renderer->renderScene();
 		frame++;
 	}

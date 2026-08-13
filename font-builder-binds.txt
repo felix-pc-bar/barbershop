@@ -1,11 +1,21 @@
 GLOBAL BINDS
 	HOME- reset pan
 	MMB or G- hold to pan with mouse
+	Scroll wheel- zoom
 	C- clear rulers
 	R- enter/cancel ruler placing tool
 	Ctrl+S- save font file
 	Ctrl+O- load font file
 	Ctrl+Z- undo
+
+	Q- prompt in terminal for glyph index to focus
+	MINUS- decrement focused glyph
+	EQUALS- increment focused glyph
+	ALT+Scroll wheel- select focused glyph
+	P- toggle "printable" status of focused glyph; effectively enables/disables a glyph. Glyphs aren't printable by default, they must be toggled on initially!
+	COMMA- decrement default kerning
+	FULL STOP- increment default kerning
+	ALT+{W/A/S/D}- adjust positioning/kerning for focused glyph
 MODE/TOOL-SPECIFIC BINDS
 	PEN TOOL
 		LMB- draw on the buffers

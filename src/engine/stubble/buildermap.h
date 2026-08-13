@@ -64,8 +64,8 @@ static std::unordered_map<std::string, builderFunctionEntry> builderLookup =
 		{
 			{
 				{
-					{ TypesEnum::_pixelBuffer, TypesEnum::Int, TypesEnum::Int },
-					_bmpglyphBufXY
+					{ TypesEnum::_pixelBuffer, TypesEnum::Int, TypesEnum::Int, TypesEnum::Bool },
+					_bmpglyphBufXYPrintable
 				}
 			}
 		}
@@ -76,8 +76,8 @@ static std::unordered_map<std::string, builderFunctionEntry> builderLookup =
 		{
 			{
 				{
-					{ TypesEnum::StdString, TypesEnum::Int, TypesEnum::_Pyjama },
-					_bmpfontNameSizePJGlyph
+					{ TypesEnum::StdString, TypesEnum::Int, TypesEnum::Int, TypesEnum::_Pyjama },
+					_bmpfontNameSizeKernPJGlyph
 				}
 			}
 		}

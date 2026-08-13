@@ -107,6 +107,7 @@ void _bmpGlyph(extendedValue ob, StubbleParser::SyntacticalBranch* AST)
 	writeASTRecurseKernel(glyph.bitmap, AST);
 	writeASTRecurseKernel(glyph.placementX, AST);
 	writeASTRecurseKernel(glyph.placementY, AST);
+	writeASTRecurseKernel(glyph.isPrintable, AST);
 	return;
 }
 
@@ -116,6 +117,7 @@ void _bmpFont(extendedValue ob, StubbleParser::SyntacticalBranch* AST)
 	bmpFont font = *std::get<bmpFont*>(ob);
 	writeASTRecurseKernel(font.name, AST);
 	writeASTRecurseKernel(font.sizepx, AST);
+	writeASTRecurseKernel(font.defaultKerning, AST);
 	// We need to convert the std::array for glyphs into a vector, so it can pack into a pyjama object
 	Pyjama* glyphs = new Pyjama;
 	glyphs->v = std::vector<extendedValue>(font.glyphs.begin(), font.glyphs.end());

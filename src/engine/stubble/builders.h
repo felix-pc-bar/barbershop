@@ -24,6 +24,6 @@ Scene* _scnFull(std::vector<extendedValue> args); // Scene from vector of Camera
 
 pixelBuffer* _pxbufWidthData(std::vector<extendedValue> args); // pixelBuffer from width (int), b64 raw bitmap data (std::string)
 
-bmpGlyph* _bmpglyphBufXY(std::vector<extendedValue> args); // bmpGlyph from pixelBuffer, x placement, y placement (ints)
+bmpGlyph* _bmpglyphBufXYPrintable(std::vector<extendedValue> args); // bmpGlyph from pixelBuffer, x placement, y placement (ints), printable (bool)
 
-bmpFont* _bmpfontNameSizePJGlyph(std::vector<extendedValue> args); // bmpFont from name (std::string), size in px (int), and a pyjama of bmpGlyph*
+bmpFont* _bmpfontNameSizeKernPJGlyph(std::vector<extendedValue> args); // bmpFont from name (std::string), size in px (int), and a pyjama of bmpGlyph*

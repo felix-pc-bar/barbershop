@@ -7,7 +7,7 @@
 #include "CPU2D.h"
 #include "../../general2d.h"
 #include "../../stubble/stubble.h"
-#include "../../stubble/types.h"
+// #include "../../stubble/types.h"
 #include "bmpfont.h"
 
 Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
@@ -16,20 +16,37 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	this->height = height;
 	this->bufMain = screenbuffer;
 	StubbleParser* tempParser = new StubbleParser();
-	auto result = tempParser->import("content/defaultfont.stbbl", TypesEnum::_bmpFont);
-	if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
+	// auto result = tempParser->import("content/defaultfont.stbbl", TypesEnum::_bmpFont);
+	// if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
 }
 
-void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders)
+void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders, uint32_t outlineColour, uint32_t colour, uint32_t backgroundColour)
 {
-	// std::cout << buf.values.size() << std::endl;
-	for (int y = 0; ; y++)
+	Colour tmp(backgroundColour);
+	if (tmp.alpha != 0)
 	{
-		for (int x = 0; x < buf->width; x++)
+		for (int y = 0; ; y++)
 		{
-			if (y * buf->width + static_cast<int>(x / scaling) >= buf->values.size()) { goto doneBuf; }
-			uint32_t col = (buf->values[y * buf->width + x] == 1) ? 0xFFFFFFFF : 0xFF000000;
-			this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, col);
+			for (int x = 0; x < buf->width; x++)
+			{
+				if (y * buf->width + static_cast<int>(x / scaling) >= buf->values.size()) { goto doneBuf; }
+				uint32_t col = (buf->values[y * buf->width + x] == 1) ? colour : backgroundColour;
+				this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, col);
+			}
+		}
+	}
+	else
+	{
+		for (int y = 0; ; y++)
+		{
+			for (int x = 0; x < buf->width; x++)
+			{
+				if (y * buf->width + static_cast<int>(x / scaling) >= buf->values.size()) { goto doneBuf; }
+				if (buf->values[y * buf->width + x] == 1)
+				{
+					this->SetBox(dx + (x * scaling),  dy + (y * scaling), scaling, colour);
+				}
+			}
 		}
 	}
 doneBuf:
@@ -46,18 +63,41 @@ doneBuf:
 			this->drawLine({dx, y}, {dx + (buf->width * scaling), y}, 0xFF808080, 1);
 		}
 	}
+	if (Colour(outlineColour).alpha != 0)
+	{
+		int bl_x = dx - 1;
+		int bl_y = dy - 1;
+		int tr_x = dx + (buf->width * scaling);
+		int tr_y = dy + (buf->height() * scaling);
+		this->drawLine({bl_x, bl_y}, {tr_x, bl_y}, outlineColour, 1);
+		this->drawLine({tr_x, bl_y}, {tr_x, tr_y}, outlineColour, 1);
+		this->drawLine({tr_x, tr_y}, {bl_x, tr_y}, outlineColour, 1);
+		this->drawLine({bl_x, tr_y}, {bl_x, bl_y}, outlineColour, 1);
+	}
 	return;
 }
 
-void Hairline::SetBox(int xPos, int yPos, int size, uint32_t color)
+void Hairline::drawRectangle(Point2d botLeft, Point2d topRight, uint32_t colour)
+{
+	for (int x = botLeft.x; x < topRight.x; x++)
+	{
+		for (int y = botLeft.y; y < topRight.y; y++)
+		{
+			SetPixel(x, y, colour);
+		}
+	}
+	return;
+}
+
+void Hairline::SetBox(int xPos, int yPos, int size, uint32_t colour)
 {
 	if (xPos < -size || xPos > this->width || yPos < -size || yPos > this->height) { return; }
-	if (size == 1) { SetPixel(xPos, yPos, color); return; }
+	if (size == 1) { SetPixel(xPos, yPos, colour); return; }
 	for (int y = 0; y < size; y++)
 	{
 		for (int x = 0; x < size; x++)
 		{
-			SetPixel(xPos + x, yPos + y, color);
+			SetPixel(xPos + x, yPos + y, colour);
 		}
 	}
 	return;
@@ -81,18 +121,23 @@ void Hairline::drawPoint(Point2d pt, int sizePx)
 
 void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 {
-
 	if (p1.x == p2.x && p1.y == p2.y)
 	{
 		this->SetPixel(p1.x, p1.y, col);
 		return;
 	}
-	if (p2.x - p1.x >= p2.y - p1.y)
+	if (abs(p2.x - p1.x) >= abs(p2.y - p1.y))
 	{
+		if (p1.x > p2.x)
+		{
+			auto tmp = p1;
+			p1 = p2;
+			p2 = tmp;
+		}
 		float yStep = 0.0f;
 		if (p2.x - p1.x != 0)
 		{
-			yStep = (float)(p2.y - p1.y) / (float)(p2.x - p1.x); 
+			yStep = (float)(p2.y - p1.y) / (float)(p2.x - p1.x);
 		}
 		for (int i = 0; i <= p2.x - p1.x; i++)
 		{
@@ -101,6 +146,12 @@ void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 	}
 	else
 	{
+		if (p1.y > p2.y)
+		{
+			auto tmp = p1;
+			p1 = p2;
+			p2 = tmp;
+		}
 		float xStep = 0.0f;
 		if (p2.y - p1.y != 0)
 		{
@@ -114,19 +165,19 @@ void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 	return;
 }
 
-void Hairline::drawText(Point2d position, std::string text)
+void Hairline::drawText(Point2d position, std::string text, bmpFont* font, int scaling, uint32_t colour)
 {
-	bmpFont* font = this->backupFont;
+	if (font == nullptr) { font = this->backupFont; }
 	int xoffset = 0;
 	for (int i = 0; i < text.size(); i++)
 	{
 		bmpGlyph* currentGlyph = font->getChar(text.at(i));
-		transformPixelBuffer(currentGlyph->bitmap, position.x + xoffset + font->defaultKerning + currentGlyph->placementX, position.y + currentGlyph->placementY);
-		xoffset += currentGlyph->bitmap->width + font->defaultKerning + currentGlyph->placementX;
+		transformPixelBuffer(currentGlyph->bitmap, position.x + xoffset + ((font->defaultKerning + currentGlyph->placementX) * scaling), position.y + (currentGlyph->placementY * scaling), scaling, false, 0x00000000, colour, 0x00000000);
+		xoffset += (currentGlyph->bitmap->width + font->defaultKerning + currentGlyph->placementX) * scaling;
 	}
 }
 
-inline void Hairline::SetPixel(int x, int y, uint32_t color)
+inline void Hairline::SetPixel(int x, int y, uint32_t colour)
 {
 	int screenY = this->height - y;
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
@@ -134,22 +185,22 @@ inline void Hairline::SetPixel(int x, int y, uint32_t color)
 
 	uint32_t& dest = (*bufMain)[screenY * width + x];
 
-	uint8_t srcA = color >> 24;
+	uint8_t srcA = colour >> 24;
 	if (srcA == 255) {
 		// Fully opaque: just write
-		dest = color;
+		dest = colour;
 		return;
 	}
 	if (srcA == 0) {
 		// Fully transparent: do nothing
 		return;
 	}
-	// Extract source color components
-	uint8_t srcR = (color >> 16) & 0xFF;
-	uint8_t srcG = (color >> 8) & 0xFF;
-	uint8_t srcB = color & 0xFF;
+	// Extract source colour components
+	uint8_t srcR = (colour >> 16) & 0xFF;
+	uint8_t srcG = (colour >> 8) & 0xFF;
+	uint8_t srcB = colour & 0xFF;
 
-	// Extract destination color components
+	// Extract destination colour components
 	uint8_t dstR = (dest >> 16) & 0xFF;
 	uint8_t dstG = (dest >> 8) & 0xFF;
 	uint8_t dstB = dest & 0xFF;

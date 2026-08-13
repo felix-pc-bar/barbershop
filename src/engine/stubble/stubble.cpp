@@ -1,3 +1,4 @@
+#include <exception>
 #include <iostream>
 //#include <sstream>
 #include <fstream>
@@ -454,10 +455,11 @@ std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::Syntact
 	{
 		if (ast.data == "true") { return true; }
 		if (ast.data == "false") { return false; }
-		if (helpers::isDigits(ast.data))
+		try
 		{
 			return stoi(ast.data);
 		}
+		catch (...) {}
 		auto fpResult = helpers::getFloatLiteral(ast.data);
 		if (fpResult.has_value())
 		{
@@ -567,9 +569,10 @@ std::optional<objectPointer> StubbleParser::getBuiltObject(std::string typeName,
 		// TODO: Add reporting for wanted/given parameter types
 		return std::nullopt;
 	}
-	catch ( ... )
+	catch ( const std::exception& e )
 	{
 		std::cout << "Error: Could not import \"" << typeName << "\"" << std::endl;
+		std::cout << e.what();
 		return std::nullopt;
 	}
 }
@@ -736,17 +739,22 @@ std::optional<extendedValue> StubbleParser::import(std::string filepath, std::op
 		return std::nullopt;
 	}
 
+	// Translate the AST: locate relavent builder functions and recursively turn the data into objects
+
 	std::optional<extendedValue> result = translateTree(AST.value());
 	if (!result.has_value())
 	{
 		std::cout << "Error when translating \"" << filepath << "\"\n";
 	}
-	if (typeToGet.has_value())
+	else
 	{
-		if (!matchesType(result.value(), TypeData(typeToGet.value(), false)))
+		if (typeToGet.has_value())
 		{
-			std::cout << "Error: imported object of incorrect type (got \"" << getTypeName(result.value()) << "\"\n";
-			return std::nullopt;
+			if (!matchesType(result.value(), TypeData(typeToGet.value(), false)))
+			{
+				std::cout << "Error: imported object of incorrect type (got \"" << getTypeName(result.value()) << "\"\n";
+				return std::nullopt;
+			}
 		}
 	}
 	return result;
@@ -766,12 +774,7 @@ std::optional<extendedValue> StubbleParser::importGUI(std::optional<TypesEnum> t
 	);
 	if (file != NULL)
 	{
-		auto returned = import(file, TypesEnum::_bmpFont);
-		if (returned.has_value())
-		{
-			return std::get<bmpFont*>(returned.value());
-		}
-		return returned;
+		return import(file, typeToGet);
 	}
 	return std::nullopt;
 }
