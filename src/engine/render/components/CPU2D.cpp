@@ -16,8 +16,8 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	this->height = height;
 	this->bufMain = screenbuffer;
 	StubbleParser* tempParser = new StubbleParser();
-	// auto result = tempParser->import("content/defaultfont.stbbl", TypesEnum::_bmpFont);
-	// if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
+	auto result = tempParser->import("content/fonts/Tx.stbbl", TypesEnum::_bmpFont);
+	if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
 }
 
 void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders, uint32_t outlineColour, uint32_t colour, uint32_t backgroundColour)

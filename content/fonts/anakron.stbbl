@@ -1,0 +1,905 @@
+bmpFont
+(
+	"anakron",
+	12,
+	-1,
+	bmpGlyph
+	[
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfkJCQkJCQn4AAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgAGBg8PBgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAA2NjYAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANjZ-Nn82NgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAACD4LPmg+CAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAARmYwGAxmYgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANmxsNjA0HAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAABgYGAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAMGBgwMDAYGAwAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAwGBgMDAwYGDAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAACQYfhgkAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAABgYfhgYAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAABAIGBgAAAAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAPAAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgAAAAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAQGAwGAwGAgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZ2fm5mPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfhgYGBh4CAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfjIYDAZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGYGHAZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAADAx+LBwMBAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGYGBnxgfgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZmbGAwHAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgYDAxGfgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZmPGZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAOAwGNmZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgAABgYAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAABAIGBgAABgYAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAADBgwYDAYDAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAH4AAH4AAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAMBgMBgwYMAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgAGAwGZjwAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGBubm5mPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZmfiYUCAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAbGZmbGZmfAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZgYGBmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAeGRmZmZkeAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfmJgeGBifgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAYGBgeGBifgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANmZmbmBmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZmfmZmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfhgYGBgYfgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAA4bAwMDAwMHgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZ0aGRmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfmJgYGBgYAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAY2Nja3djQQAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZmbnZmRgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZmZmZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAYGBgbGZmfAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAGOGRmZmZmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZkbGZmfAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGYGPGBmPAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgYGBgYfgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZmZmZmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAEChkZmZmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANmtra2tjYwAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmYkGCRmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgYGCRmZgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfmIwGAxGfgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAYEBAQEBAQGAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAgYMGDBgQAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAYCAgICAgIGAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAYzYcCAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAB+AAAAAAAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAwYMAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANmY+BjwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAbGZmdmxgYAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZgZDwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANmZmbj4GBgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGB+ZjwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAGBgYGH4YDgAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAABwGPGA8ZjwCAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZmdmxgYAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAADhgYGHgAGBgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAABw2BgYGBh4ABgYAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZnZsZmZgYAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAADhgYGBgYeAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAampqanQAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmZmdmwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPGZmZjwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAGBgbGZmdmwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAYGNmZmbjYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAMDAwOHYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAPAY8YDwAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAADhgYGH4YGAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANm5mZmYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAEChkZmYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAANGpqamoAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAZmY8ZmYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAADwGNm5mZmYAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAfjIYTH4AAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAMGBgYcBgYGAwAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAYGBgYGBgYGAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAwGBgYDhgYGDAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAGZrMwAAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(8, "YAAAAAAAAAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		)
+	]
+)

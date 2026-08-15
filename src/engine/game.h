@@ -43,7 +43,7 @@ private:
 	int previewRuleHeight;
 	bool previewingRule; // For the rule being previewed before it is placed
 
-	bmpFont* testFont;
+	bmpFont* workingFont;
 	bmpFont* stopgapFont; // for UI temporarily
 	int defaultWidth;
 	int defaultHeight;

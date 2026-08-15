@@ -1,0 +1,905 @@
+bmpFont
+(
+	"Tx",
+	8,
+	0,
+	bmpGlyph
+	[
+		
+		(
+			pixelBuffer(6, "MAAAAPooooovgA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAgAgggggA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAACigA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAFFPlPlFAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACPCnKHiAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAEiBEgAAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGpKkKKEAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAggA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAhCCCBAgA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACBAgghCAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAACKnKiAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAACCPiCAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABAhgAAAAA=="),
+			-3,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAADgAAAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAgAAAAAAA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIECBAgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIsqponAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADhBBBDBAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPkCBAonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIghCBPgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABBPpFDBAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIggvIPgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIovIEDAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAEEECBAvgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIonIonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGBAnoonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAgAAgAAA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABAgAAgAAA=="),
+			-3,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAhCECBAgA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAHgHgAAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAECBAhCEAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACACBAonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHoKLqonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIoovoonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPIovIovAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIoIIInAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPIoooovAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPoIPIIPgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIIIPIIPgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHooroInAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIoovooogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADhBBBBDgA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGJBBBBDgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIpKMKJIgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPoIIIIIAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIooqqtogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIopqsoogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIoooonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIIIPIovAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGpKooonAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIpKPIovAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPAgnIIHgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACCCCCCPgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIooooogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACFFIooogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAFKqoooogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIolCFIogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACCCFIoogA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPoECBAvgA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABhBBBBBgA=="),
+			-3,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAhCEIAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABggggghgA=="),
+			-3,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAIlCAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPgAAAAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAhCAA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHongnAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPIosrIIAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIoIHAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHoopmgggA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIPonAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAEEEOEEjAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHAnoongAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIoosrIIAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADhBBDABAA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADEgghgAgA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAElGFEkEAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADhBBBBDAA=="),
+			-2,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIoqqtAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIoosrAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHIoonAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIIPIvAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAgnpmgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIIIMrAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPAnIHAAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAADEkEOEEAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGpooogAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAACFIoogAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAFKqoogAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAIlCFIgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAHAnoogAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAPkCBPgAAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAABiCECCBgA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAgggggggA=="),
+			-4,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAGBBAhBGAA=="),
+			-1,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAABKkAA=="),
+			0,
+			0,
+			true
+		),
+		
+		(
+			pixelBuffer(6, "MAAAAAAAAAAAAA=="),
+			0,
+			0,
+			false
+		)
+	]
+)
