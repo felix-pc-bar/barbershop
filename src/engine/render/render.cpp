@@ -16,6 +16,7 @@
 
 #include "render.h"
 #include "components/CPU2D.h"
+#include "../ui.h"
 
 
 using std::cout, std::endl;
@@ -55,6 +56,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	this->hairline = new Hairline(renderwidth, renderheight, &this->bufScreen); // Create viewport
+	this->UI = new LayoutElement();
 }
 
 void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
@@ -93,11 +95,13 @@ cRenderer::~cRenderer() {
 	}
 }
 
-void cRenderer::renderScene() const
+void cRenderer::renderScene()
 {
 	// do whatever in hairline here
 	// this->hairline->transformPixelBuffer(pbuf, xoffset, yoffset, scaling);
 	// this->hairline->SetPixel(5, 5, Colour(255, 0, 255).raw());
+
+	UI->draw(nullptr, this);
 
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, screenTexture, nullptr, nullptr);

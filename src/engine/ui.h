@@ -1,4 +1,7 @@
+#pragma once
+
 #include <cstdint>
+#include <unordered_map>
 #include <vector>
 #include <memory>
 #include <string>
@@ -31,22 +34,31 @@ public:
 	// Derived from the public dimensions at draw-time
 	Point2d _sizePx;
 
+	// unique_ptr provides exclusive ownership but doesn't force the class extensions back into LayoutElement form
+	std::vector<std::unique_ptr<LayoutElement>> children;
+
+	// We store notable elements in the phoneBook, with names/ids and a map to get to them from this object; i.e. [0,2,5,4] is children[0].children[2].etc...
+	std::unordered_map<std::string, std::vector<int>> phoneBook;
+
 	LayoutElement() = default;
 	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0});
 	virtual ~LayoutElement() = default;
+
+	// Copy constructor and assign
+	LayoutElement(LayoutElement&&) = default;
+	LayoutElement& operator=(LayoutElement&&) = default;
 
 	// if parent == nullptr, this is the top element;
 	void draw(LayoutElement* parent, cRenderer* renderer);
 	virtual void _drawSelf(cRenderer* renderer);
 	void deleteChild(int index);
-	// unique_ptr provides exclusive ownership but doesn't force the class extensions back into LayoutElement form
-	std::vector<std::unique_ptr<LayoutElement>> children;
 };
 
 class Rectangle : public LayoutElement
 {
 public:
+	uint32_t fillColour;
+
 	Rectangle(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Colour _fillColour, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0});
 	void _drawSelf(cRenderer* renderer) override;
-	uint32_t fillColour;
 };

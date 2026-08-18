@@ -10,6 +10,8 @@
 #include "../globals.h"
 #include "../material.h"
 
+class LayoutElement;
+
 class cRenderer // Composite render class housing other specialised renderer objects
 {
 public:
@@ -18,13 +20,15 @@ public:
 	void resize(int newWidth, int newHeight); // Broken lol
 	Hairline* hairline;
 
-	void renderScene() const;
+	void renderScene();
 	void clear(Colour col);
 	
 	int width;
 	int height;
 
 	std::vector<uint32_t> bufScreen;
+
+	LayoutElement* UI;
 private:
 	// Pointers to our window and surface
 	SDL_Surface* winSurface;

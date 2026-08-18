@@ -644,7 +644,7 @@ bmpFont
 		),
 		
 		(
-			pixelBuffer(8, "YAAAAAAYEBAQEBAQGAAAAA=="),
+			pixelBuffer(8, "YAAAAAAcGBgYGBgYHAAAAA=="),
 			0,
 			0,
 			true
@@ -658,7 +658,7 @@ bmpFont
 		),
 		
 		(
-			pixelBuffer(8, "YAAAAAAYCAgICAgIGAAAAA=="),
+			pixelBuffer(8, "YAAAAAA4GBgYGBgYOAAAAA=="),
 			0,
 			0,
 			true
@@ -871,14 +871,14 @@ bmpFont
 			pixelBuffer(8, "YAAAAAAMGBgYcBgYGAwAAA=="),
 			0,
 			0,
-			false
+			true
 		),
 		
 		(
 			pixelBuffer(8, "YAAAAAAYGBgYGBgYGAAAAA=="),
 			0,
 			0,
-			false
+			true
 		),
 		
 		(

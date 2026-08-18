@@ -1,7 +1,6 @@
 #include "ui.h"
 #include "general2d.h"
 #include "render/render.h"
-#include <cstdint>
 
 Point2d operator*(Point2d const& lhs, frac2d const& rhs)
 {
@@ -62,7 +61,7 @@ void Rectangle::_drawSelf(cRenderer* renderer)
 {
 	for (int y = this->_bottomLeft.y; y <= this->_topRight.y; y++)
 	{
-		int rowOffset = renderer->width * y;
+		int rowOffset = renderer->width * ((renderer->height - y) - 1);
 		std::fill(renderer->bufScreen.begin() + rowOffset + _bottomLeft.x, renderer->bufScreen.begin() + rowOffset + _topRight.x, fillColour);
 	}
 	return;
