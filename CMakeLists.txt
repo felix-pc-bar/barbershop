@@ -47,6 +47,8 @@ add_executable(barbershop
 
     src/engine/buffer.cpp
 
+    src/engine/ui.cpp
+
     src/app_icon.rc
 
     external/tinyfiledialogs/tinyfiledialogs.c

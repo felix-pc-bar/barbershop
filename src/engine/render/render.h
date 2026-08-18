@@ -23,12 +23,14 @@ public:
 	
 	int width;
 	int height;
+
+	std::vector<uint32_t> bufScreen;
 private:
 	// Pointers to our window and surface
 	SDL_Surface* winSurface;
 	SDL_Window* window;
 
-	std::vector<uint32_t> bufScreen;
+
 	// This stuff is GPU
 	SDL_Texture* screenTexture;
 	SDL_Renderer* sdlRenderer;

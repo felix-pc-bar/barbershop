@@ -7,9 +7,16 @@ Point2d::Point2d() { this->x = 0; this->y = 0; }
 
 Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
+Point2d Point2d::abs()
+{
+	return {::abs(x), ::abs(y)}; // idk bro
+}
+
 Point2d operator+(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x + p2.x, p1.y + p2.y); }
 Point2d operator-(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x - p2.x, p1.y - p2.y); }
 Point2d operator*(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x * p2.x, p1.y * p2.y); }
+Point2d operator*(const Point2d& p1, float rhs) { return {static_cast<int>(p1.x * rhs), static_cast<int>(p1.y * rhs)}; }
+Point2d operator/(const Point2d& p1, float rhs) { return {static_cast<int>(p1.x / rhs), static_cast<int>(p1.y / rhs)}; }
 bool operator==(const Point2d& p1, const Point2d& p2) { return (p1.x == p2.x && p1.y == p2.y); }
 
 int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& test)

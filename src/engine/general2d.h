@@ -6,9 +6,8 @@ class Point2d
 {
 public:
 	Point2d();
-	// Point2d(const Vertex3d& from3d, Quaternion* camRotInv = nullptr);
 	Point2d(int xin, int yin);
-	friend Point2d operator+(Point2d& p1, Point2d& p2);
+	Point2d abs();
 	int x, y;
 };
 
@@ -24,6 +23,8 @@ public:
 Point2d operator+(const Point2d& p1, const Point2d& p2);
 Point2d operator-(const Point2d& p1, const Point2d& p2);
 Point2d operator*(const Point2d& p1, const Point2d& p2);
+Point2d operator*(const Point2d& p1, float rhs);
+Point2d operator/(const Point2d& p1, float rhs);
 bool operator==(const Point2d& p1, const Point2d& p2);
 
 int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& test);

@@ -12,6 +12,7 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
+#include <memory>
 #include <optional>
 #include <string>
 
@@ -27,7 +28,7 @@
 #include "material.h"
 #include "stubble/stubble.h"
 #include "helpers/stringy.h"
-
+#include "ui.h"
 #include "buffer.h"
 #include "stubble/types.h"
 
@@ -413,35 +414,52 @@ void Game::run()
 
 		this->renderer->clear({0xFF202020});
 
-		for (int i = 0; i < 128; i++)
+		// for (int i = 0; i < 128; i++)
+		// {
+		// 	auto pb = pxbufs[i];
+		// 	uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : (workingFont->glyphs[i]->isPrintable ? 0xFF004000 : 0x00000000);
+		// 	this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
+		// 	if (scale > 3)
+		// 	{
+		// 		this->renderer->hairline->drawText(Point2d{dx + (pb->displayDX * scale), dy + (pb->displayDY * scale) - 8}, std::to_string(i));
+		// 	}
+		// }
+		// for (int height : rulers)
+		// {
+		// 	this->renderer->hairline->drawLine({0,(height * scale) + dy}, {this->renderer->width,(height * scale) + dy}, 0xFFFFFFFF, 1);
+		// }
+		// if (currentTool == tool::placing_ruler)
+		// {
+		// 	this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
+		// }
+
+		// this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
+		// this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
+		// this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
+		// this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
+
+		// this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
+		// this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
+		// this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
+		// this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
+
+		this->renderer->clear({0xFF202020});
+
+		LayoutElement le;
+		frac2d mainSize{
+			std::sin(gameTime) * 0.4f + 0.5f,
+			std::cos(gameTime) * 0.4f + 0.5f
+		};
+		le.children.emplace_back(std::make_unique<Rectangle>("test rectangle", frac2d{0.5, 0.5}, frac2d{0.5f, 0.5f}, mainSize, Colour(0.2f, 0.0f, 0.0f)));
+		for (int x = 0; x < 4; x++)
 		{
-			auto pb = pxbufs[i];
-			uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : (workingFont->glyphs[i]->isPrintable ? 0xFF004000 : 0x00000000);
-			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
-			if (scale > 3)
+			for (int y = 0; y < 2; y++)
 			{
-				this->renderer->hairline->drawText(Point2d{dx + (pb->displayDX * scale), dy + (pb->displayDY * scale) - 8}, std::to_string(i));
+				le.children[0]->children.emplace_back(std::make_unique<Rectangle>("subgrid rectangle " + std::to_string(le.children[0]->children.size()), frac2d{0.0f, 0.0f}, frac2d{0.25f * x, 0.5f * y}, frac2d{0.25, 0.5}, Colour(1.0f, y / 2.0f, x / 4.0f), Point2d{0, 0}, Point2d{ -10, -10}));
 			}
 		}
-		for (int height : rulers)
-		{
-			this->renderer->hairline->drawLine({0,(height * scale) + dy}, {this->renderer->width,(height * scale) + dy}, 0xFFFFFFFF, 1);
-		}
-		if (currentTool == tool::placing_ruler)
-		{
-			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
-		}
 
-		this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
-		this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
-		this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
-		this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
-
-		this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
-		this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
-		this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
-		this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
-
+		le.draw(nullptr, this->renderer);
 		this->renderer->renderScene();
 		frame++;
 	}
