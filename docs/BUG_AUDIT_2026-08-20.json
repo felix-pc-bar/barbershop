@@ -1,0 +1,33 @@
+{
+  "repository": "felix-pc-bar/barbershop",
+  "commit": "b290d97ce6d4c4d3cb5ded5f6c7d6fe638fd2125",
+  "date": "2026-08-20",
+  "confidence": "high for deterministic static findings; runtime validation incomplete",
+  "findings": [
+    {"id":"BUG-001","severity":"High","category":"Memory safety / UB","status":"Fixed","component":"src/engine/material.cpp","branch":"fix/colour-invalid-name"},
+    {"id":"BUG-002","severity":"High","category":"Memory safety / input validation","status":"Fixed","component":"src/engine/import3d.cpp","branch":"fix/obj-import-validation"},
+    {"id":"BUG-003","severity":"High","category":"Resource lifetime","status":"Fixed","component":"src/engine/render/render.cpp; src/engine/game.cpp","branch":"fix/renderer-lifetime-resize"},
+    {"id":"BUG-004","severity":"High","category":"Rendering correctness","status":"Fixed","component":"src/engine/general2d.cpp","branch":"fix/triangle-screen-culling"},
+    {"id":"BUG-005","severity":"High","category":"State/logic","status":"Fixed","component":"src/engine/general3d.cpp","branch":"fix/mesh-rotation-state"},
+    {"id":"BUG-006","severity":"High","category":"Parser crash","status":"Fixed","component":"src/engine/stubble.cpp","branch":"fix/parser-input-validation"},
+    {"id":"BUG-007","severity":"Medium","category":"Error handling","status":"Partially fixed","component":"src/engine/render/render.cpp; src/engine/game.cpp","branch":"fix/renderer-lifetime-resize"},
+    {"id":"BUG-008","severity":"Medium","category":"Rendering edge case","status":"Open","component":"src/engine/render/components/CPU3D.cpp"},
+    {"id":"BUG-009","severity":"Medium","category":"Architecture/state coupling","status":"Open","component":"src/engine/general3d.cpp; src/engine/render/render.cpp"},
+    {"id":"BUG-010","severity":"Medium","category":"Allocation/leak","status":"Open","component":"src/engine/material.cpp; src/engine/render/render.cpp"},
+    {"id":"BUG-011","severity":"Medium","category":"Ownership/lifetime","status":"Open","component":"src/engine/general3d.h; src/engine/import3d.cpp"},
+    {"id":"BUG-012","severity":"Medium","category":"Pointer invalidation","status":"Open","component":"src/engine/general3d.cpp"},
+    {"id":"BUG-013","severity":"Low/Medium","category":"Numeric robustness","status":"Open","component":"src/engine/material.cpp"},
+    {"id":"BUG-014","severity":"Medium","category":"Build portability","status":"Open","component":"CMakeLists.txt; CMakePresets.json"},
+    {"id":"BUG-015","severity":"Low","category":"API semantics","status":"Open","component":"src/engine/general3d.cpp"}
+  ],
+  "security": {
+    "confirmed_vulnerabilities": 0,
+    "notes": ["No obvious embedded secrets or network attack surface found.", "Local parser bugs were treated as security-relevant memory-safety issues.", "Vendored SDL2 is 2.32.8; 2.32.10 is available upstream and should be reviewed for update."]
+  },
+  "validation": {
+    "ci_present": false,
+    "original_tests_present": false,
+    "runtime_execution": false,
+    "reason": "Repository execution was not available in the analysis environment."
+  }
+}
