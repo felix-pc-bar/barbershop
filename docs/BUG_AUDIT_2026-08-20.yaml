@@ -1,0 +1,79 @@
+repository: felix-pc-bar/barbershop
+commit: b290d97ce6d4c4d3cb5ded5f6c7d6fe638fd2125
+date: 2026-08-20
+confidence: high for deterministic static findings; runtime validation incomplete
+findings:
+  - id: BUG-001
+    severity: High
+    status: Fixed
+    component: src/engine/material.cpp
+    branch: fix/colour-invalid-name
+  - id: BUG-002
+    severity: High
+    status: Fixed
+    component: src/engine/import3d.cpp
+    branch: fix/obj-import-validation
+  - id: BUG-003
+    severity: High
+    status: Fixed
+    component: src/engine/render/render.cpp; src/engine/game.cpp
+    branch: fix/renderer-lifetime-resize
+  - id: BUG-004
+    severity: High
+    status: Fixed
+    component: src/engine/general2d.cpp
+    branch: fix/triangle-screen-culling
+  - id: BUG-005
+    severity: High
+    status: Fixed
+    component: src/engine/general3d.cpp
+    branch: fix/mesh-rotation-state
+  - id: BUG-006
+    severity: High
+    status: Fixed
+    component: src/engine/stubble.cpp
+    branch: fix/parser-input-validation
+  - id: BUG-007
+    severity: Medium
+    status: Partially fixed
+    component: src/engine/render/render.cpp; src/engine/game.cpp
+    branch: fix/renderer-lifetime-resize
+  - id: BUG-008
+    severity: Medium
+    status: Open
+    component: src/engine/render/components/CPU3D.cpp
+  - id: BUG-009
+    severity: Medium
+    status: Open
+    component: src/engine/general3d.cpp; src/engine/render/render.cpp
+  - id: BUG-010
+    severity: Medium
+    status: Open
+    component: src/engine/material.cpp; src/engine/render/render.cpp
+  - id: BUG-011
+    severity: Medium
+    status: Open
+    component: src/engine/general3d.h; src/engine/import3d.cpp
+  - id: BUG-012
+    severity: Medium
+    status: Open
+    component: src/engine/general3d.cpp
+  - id: BUG-013
+    severity: Low/Medium
+    status: Open
+    component: src/engine/material.cpp
+  - id: BUG-014
+    severity: Medium
+    status: Open
+    component: CMakeLists.txt; CMakePresets.json
+  - id: BUG-015
+    severity: Low
+    status: Open
+    component: src/engine/general3d.cpp
+security:
+  confirmed_vulnerabilities: 0
+  dependency_note: vendored SDL2 is 2.32.8; upstream 2.32.10 exists
+validation:
+  ci_present: false
+  original_tests_present: false
+  runtime_execution: false
