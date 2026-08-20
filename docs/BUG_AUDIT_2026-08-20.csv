@@ -1,0 +1,16 @@
+BUG-ID,Severity,Category,Status,Component,Fix Branch
+BUG-001,High,Memory safety / UB,Fixed,src/engine/material.cpp,fix/colour-invalid-name
+BUG-002,High,Memory safety / input validation,Fixed,src/engine/import3d.cpp,fix/obj-import-validation
+BUG-003,High,Resource lifetime,Fixed,src/engine/render/render.cpp; src/engine/game.cpp,fix/renderer-lifetime-resize
+BUG-004,High,Rendering correctness,Fixed,src/engine/general2d.cpp,fix/triangle-screen-culling
+BUG-005,High,State/logic,Fixed,src/engine/general3d.cpp,fix/mesh-rotation-state
+BUG-006,High,Parser crash,Fixed,src/engine/stubble.cpp,fix/parser-input-validation
+BUG-007,Medium,Error handling,Partially fixed,src/engine/render/render.cpp; src/engine/game.cpp,fix/renderer-lifetime-resize
+BUG-008,Medium,Rendering edge case,Open,src/engine/render/components/CPU3D.cpp,
+BUG-009,Medium,Architecture/state coupling,Open,src/engine/general3d.cpp; src/engine/render/render.cpp,
+BUG-010,Medium,Allocation/leak,Open,src/engine/material.cpp; src/engine/render/render.cpp,
+BUG-011,Medium,Ownership/lifetime,Open,src/engine/general3d.h; src/engine/import3d.cpp,
+BUG-012,Medium,Pointer invalidation,Open,src/engine/general3d.cpp,
+BUG-013,Low/Medium,Numeric robustness,Open,src/engine/material.cpp,
+BUG-014,Medium,Build portability,Open,CMakeLists.txt; CMakePresets.json,
+BUG-015,Low,API semantics,Open,src/engine/general3d.cpp,
