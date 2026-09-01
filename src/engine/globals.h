@@ -8,6 +8,7 @@ extern float globFOVrads;
 extern Position3d globLightNormal;
 extern int globScreenwidth;
 extern int globScreenheight;
+extern int globIntScaling; // screen integer scaling value
 extern bool globDrawPoints;
 extern bool globWireframe;
 extern bool globDeferGFXcreation; // if true, only init SDL, renderers etc at last moment (allow terminal only mode in gameloop)

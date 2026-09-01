@@ -57,6 +57,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	this->hairline = new Hairline(renderwidth, renderheight, &this->bufScreen); // Create viewport
 	this->UI = new LayoutElement();
+	this->setScreenDimensions();
 }
 
 void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
@@ -114,7 +115,18 @@ void cRenderer::clear(Colour col)
 	return;
 }
 
-// void cRenderer::clear(Material mat) 
+void cRenderer::setScreenDimensions(int scaling)
+{
+	int display = SDL_GetWindowDisplayIndex(this->window);
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode(display, &mode);
+	globScreenheight = mode.h / scaling;
+	globScreenwidth = mode.w / scaling;
+	this->resize(globScreenwidth, globScreenheight);
+	return;
+}
+
+// void cRenderer::clear(Material mat)
 // {
 // 	for (int y = 0; y < this->height; y++)
 // 	{

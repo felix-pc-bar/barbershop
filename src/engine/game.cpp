@@ -181,9 +181,11 @@ void Game::run()
 		return;
 	}
 
+	std::cout << this->renderer->width  << 'x' << this->renderer->height << '\n';
+
 	int focusedGlyphIndex = 0;
 
-	Console console(this->renderer);
+	// Console console(this->renderer);
 
 	for (;;)
 	{

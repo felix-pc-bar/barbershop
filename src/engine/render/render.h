@@ -22,6 +22,8 @@ public:
 
 	void renderScene();
 	void clear(Colour col);
+
+	void setScreenDimensions(int scaling = globIntScaling); // set resolution to match screen
 	
 	int width;
 	int height;
