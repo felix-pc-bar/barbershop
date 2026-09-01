@@ -53,6 +53,11 @@ void LayoutElement::deleteChild(int index)
 	return;
 }
 
+LayoutPosition::LayoutPosition(std::string _name, frac2d _relPos, Point2d _offsetPx)
+	: name(_name),
+	relPos(_relPos),
+	offsetPx(_offsetPx) {}
+
 Rectangle::Rectangle(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Colour _fillColour, Point2d _offsetPx, Point2d _sizeOffsetPx)
 : LayoutElement(_name, _anchor, _relPos, _relSize, _offsetPx, _sizeOffsetPx),
 fillColour(_fillColour.raw()) {}
@@ -65,4 +70,9 @@ void Rectangle::_drawSelf(cRenderer* renderer)
 		std::fill(renderer->bufScreen.begin() + rowOffset + _bottomLeft.x, renderer->bufScreen.begin() + rowOffset + _topRight.x, fillColour);
 	}
 	return;
+}
+
+Text::Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, Point2d _offsetPx)
+{
+
 }

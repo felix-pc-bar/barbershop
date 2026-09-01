@@ -54,11 +54,43 @@ public:
 	void deleteChild(int index);
 };
 
+// TODO:
+// - LayoutPosition won't update the _realPosition; it's never drawn
+// - Split draw and position calculations: maybe a set() to allow for interrupt-ish recalculation
+// - Finish Text
+class LayoutPosition
+{
+protected:
+	// Derived from the public dimensions at draw-time
+	Point2d _realPosition;
+public:
+	std::string name;
+	frac2d relPos; // Where to put the anchor, as fraction of the parent
+	Point2d offsetPx;
+
+	LayoutPosition() = default;
+	LayoutPosition(std::string _name, frac2d _anchor, Point2d _offsetPx = {0,0});
+	virtual ~LayoutPosition() = default;
+
+	// Copy constructor and assign
+	LayoutPosition(LayoutPosition&&) = default;
+	LayoutPosition& operator=(LayoutPosition&&) = default;
+};
+
 class Rectangle : public LayoutElement
 {
 public:
 	uint32_t fillColour;
 
 	Rectangle(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Colour _fillColour, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0});
+	void _drawSelf(cRenderer* renderer) override;
+};
+
+class Text : public LayoutElement
+{
+public:
+	std::string text;
+
+	Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, Point2d _offsetPx = {0,0});
 	void _drawSelf(cRenderer* renderer) override;
 };

@@ -56,8 +56,8 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	this->hairline = new Hairline(renderwidth, renderheight, &this->bufScreen); // Create viewport
-	this->UI = new LayoutElement();
 	this->setScreenDimensions();
+	this->UI = new LayoutElement("UI", {0.5f, 0.5f}, {0.5f, 0.5f}, {1.0f, 1.0f});
 }
 
 void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?

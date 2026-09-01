@@ -12,6 +12,7 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
+#include <memory>
 #include <optional>
 #include <string>
 
@@ -40,6 +41,8 @@ Game::Game()
 		this->renderer = new cRenderer();
 	}
 	this->stubbleparser = new StubbleParser();
+
+	this->renderer->UI->children.emplace_back(std::make_unique<LayoutElement>(LayoutElement("UI safezone", {0.5f, 0.5f}, {0.5f, 0.5f}, {0.95f, 0.95f})));
 
 	frame = 0;
 	lastTime = dtclock::now();
@@ -89,17 +92,6 @@ Game::Game()
 		}
 	}
 
-	testString =
-	"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
-	"Sed do eiusmod tempor incididunt ut labore et dolore magna.\n"
-	"Ut enim ad minim veniam, quis nostrud exercitation ullamco.\n"
-	"Laboris nisi ut aliquip ex ea commodo consequat.\n"
-	"Duis aute irure dolor in reprehenderit in voluptate velit.\n"
-	"Esse cillum dolore eu fugiat nulla pariatur.\n"
-	"Excepteur sint occaecat cupidatat non proident.\n"
-	"Sunt in culpa qui officia deserunt mollit anim id est.\n"
-	"Curabitur pretium tincidunt lacus, vitae suscipit nulla.\n"
-	"Praesent blandit, risus eget feugiat fermentum, nunc.";
 
 	// auto imported = this->stubbleparser->import("/home/felix/Downloads/Tx.stbbl", TypesEnum::_bmpFont);
 	// if (imported.has_value()) { this->stopgapFont = std::get<bmpFont*>(imported.value()); }
@@ -184,6 +176,29 @@ void Game::run()
 	std::cout << this->renderer->width  << 'x' << this->renderer->height << '\n';
 
 	int focusedGlyphIndex = 0;
+
+
+	testString =
+	"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+	"Sed do eiusmod tempor incididunt ut labore et dolore magna.\n"
+	"Ut enim ad minim veniam, quis nostrud exercitation ullamco.\n"
+	"Laboris nisi ut aliquip ex ea commodo consequat.\n"
+	"Duis aute irure dolor in reprehenderit in voluptate velit.\n"
+	"Esse cillum dolore eu fugiat nulla pariatur.\n"
+	"Excepteur sint occaecat cupidatat non proident.\n"
+	"Sunt in culpa qui officia deserunt mollit anim id est.\n"
+	"Curabitur pretium tincidunt lacus, vitae suscipit nulla.\n"
+	"Praesent blandit, risus eget feugiat fermentum, nunc.";
+
+	this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
+	this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
+	this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
+	this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
+
+	this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
+	this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
+	this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
+	this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
 
 	// Console console(this->renderer);
 
@@ -433,16 +448,6 @@ void Game::run()
 		{
 			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
 		}
-
-		this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
-		this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
-		this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
-		this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
-
-		this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
-		this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
-		this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
-		this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
 
 		this->renderer->renderScene();
 		frame++;
