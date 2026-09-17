@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 
 #include "ui.h"
 #include "general2d.h"
@@ -120,17 +121,22 @@ void Rectangle::_drawSelf(cRenderer* renderer)
 	return;
 }
 
-Text::Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling, Point2d _offsetPx)
+Text::Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling, std::function<std::string()> _txfac, Point2d _offsetPx)
 : LayoutElement(_name, _anchor, _relPos, _offsetPx),
 text(_text),
 font(_font),
-scaling(scaling) {}
+scaling(scaling),
+textFactory(_txfac) {}
  
 // todo: figure out why text put at (0, 0) is drawn a few pixels too low.
 void Text::preprocessLiterals()
 {
 	int numLines = std::count(this->text.begin(), this->text.end(), '\n');
 	this->_sizePx = {10, (((*font)->sizepx * scaling) + 2) * numLines};
+	if (textFactory != nullptr)
+	{
+		this->text = textFactory();
+	}
 }
 
 void Text::_drawSelf(cRenderer* renderer)

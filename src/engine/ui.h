@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <unordered_map>
 #include <vector>
 #include <memory>
@@ -96,11 +97,12 @@ public:
 class Text : public LayoutElement
 {
 public:
+	std::function<std::string()> textFactory = nullptr;
 	std::string text;
 	bmpFont** font;
 	int scaling;
 
-	Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling = 1, Point2d _offsetPx = {0,0});
+	Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling = 1, std::function<std::string()> _txfac = nullptr, Point2d _offsetPx = {0,0});
 
 	void _drawSelf(cRenderer* renderer) override;
 	void preprocessLiterals() override;

@@ -203,6 +203,16 @@ void Game::run()
 		3
 	));
 
+	this->renderer->UI->children[0]->children.emplace_back(std::make_unique<Text>(
+		"Test text",
+		frac2d{0, 0},
+		frac2d{0, 0},
+		testString,
+		workingFont,
+		3,
+		[]() { return "test"; }
+	));
+
 	// this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
 	// this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
 	// this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
