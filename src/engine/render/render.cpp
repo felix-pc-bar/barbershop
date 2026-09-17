@@ -123,6 +123,7 @@ void cRenderer::setScreenDimensions(int scaling)
 	SDL_GetCurrentDisplayMode(display, &mode);
 	globScreenheight = mode.h / scaling;
 	globScreenwidth = mode.w / scaling;
+	globIntScaling = scaling;
 	this->resize(globScreenwidth, globScreenheight);
 	return;
 }

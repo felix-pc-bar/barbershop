@@ -170,6 +170,9 @@ void Game::run()
 		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
 	}
 
+	std::cout << "Renderer dimensions: " << this->renderer->width << "x" << this->renderer->height << std::endl;
+	std::cout << "Screen dimensions: " << globScreenwidth << "x" << globScreenheight << std::endl;
+
 	this->renderer->UI->children.emplace_back(std::make_unique<LayoutElement>(
 		"UI safezone",
 		frac2d{0.5f, 0.5f},
@@ -187,7 +190,7 @@ void Game::run()
 	"Duis aute irure dolor in reprehenderit in voluptate velit.\n"
 	"Esse cillum dolore eu fugiat nulla pariatur.\n"
 	"Excepteur sint occaecat cupidatat non proident.\n"
-	"S4unt in culpa qui officia deserunt mollit anim id est.\n"
+	"Sunt in culpa qui officia deserunt mollit anim id est.\n"
 	"Curabitur pretium tincidunt lacus, vitae suscipit nulla.\n"
 	"Praesent blandit, risus eget feugiat fermentum, nunc.";
 
@@ -267,14 +270,14 @@ void Game::run()
 				// mouse
 				if (mmbdown)
 				{
-					dx += event.motion.xrel;
-					dy -= event.motion.yrel;
+					dx += (event.motion.xrel / globIntScaling);
+					dy -= (event.motion.yrel / globIntScaling);
 					originDX = dx - (globScreenwidth / 2);
 					originDY = dy - (globScreenheight / 2);
 				}
 
-				mousex = event.motion.x;
-				mousey = globScreenheight - event.motion.y;
+				mousex = event.motion.x / globIntScaling;
+				mousey = globScreenheight - (event.motion.y / globIntScaling);
 			}
 
 			if (currentState == state::roughing_normal)
