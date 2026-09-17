@@ -7,6 +7,7 @@
 #include <string>
 
 #include "general2d.h"
+#include "render/components/bmpfont.h"
 #include "render/render.h"
 #include "material.h"
 
@@ -34,6 +35,10 @@ public:
 	// Derived from the public dimensions at draw-time
 	Point2d _sizePx;
 
+	// If true, then we only represent a single point and not a box. disregard box-relating values and use bottom-right
+	// warning: if a point has children, behaviour is undefined
+	bool isPoint;
+
 	// unique_ptr provides exclusive ownership but doesn't force the class extensions back into LayoutElement form
 	std::vector<std::unique_ptr<LayoutElement>> children;
 
@@ -41,7 +46,8 @@ public:
 	std::unordered_map<std::string, std::vector<int>> phoneBook;
 
 	LayoutElement() = default;
-	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0});
+	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0}); // rectangle
+	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, Point2d _offsetPx = {0,0}); // point
 	virtual ~LayoutElement() = default;
 
 	// Copy constructor and assign
@@ -49,33 +55,34 @@ public:
 	LayoutElement& operator=(LayoutElement&&) = default;
 
 	// if parent == nullptr, this is the top element;
+	void updateLiteralValues(LayoutElement* parent);
+	virtual void preprocessLiterals();
+
 	void draw(LayoutElement* parent, cRenderer* renderer);
 	virtual void _drawSelf(cRenderer* renderer);
 	void deleteChild(int index);
 };
 
-// TODO:
-// - LayoutPosition won't update the _realPosition; it's never drawn
-// - Split draw and position calculations: maybe a set() to allow for interrupt-ish recalculation
-// - Finish Text
-class LayoutPosition
-{
-protected:
-	// Derived from the public dimensions at draw-time
-	Point2d _realPosition;
-public:
-	std::string name;
-	frac2d relPos; // Where to put the anchor, as fraction of the parent
-	Point2d offsetPx;
-
-	LayoutPosition() = default;
-	LayoutPosition(std::string _name, frac2d _anchor, Point2d _offsetPx = {0,0});
-	virtual ~LayoutPosition() = default;
-
-	// Copy constructor and assign
-	LayoutPosition(LayoutPosition&&) = default;
-	LayoutPosition& operator=(LayoutPosition&&) = default;
-};
+// class LayoutPosition
+// {
+// protected:
+// 	// Derived from the public dimensions at draw-time
+// 	Point2d _realPosition;
+// public:
+// 	std::string name;
+// 	frac2d relPos; // Where to put the anchor, as fraction of the parent
+// 	Point2d offsetPx;
+//
+// 	LayoutPosition() = default;
+// 	LayoutPosition(std::string _name, frac2d _anchor, Point2d _offsetPx = {0,0});
+// 	virtual ~LayoutPosition() = default;
+//
+// 	// Copy constructor and assign
+// 	LayoutPosition(LayoutPosition&&) = default;
+// 	LayoutPosition& operator=(LayoutPosition&&) = default;
+//
+// 	void updateLiteralValues(LayoutElement* parent);
+// };
 
 class Rectangle : public LayoutElement
 {
@@ -90,7 +97,11 @@ class Text : public LayoutElement
 {
 public:
 	std::string text;
+	bmpFont** font;
+	int scaling;
 
-	Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, Point2d _offsetPx = {0,0});
+	Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling = 1, Point2d _offsetPx = {0,0});
+
 	void _drawSelf(cRenderer* renderer) override;
+	void preprocessLiterals() override;
 };

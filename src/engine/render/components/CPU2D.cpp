@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <SDL_render.h>
+// #include <filesystem>
 
 #include "CPU2D.h"
 #include "../../general2d.h"
@@ -18,6 +19,18 @@ Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) /
 	StubbleParser* tempParser = new StubbleParser();
 	auto result = tempParser->import("content/fonts/Tx.stbbl", TypesEnum::_bmpFont);
 	if (result.has_value()) { this->backupFont = std::get<bmpFont*>(result.value()); }
+	// Populate fonts vector
+	// for (const auto& entry : std::filesystem::recursive_directory_iterator("content/fonts"))
+	// {
+	// 	if (entry.is_regular_file() && entry.path().extension() == ".stbbl")
+	// 	{
+	// 		auto result = tempParser->import(entry.path(), TypesEnum::_bmpFont);
+	// 		if (result.has_value())
+	// 		{
+	// 			this->fonts.emplace_back(std::make_unique<bmpFont>(*std::get<bmpFont*>(result.value())));
+	// 		}
+	// 	}
+	// }
 }
 
 void Hairline::transformPixelBuffer(pixelBuffer* buf, int dx, int dy, int scaling, bool pixelBorders, uint32_t outlineColour, uint32_t colour, uint32_t backgroundColour)
@@ -194,7 +207,7 @@ void Hairline::drawText(Point2d position, std::string text, bmpFont* font, int s
 
 inline void Hairline::SetPixel(int x, int y, uint32_t colour)
 {
-	int screenY = this->height - y;
+	int screenY = this->height - y - 1;
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
 		return;
 

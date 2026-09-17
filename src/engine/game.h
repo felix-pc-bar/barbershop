@@ -14,7 +14,7 @@ public:
 	~Game();
 	void run();
 	void quit();
-	cRenderer* renderer;
+	cRenderer* renderer = nullptr;
 	StubbleParser* stubbleparser;
 private:
 
@@ -43,7 +43,8 @@ private:
 	int previewRuleHeight;
 	bool previewingRule; // For the rule being previewed before it is placed
 
-	bmpFont* workingFont;
+	bmpFont** workingFont; // double pointer allows us to change what it points to
+	bmpFont* _wf;
 	bmpFont* stopgapFont; // for UI temporarily
 	int defaultWidth;
 	int defaultHeight;

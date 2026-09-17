@@ -57,7 +57,7 @@ cRenderer::cRenderer(int renderwidth, int renderheight)
 	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	this->hairline = new Hairline(renderwidth, renderheight, &this->bufScreen); // Create viewport
 	this->setScreenDimensions();
-	this->UI = new LayoutElement("UI", {0.5f, 0.5f}, {0.5f, 0.5f}, {1.0f, 1.0f});
+	this->UI = new LayoutElement("UI", {0.5f, 0.5f}, {0.5f, 0.5f}, frac2d{1.0f, 1.0f});
 }
 
 void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
@@ -100,8 +100,8 @@ void cRenderer::renderScene()
 {
 	// do whatever in hairline here
 	// this->hairline->transformPixelBuffer(pbuf, xoffset, yoffset, scaling);
-	// this->hairline->SetPixel(5, 5, Colour(255, 0, 255).raw());
 
+	UI->updateLiteralValues(nullptr);
 	UI->draw(nullptr, this);
 
 	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
@@ -115,6 +115,7 @@ void cRenderer::clear(Colour col)
 	return;
 }
 
+// todo: dynamic resolutions for window mode, resizing?
 void cRenderer::setScreenDimensions(int scaling)
 {
 	int display = SDL_GetWindowDisplayIndex(this->window);
@@ -125,17 +126,3 @@ void cRenderer::setScreenDimensions(int scaling)
 	this->resize(globScreenwidth, globScreenheight);
 	return;
 }
-
-// void cRenderer::clear(Material mat)
-// {
-// 	for (int y = 0; y < this->height; y++)
-// 	{
-// 		for (int x = 0; x < this->width; x++)
-// 		{
-// 			if (mat.ditherValue < this->razor3d->bayer8x8[x % 8][y % 8])
-// 			{ bufScreen[(y * this->height) + x] = Colour("black").raw(); }
-// 			else {  bufScreen[(y * this->height) + x] = mat.colour.raw(); }
-// 		}
-// 	}
-// 	return;
-// }

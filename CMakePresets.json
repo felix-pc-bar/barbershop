@@ -11,7 +11,6 @@
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_MAKE_PROGRAM": "ninja",
         "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_RC_COMPILER": "windres",
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
@@ -26,7 +25,6 @@
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_MAKE_PROGRAM": "ninja",
         "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_RC_COMPILER": "windres",
         "CMAKE_BUILD_TYPE": "MinSizeRel",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }

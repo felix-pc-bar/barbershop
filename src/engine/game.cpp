@@ -31,6 +31,7 @@
 #include "buffer.h"
 #include "stubble/types.h"
 #include "ui-impls.h"
+#include "ui.h"
 
 using dtclock = std::chrono::steady_clock;
 
@@ -41,8 +42,6 @@ Game::Game()
 		this->renderer = new cRenderer();
 	}
 	this->stubbleparser = new StubbleParser();
-
-	this->renderer->UI->children.emplace_back(std::make_unique<LayoutElement>(LayoutElement("UI safezone", {0.5f, 0.5f}, {0.5f, 0.5f}, {0.95f, 0.95f})));
 
 	frame = 0;
 	lastTime = dtclock::now();
@@ -68,16 +67,18 @@ Game::Game()
 		std::cin >> nameEntered;
 		std::cout << std::endl;
 
-		workingFont = new bmpFont(defaultWidth, defaultHeight);
-		workingFont->name = nameEntered;
-		workingFont->sizepx = defaultHeight;
+		_wf = new bmpFont(defaultWidth, defaultHeight);
+		// workingFont = &_wf;
+		(*workingFont)->name = nameEntered;
+		(*workingFont)->sizepx = defaultHeight;
 	}
 	else
 	{
 		auto imported = stubbleparser->importGUI(TypesEnum::_bmpFont);
 		if (imported.has_value())
 		{
-			workingFont = std::get<bmpFont*>(imported.value());
+			_wf = std::get<bmpFont*>(imported.value());
+			workingFont = &_wf;
 		}
 		else
 		{
@@ -96,7 +97,7 @@ Game::Game()
 	// auto imported = this->stubbleparser->import("/home/felix/Downloads/Tx.stbbl", TypesEnum::_bmpFont);
 	// if (imported.has_value()) { this->stopgapFont = std::get<bmpFont*>(imported.value()); }
 
-	this->dealFontBuffers(workingFont);
+	this->dealFontBuffers(*workingFont);
 
 	// these are the "camera" offset
 	dx = globScreenwidth / 2;
@@ -129,7 +130,7 @@ Game::Game()
 	{
 		std::cout << "Error: could not assign appdata location. Proceed with caution; the program may be unstable." << std::endl;
 	}
-	this->stubbleparser->stbExport(this->workingFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
+	this->stubbleparser->stbExport(*workingFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
 }
 
 void Game::dealFontBuffers(bmpFont* font)
@@ -148,7 +149,7 @@ void Game::createUndoState()
 	try
 	{
 		std::filesystem::rename(globAppdatalocation / "font-ed" / "autosav.stbbl", globAppdatalocation / "font-ed" / "undostate.stbbl");
-		this->stubbleparser->stbExport(this->workingFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
+		this->stubbleparser->stbExport(*workingFont, globAppdatalocation / "font-ed" / "autosav.stbbl");
 	}
 	catch (std::filesystem::filesystem_error)
 	{ std::cout << "Error whilst creating autosave...\n"; }
@@ -157,26 +158,26 @@ void Game::createUndoState()
 
 void Game::run()
 {
-	if (this->renderer == nullptr && !globDeferGFXcreation)
-	{
-		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
-		return;
-	}
-	else
-	{
-		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
-	}
+	int focusedGlyphIndex = 0;
 
 	if (this->renderer == nullptr)
 	{
-		std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
-		return;
+		if (!globDeferGFXcreation)
+		{
+			std::cout << "Error: renderer not initialised. Exiting..." << std::endl;
+			return;
+		}
+		this->renderer = new cRenderer(globScreenwidth, globScreenheight);
 	}
 
-	std::cout << this->renderer->width  << 'x' << this->renderer->height << '\n';
-
-	int focusedGlyphIndex = 0;
-
+	this->renderer->UI->children.emplace_back(std::make_unique<LayoutElement>(
+		"UI safezone",
+		frac2d{0.5f, 0.5f},
+		frac2d{0.5f, 0.5f},
+		frac2d{1.0f, 1.0f},
+		Point2d{0, 0},
+		Point2d{-50, -50}
+	));
 
 	testString =
 	"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
@@ -186,19 +187,28 @@ void Game::run()
 	"Duis aute irure dolor in reprehenderit in voluptate velit.\n"
 	"Esse cillum dolore eu fugiat nulla pariatur.\n"
 	"Excepteur sint occaecat cupidatat non proident.\n"
-	"Sunt in culpa qui officia deserunt mollit anim id est.\n"
+	"S4unt in culpa qui officia deserunt mollit anim id est.\n"
 	"Curabitur pretium tincidunt lacus, vitae suscipit nulla.\n"
 	"Praesent blandit, risus eget feugiat fermentum, nunc.";
 
-	this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
-	this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
-	this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
-	this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
+	this->renderer->UI->children[0]->children.emplace_back(std::make_unique<Text>(
+		"Test text",
+		frac2d{0, 0},
+		frac2d{0, 0},
+		testString,
+		workingFont,
+		3
+	));
 
-	this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
-	this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
-	this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
-	this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
+	// this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);
+	// this->renderer->hairline->drawText({16, 50}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 3);
+	// this->renderer->hairline->drawText({16, 30}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont, 2);
+	// this->renderer->hairline->drawText({16, 20}, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", workingFont);
+
+	// this->renderer->hairline->drawText({16, 1050}, "Editing " + workingFont->name, nullptr, 2);
+	// this->renderer->hairline->drawText({16, 1030}, "Glyph " + std::to_string(focusedGlyphIndex), nullptr, 2);
+	// this->renderer->hairline->drawText({16, 1010}, this->asciiDescriptions[focusedGlyphIndex], nullptr, 2);
+	// this->renderer->hairline->drawText({16, 990}, workingFont->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable", nullptr, 2);
 
 	// Console console(this->renderer);
 
@@ -330,8 +340,9 @@ void Game::run()
 						auto import = this->stubbleparser->import(globAppdatalocation / "font-ed" / "undostate.stbbl", TypesEnum::_bmpFont);
 						if (import.has_value())
 						{
-							this->workingFont = std::get<bmpFont*>(import.value());
-							this->dealFontBuffers(workingFont);
+							_wf = std::get<bmpFont*>(import.value());
+							// workingFont = &_wf;
+							this->dealFontBuffers(*workingFont);
 						}
 						this->createUndoState();
 					}
@@ -345,7 +356,7 @@ void Game::run()
 							NULL
 						);
 						// this->stubbleparser->stbExport(pxbufs[0], fp);
-						this->stubbleparser->stbExport(workingFont, fp);
+						this->stubbleparser->stbExport(*workingFont, fp);
 					}
 					if ((mods & KMOD_CTRL) && event.key.keysym.sym == SDLK_o)
 					{
@@ -362,9 +373,10 @@ void Game::run()
 							auto returned = this->stubbleparser->importGUI(TypesEnum::_bmpFont);
 							if (returned.has_value())
 							{
-								workingFont = std::get<bmpFont*>(returned.value());
-								this->renderer->hairline->backupFont = workingFont;
-								this->dealFontBuffers(workingFont);
+								_wf = std::get<bmpFont*>(returned.value());
+								// workingFont = &_wf;
+								this->renderer->hairline->backupFont = *workingFont;
+								this->dealFontBuffers(*workingFont);
 							}
 						}
 					}
@@ -388,18 +400,18 @@ void Game::run()
 					}
 					if (event.key.keysym.sym == SDLK_p)
 					{
-						workingFont->glyphs[focusedGlyphIndex]->isPrintable = !workingFont->glyphs[focusedGlyphIndex]->isPrintable;
+						(*workingFont)->glyphs[focusedGlyphIndex]->isPrintable = !(*workingFont)->glyphs[focusedGlyphIndex]->isPrintable;
 					}
 					if (event.key.keysym.sym == SDLK_MINUS) { focusedGlyphIndex--; }
 					if (event.key.keysym.sym == SDLK_EQUALS) { focusedGlyphIndex++; }
-					if (event.key.keysym.sym == SDLK_COMMA) { workingFont->defaultKerning--; }
-					if (event.key.keysym.sym == SDLK_PERIOD) { workingFont->defaultKerning++; }
+					if (event.key.keysym.sym == SDLK_COMMA) { (*workingFont)->defaultKerning--; }
+					if (event.key.keysym.sym == SDLK_PERIOD) { (*workingFont)->defaultKerning++; }
 					if ((mods & KMOD_ALT))
 					{
-						if (event.key.keysym.sym == SDLK_w) { workingFont->glyphs[focusedGlyphIndex]->placementY++; }
-						if (event.key.keysym.sym == SDLK_a) { workingFont->glyphs[focusedGlyphIndex]->placementX--; }
-						if (event.key.keysym.sym == SDLK_s) { workingFont->glyphs[focusedGlyphIndex]->placementY--; }
-						if (event.key.keysym.sym == SDLK_d) { workingFont->glyphs[focusedGlyphIndex]->placementX++; }
+						if (event.key.keysym.sym == SDLK_w) { (*workingFont)->glyphs[focusedGlyphIndex]->placementY++; }
+						if (event.key.keysym.sym == SDLK_a) { (*workingFont)->glyphs[focusedGlyphIndex]->placementX--; }
+						if (event.key.keysym.sym == SDLK_s) { (*workingFont)->glyphs[focusedGlyphIndex]->placementY--; }
+						if (event.key.keysym.sym == SDLK_d) { (*workingFont)->glyphs[focusedGlyphIndex]->placementX++; }
 						if (event.key.keysym.sym == SDLK_t)
 						{
 							std::string line;
@@ -430,10 +442,13 @@ void Game::run()
 
 		this->renderer->clear({0xFF202020});
 
+		// TODO: update sample text with font being edited
+		// => traverse LayoutElement trees better
+
 		for (int i = 0; i < 128; i++)
 		{
 			auto pb = pxbufs[i];
-			uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : (workingFont->glyphs[i]->isPrintable ? 0xFF00A000 : 0x00000000);
+			uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : ((*workingFont)->glyphs[i]->isPrintable ? 0xFF00A000 : 0x00000000);
 			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
 			if (scale > 3)
 			{
@@ -448,6 +463,7 @@ void Game::run()
 		{
 			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
 		}
+
 
 		this->renderer->renderScene();
 		frame++;

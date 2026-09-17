@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.15)
 #message(STATUS "ENV PATH = $ENV{PATH}")
 message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
 
-set(CMAKE_CXX_COMPILER_FORCED TRUE)
 project(barbershop LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -51,10 +50,12 @@ add_executable(barbershop
 
     src/engine/ui-impls.cpp
 
-    src/app_icon.rc
-
     external/tinyfiledialogs/tinyfiledialogs.c
 )
+
+if(WIN32)
+    target_sources(barbershop PRIVATE src/app_icon.rc)
+endif()
 
 # SDL include + lib paths (scoped)
 target_include_directories(barbershop PRIVATE
@@ -108,7 +109,9 @@ add_custom_command(
         "$<TARGET_FILE_DIR:barbershop>/content"
 )
 
-file(COPY
-    ${CMAKE_SOURCE_DIR}/external/SDL2/lib/x64/SDL2.dll
-    DESTINATION ${CMAKE_BINARY_DIR}
-)
+if(WIN32)
+    file(COPY
+        ${CMAKE_SOURCE_DIR}/external/SDL2/lib/x64/SDL2.dll
+        DESTINATION ${CMAKE_BINARY_DIR}
+    )
+endif()
