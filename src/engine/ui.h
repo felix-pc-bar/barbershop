@@ -40,6 +40,8 @@ public:
 	// warning: if a point has children, behaviour is undefined
 	bool isPoint;
 
+	bool sizePxOverride;
+
 	// unique_ptr provides exclusive ownership but doesn't force the class extensions back into LayoutElement form
 	std::vector<std::unique_ptr<LayoutElement>> children;
 
@@ -48,6 +50,8 @@ public:
 
 	LayoutElement() = default;
 	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, frac2d _relSize, Point2d _offsetPx = {0,0}, Point2d _sizeOffsetPx = {0,0}); // rectangle
+	// TODO: find a better way to differentiate the constructors for custom sizePx calcs vs point elements
+	LayoutElement(frac2d _anchor, frac2d _relPos, std::string _name, Point2d _offsetPx = {0,0}); // rectangle (custom sizePx calcs)
 	LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, Point2d _offsetPx = {0,0}); // point
 	virtual ~LayoutElement() = default;
 
@@ -106,4 +110,6 @@ public:
 
 	void _drawSelf(cRenderer* renderer) override;
 	void preprocessLiterals() override;
+private:
+	int numlines;
 };

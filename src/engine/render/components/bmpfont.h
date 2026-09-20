@@ -24,6 +24,7 @@ public:
 	// these are used for selection
 	std::string name;
 	int sizepx; // This is just used to categorise and find fonts; "get me a 10px size font for this draw" etc
+	int lineSpacing; // number of pixels to space lines by
 	int defaultKerning; // number of pixels to space characters by by default
 
 	std::array<bmpGlyph*, 128> glyphs; // we only store the ascii set (for now)

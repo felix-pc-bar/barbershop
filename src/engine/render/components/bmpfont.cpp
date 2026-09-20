@@ -13,6 +13,7 @@ bmpFont::bmpFont()
 		ptr = new bmpGlyph(1, 1);
 	}
 	this->defaultKerning = 2;
+	this->lineSpacing = 1;
 }
 
 bmpFont::bmpFont(int width, int height)
@@ -21,7 +22,8 @@ bmpFont::bmpFont(int width, int height)
 	{
 		this->glyphs[i] = new bmpGlyph(width, height);
 	}
-	this->defaultKerning = 2;
+	this->defaultKerning = 1;
+	this->lineSpacing = 2;
 }
 
 bmpGlyph* bmpFont::getChar(char c)

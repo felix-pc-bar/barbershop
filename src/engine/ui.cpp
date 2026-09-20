@@ -17,14 +17,24 @@ LayoutElement::LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, 
 	relSize(_relSize),
 	offsetPx(_offsetPx),
 	sizeOffsetPx(_sizeOffsetPx),
-	isPoint(false) {}
+	isPoint(false),
+	sizePxOverride(false) {}
 
 LayoutElement::LayoutElement(std::string _name, frac2d _anchor, frac2d _relPos, Point2d _offsetPx)
 	: name(_name),
 	anchor(_anchor),
 	relPos(_relPos),
 	offsetPx(_offsetPx),
-	isPoint(true) {}
+	isPoint(true),
+	sizePxOverride(false) {}
+
+LayoutElement::LayoutElement(frac2d _anchor, frac2d _relPos, std::string _name, Point2d _offsetPx)
+	: name(_name),
+	anchor(_anchor),
+	relPos(_relPos),
+	offsetPx(_offsetPx),
+	isPoint(false),
+	sizePxOverride(true) {}
 
 void LayoutElement::draw(LayoutElement* parent, cRenderer* renderer)
 {
@@ -75,7 +85,10 @@ void LayoutElement::updateLiteralValues(LayoutElement* parent)
 		Point2d parentBottomLeft = (parent == nullptr) ? Point2d{0, 0} : parent->_bottomLeft;
 		if (!this->isPoint)
 		{
-			this->_sizePx = ((parentSize * relSize) + sizeOffsetPx).abs();
+			if (!sizePxOverride) // if we have sizePxOverride, then sizePx is already set in the preprocessLiterals step
+			{
+				this->_sizePx = ((parentSize * relSize) + sizeOffsetPx).abs();
+			}
 			Point2d anchorOffset = this->_sizePx * this->anchor;
 			this->_bottomLeft = ((parentSize * relPos) + parentBottomLeft) - anchorOffset + offsetPx;
 			this->_topRight = _bottomLeft + _sizePx;
@@ -122,17 +135,17 @@ void Rectangle::_drawSelf(cRenderer* renderer)
 }
 
 Text::Text(std::string _name, frac2d _anchor, frac2d _relPos, std::string _text, bmpFont** _font, int scaling, std::function<std::string()> _txfac, Point2d _offsetPx)
-: LayoutElement(_name, _anchor, _relPos, _offsetPx),
+: LayoutElement(_anchor, _relPos, _name, _offsetPx),
 text(_text),
 font(_font),
 scaling(scaling),
 textFactory(_txfac) {}
- 
+
 // todo: figure out why text put at (0, 0) is drawn a few pixels too low.
 void Text::preprocessLiterals()
 {
-	int numLines = std::count(this->text.begin(), this->text.end(), '\n');
-	this->_sizePx = {10, (((*font)->sizepx * scaling) + 2) * numLines};
+	this->numlines = std::count(this->text.begin(), this->text.end(), '\n') + 1;
+	this->_sizePx = {10, (((*font)->sizepx * scaling) + (*font)->lineSpacing) * numlines};
 	if (textFactory != nullptr)
 	{
 		this->text = textFactory();
@@ -141,5 +154,5 @@ void Text::preprocessLiterals()
 
 void Text::_drawSelf(cRenderer* renderer)
 {
-	renderer->hairline->drawText(_bottomLeft + Point2d{0, this->_sizePx.y}, text, *font, scaling);
+	renderer->hairline->drawText(_bottomLeft + Point2d{0, ((*font)->sizepx + (*font)->lineSpacing) * this->scaling * (this->numlines - 1)}, text, *font, scaling);
 }

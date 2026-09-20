@@ -183,18 +183,17 @@ void Hairline::drawText(Point2d position, std::string text, bmpFont* font, int s
 	if (font == nullptr) { font = this->backupFont; }
 	int xoffset = 0;
 	int yoffset = 0;
-	int linespacing = 2;
 	if (anchor == 1)
 	{
 		int numlines = std::count(text.begin(), text.end(), '\n') + 1;
-		yoffset = scaling * numlines * (font->sizepx + linespacing);
+		yoffset = scaling * numlines * (font->sizepx + font->lineSpacing);
 	}
 	for (int i = 0; i < text.size(); i++)
 	{
 		if (text.at(i) == '\n')
 		{
 			xoffset = 0;
-			yoffset -= (font->sizepx * scaling) + linespacing; // Down = -y
+			yoffset -= ((font->sizepx + font->lineSpacing)* scaling); // Down = -y
 		}
 		else
 		{

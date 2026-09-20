@@ -158,8 +158,6 @@ void Game::createUndoState()
 
 void Game::run()
 {
-	int focusedGlyphIndex = 0;
-
 	if (this->renderer == nullptr)
 	{
 		if (!globDeferGFXcreation)
@@ -195,22 +193,32 @@ void Game::run()
 	"Praesent blandit, risus eget feugiat fermentum, nunc.";
 
 	this->renderer->UI->children[0]->children.emplace_back(std::make_unique<Text>(
-		"Test text",
+		"Lorem",
 		frac2d{0, 0},
 		frac2d{0, 0},
-		testString,
+		testString + "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
 		workingFont,
 		3
 	));
 
+	frame = 0;
+	focusedGlyphIndex = 0;
+
 	this->renderer->UI->children[0]->children.emplace_back(std::make_unique<Text>(
-		"Test text",
-		frac2d{0, 0},
-		frac2d{0, 0},
+		"Font properties",
+		frac2d{0, 1},
+		frac2d{0, 1},
 		testString,
 		workingFont,
 		3,
-		[]() { return "test"; }
+		[this]() 
+		{
+			return
+			"Editing " + (*workingFont)->name + '\n' +
+			"Glyph " + std::to_string(focusedGlyphIndex) + ":- " +
+			this->asciiDescriptions[focusedGlyphIndex] + '\n' +
+			((*workingFont)->glyphs[focusedGlyphIndex]->isPrintable ? "Printable" : "Not printable");
+ 		}
 	));
 
 	// this->renderer->hairline->drawText({16, 70}, testString, workingFont, 1, 0xFFFFFFFF, 1);

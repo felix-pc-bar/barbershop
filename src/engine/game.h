@@ -87,6 +87,9 @@ private:
 	state currentState;
 	tool currentTool;
 	bool unsavedWork;
+
+	int focusedGlyphIndex;
+
 	const char* asciiDescriptions[128] = {
 		"Null character- used as placeholder",                                      // 0
 		"Start of heading",                                    // 1
