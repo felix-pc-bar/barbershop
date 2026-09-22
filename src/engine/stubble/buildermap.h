@@ -76,7 +76,7 @@ static std::unordered_map<std::string, builderFunctionEntry> builderLookup =
 		{
 			{
 				{
-					{ TypesEnum::StdString, TypesEnum::Int, TypesEnum::Int, TypesEnum::_Pyjama },
+					{ TypesEnum::StdString, TypesEnum::Int, TypesEnum::Int, TypesEnum::Int, TypesEnum::_Pyjama },
 					_bmpfontNameSizeKernPJGlyph
 				}
 			}

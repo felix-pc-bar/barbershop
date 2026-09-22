@@ -118,6 +118,7 @@ void _bmpFont(extendedValue ob, StubbleParser::SyntacticalBranch* AST)
 	writeASTRecurseKernel(font.name, AST);
 	writeASTRecurseKernel(font.sizepx, AST);
 	writeASTRecurseKernel(font.defaultKerning, AST);
+	writeASTRecurseKernel(font.lineSpacing, AST);
 	// We need to convert the std::array for glyphs into a vector, so it can pack into a pyjama object
 	Pyjama* glyphs = new Pyjama;
 	glyphs->v = std::vector<extendedValue>(font.glyphs.begin(), font.glyphs.end());

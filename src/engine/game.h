@@ -45,7 +45,7 @@ private:
 
 	bmpFont** workingFont; // double pointer allows us to change what it points to
 	bmpFont* _wf;
-	bmpFont* stopgapFont; // for UI temporarily
+	bmpFont* UIFont;
 	int defaultWidth;
 	int defaultHeight;
 	// these are the "camera" offset

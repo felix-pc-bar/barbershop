@@ -94,8 +94,8 @@ Game::Game()
 	}
 
 
-	// auto imported = this->stubbleparser->import("/home/felix/Downloads/Tx.stbbl", TypesEnum::_bmpFont);
-	// if (imported.has_value()) { this->stopgapFont = std::get<bmpFont*>(imported.value()); }
+	auto imported = this->stubbleparser->import("content/fonts/Tx.stbbl", TypesEnum::_bmpFont);
+	if (imported.has_value()) { this->UIFont = std::get<bmpFont*>(imported.value()); }
 
 	this->dealFontBuffers(*workingFont);
 
@@ -209,7 +209,7 @@ void Game::run()
 		frac2d{0, 1},
 		frac2d{0, 1},
 		testString,
-		workingFont,
+		&UIFont,
 		3,
 		[this]() 
 		{
@@ -427,6 +427,8 @@ void Game::run()
 					if (event.key.keysym.sym == SDLK_EQUALS) { focusedGlyphIndex++; }
 					if (event.key.keysym.sym == SDLK_COMMA) { (*workingFont)->defaultKerning--; }
 					if (event.key.keysym.sym == SDLK_PERIOD) { (*workingFont)->defaultKerning++; }
+					if (event.key.keysym.sym == SDLK_LEFTBRACKET) { (*workingFont)->lineSpacing--; }
+					if (event.key.keysym.sym == SDLK_RIGHTBRACKET) { (*workingFont)->lineSpacing++; }
 					if ((mods & KMOD_ALT))
 					{
 						if (event.key.keysym.sym == SDLK_w) { (*workingFont)->glyphs[focusedGlyphIndex]->placementY++; }

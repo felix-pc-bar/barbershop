@@ -65,7 +65,8 @@ bmpFont* _bmpfontNameSizeKernPJGlyph(std::vector<extendedValue> args)
 	result->name = std::get<std::string>(args[0]);
 	result->sizepx = std::get<int>(args[1]);
 	result->defaultKerning = std::get<int>(args[2]);
-	Pyjama* glpyhpj = std::get<Pyjama*>(args[3]);
+	result->lineSpacing = std::get<int>(args[3]);
+	Pyjama* glpyhpj = std::get<Pyjama*>(args[4]);
 	for (int i = 0; i < std::max(128, static_cast<int>(glpyhpj->v.size())); i++)
 	{
 		bmpGlyph* ptr = std::get<bmpGlyph*>(glpyhpj->v[i]);
