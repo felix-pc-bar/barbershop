@@ -44,17 +44,17 @@ Game::Game()
 
 	testScene = *(new Scene());
 	currentScene = &testScene;
-	testScene.cams.emplace_back();
-	testScene.currentCam = &testScene.cams[0];
+	// testScene.cams.emplace_back();
+	// testScene.currentCam = &testScene.cams[0];
 
-    testScene.currentCam->pos = {0,0,-5};
-    testScene.currentCam->quatIdentity = Quaternion();
+    // testScene.currentCam->pos = {0,0,-5};
+    // testScene.currentCam->quatIdentity = Quaternion();
 
-	auto i = stubbleparser->import("content/object.stbbl", TypesEnum::_Object3D);
-	if (i.has_value())
-	{
-		testScene.addObject(*std::get<Object3D*>(i.value()));
-	}
+	// auto i = stubbleparser->import("content/object.stbbl", TypesEnum::_Object3D);
+	// if (i.has_value())
+	// {
+	// 	testScene.addObject(*std::get<Object3D*>(i.value()));
+	// }
 
 	frame = 0;
 	lastTime = dtclock::now();
@@ -298,9 +298,6 @@ void Game::run()
 
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				testScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
-				testScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, testScene.cams[0].right);
-
 				// mouse
 				if (mmbdown)
 				{
@@ -484,24 +481,24 @@ void Game::run()
 		// TODO: update sample text with font being edited
 		// => traverse LayoutElement trees better
 
-		// for (int i = 0; i < 128; i++)
-		// {
-		// 	auto pb = pxbufs[i];
-		// 	uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : ((*workingFont)->glyphs[i]->isPrintable ? 0xFF00A000 : 0x00000000);
-		// 	this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
-		// 	if (scale > 3)
-		// 	{
-		// 		this->renderer->hairline->drawText(Point2d{dx + (pb->displayDX * scale), dy + (pb->displayDY * scale) - 8}, std::to_string(i));
-		// 	}
-		// }
-		// for (int height : rulers)
-		// {
-		// 	this->renderer->hairline->drawLine({0,(height * scale) + dy}, {this->renderer->width,(height * scale) + dy}, 0xFFFFFFFF, 1);
-		// }
-		// if (currentTool == tool::placing_ruler)
-		// {
-		// 	this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
-		// }
+		for (int i = 0; i < 128; i++)
+		{
+			auto pb = pxbufs[i];
+			uint32_t outlinecol = i == focusedGlyphIndex ? 0xFFFFFF80 : ((*workingFont)->glyphs[i]->isPrintable ? 0xFF00A000 : 0x00000000);
+			this->renderer->hairline->transformPixelBuffer(pb, dx + (pb->displayDX * scale), dy + (pb->displayDY * scale), scale, scale > 10, outlinecol, 0xFFFFFFFF, 0xFF000000); //add borders at higher scale
+			if (scale > 3)
+			{
+				this->renderer->hairline->drawText(Point2d{dx + (pb->displayDX * scale), dy + (pb->displayDY * scale) - 8}, std::to_string(i));
+			}
+		}
+		for (int height : rulers)
+		{
+			this->renderer->hairline->drawLine({0,(height * scale) + dy}, {this->renderer->width,(height * scale) + dy}, 0xFFFFFFFF, 1);
+		}
+		if (currentTool == tool::placing_ruler)
+		{
+			this->renderer->hairline->drawLine({0,(previewRuleHeight * scale) + dy}, {this->renderer->width,(previewRuleHeight * scale) + dy}, 0xFFFFa000, 1);
+		}
 
 		this->renderer->renderScene(testScene);
 		frame++;
