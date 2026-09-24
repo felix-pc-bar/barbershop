@@ -65,6 +65,9 @@ Game::Game()
 
 	previewRuleHeight = 0;
 
+	std::cout << "Enter desired integer scaling: ";
+	std::cin >> globIntScaling;
+
 	std::cout << "Would you like to {C}reate a new font, or {O}pen one that already exists?\n";
 	char response;
 	std::cin >> response;
