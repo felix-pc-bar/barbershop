@@ -54,7 +54,8 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, C
 	//}
 	//else { cri = *camRotInv;  }
 
-	Vertex3d v1c(v1.position - currentScene->currentCam->pos);
+	// Vertex3d v1c(v1.position - currentScene->currentCam->pos);
+	Vertex3d v1c(v1.position - cam->pos);
 
 	// Point2d p1(v1, camRotInv);
 	// Point2d p2(v2, camRotInv);

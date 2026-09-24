@@ -9,6 +9,7 @@
 #include "components/CPU2D.h"
 #include "../globals.h"
 #include "../material.h"
+#include "components/CPU3D.h"
 
 class LayoutElement;
 
@@ -19,8 +20,9 @@ public:
 	~cRenderer();
 	void resize(int newWidth, int newHeight); // Broken lol
 	Hairline* hairline;
+	Razor3D* razor;
 
-	void renderScene();
+	void renderScene(Scene& scene);
 	void clear(Colour col);
 
 	void setScreenDimensions(int scaling = globIntScaling); // set resolution to match screen

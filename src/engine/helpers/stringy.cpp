@@ -100,13 +100,13 @@ std::optional<float> helpers::getFloatLiteral(std::string_view s)
 	if (has_suffix)
 	{
 		s.remove_suffix(1);
-		if (s.empty()) return false; // "f" alone is invalid
+		if (s.empty()) return std::nullopt; // "f" alone is invalid
 	}
+	else { return std::nullopt; }
 
 	// Parse using from_chars
 	float value;
-	auto result = std::from_chars(s.data(), s.data() + s.size(), value,
-	                             std::chars_format::general);
+	auto result = std::from_chars(s.data(), s.data() + s.size(), value, std::chars_format::general);
 
 	// Valid if:
 	// - no error

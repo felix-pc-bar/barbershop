@@ -455,16 +455,16 @@ std::optional<extendedValue> StubbleParser::translateTree(StubbleParser::Syntact
 	{
 		if (ast.data == "true") { return true; }
 		if (ast.data == "false") { return false; }
-		try
-		{
-			return stoi(ast.data);
-		}
-		catch (...) {}
 		auto fpResult = helpers::getFloatLiteral(ast.data);
 		if (fpResult.has_value())
 		{
 			return fpResult.value();
 		}
+		try
+		{
+			return stoi(ast.data);
+		}
+		catch (...) {}
 		auto stResult = helpers::getStringLiteral(ast.data);
 		if (stResult.has_value())
 		{

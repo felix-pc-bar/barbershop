@@ -22,6 +22,8 @@ private:
 	SDL_Event event; // SDL event buffer
 	SDL_Keymod mods;
 
+	Scene testScene;
+
 	// ====
 	// TIME
 	// ====

@@ -17,7 +17,7 @@ public:
 	void SetBox(int xPos, int yPos, int size, uint32_t colour);
 
 	void drawPoint(Point2d pt, int sizePx);
-	void drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke);
+	void drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke = 1);
 	void drawRectangle(Point2d botLeft, Point2d topRight, uint32_t colour); // untested...
 	// Anchor: how text is positioned relative to given coordinate. 0: top left, 1: bottom left, 3+: unimplemented
 	void drawText(Point2d position, std::string text, bmpFont* font = nullptr, int scaling = 1, uint32_t colour = 0xFFFFFFFF, short int anchor = 0);
